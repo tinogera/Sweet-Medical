@@ -1,10 +1,10 @@
 ## 2026 - 1C - TP Desarrollo de Software
 
-- Integrante 1: ?
-- Integrante 2: ?
-- Integrante 3: ?
-- Integrante 4: ?
-- Integrante 5: ?
+- Integrante 1: Pedro Martín Camicia Pozzo
+- Integrante 2: Nahuel Alejandro Garcia
+- Integrante 3: Santino Gerardi
+- Integrante 4: Franco Losasso
+- Integrante 5: Eduardo Ariel Onishi
 - Integrante 6: ?
 
 ### Enunciados
