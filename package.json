@@ -1,0 +1,26 @@
+{
+  "name": "2026-1c-ma-tn-grupo-02",
+  "version": "1.0.0",
+  "description": "- Integrante 1: ?\r - Integrante 2: ?\r - Integrante 3: ?\r - Integrante 4: ?\r - Integrante 5: ?\r - Integrante 6: ?",
+  "homepage": "https://github.com/ddso-utn/2026-1C-MA-TN-grupo-02#readme",
+  "bugs": {
+    "url": "https://github.com/ddso-utn/2026-1C-MA-TN-grupo-02/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddso-utn/2026-1C-MA-TN-grupo-02.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
