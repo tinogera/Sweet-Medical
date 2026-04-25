@@ -1,0 +1,152 @@
+@startuml
+
+Medico --> "*" BloqueHorario
+Medico --> "1..*" Servicio
+Medico --> "1..*" Sede
+Medico --> "*" Notificacion
+
+Servicio --> "1" TipoServicio
+
+BloqueHorario --> "1" Servicio
+BloqueHorario --> "1" Sede
+
+Sede --> "1" Ubicacion
+
+Paciente --> "1" ObraSocial
+Paciente --> "1" Plan
+Paciente --> "*" Notificacion
+
+ObraSocial --> "*" Plan
+
+Plan --> "*" Cobertura
+
+Cobertura ..> EstadoCobertura
+
+Turno --> "1" Paciente
+Turno --> "1" Medico
+Turno --> "1" Servicio
+Turno --> "1" Sede
+Turno --> "*" EstadoTurno
+
+EstadoTurno --> "1" Estado
+
+class Medico {
+    nombre
+    apellido
+    documento
+    servicios
+    sedes
+    agenda: [BloqueHorario]
+    notificacionesPendientes
+    notificacionesVistas
+}
+
+class Servicio {
+    tipoServicio
+    nombre
+    descripcion
+    precio
+    duracion
+}
+
+enum TipoServicio {
+    ESPECIALIDAD
+    PRACTICA
+}
+
+class BloqueHorario {
+    fecha
+    sede
+    servicios
+    horaInicio
+    horaFin
+}
+
+class Sede {
+    nombre
+    ubicacion
+}
+
+class Ubicacion {
+    latitud
+    longitud
+}
+
+class Paciente {
+    nombre
+    apellido
+    documento
+    obraSocial
+    plan
+    notificacionesPendientes
+    notificacionesVistas
+}
+
+class ObraSocial {
+    nombre
+    planes: [Plan]
+}
+
+class Plan {
+    tipo
+    coberturaPorServicio: [Cobertura]
+
+    + coberturaDe(servicio)
+}
+
+class Cobertura {
+    servicio
+    porcentaje
+
+    + calcularMonto()
+    + tipoCobertura(): EstadoCobertura
+}
+
+enum EstadoCobertura {
+    TOTAL
+    PARCIAL
+    NINGUNA
+}
+
+class Turno {
+    paciente
+    medico
+    servicio
+    sede
+    fechaHora
+    estadosTurno: [EstadoTurno]
+    costo
+
+    + reservar(paciente)
+    + cancelar(responsable, motivo)
+    + estadoActual() : EstadoTurno
+    + confirmarCambio()
+    + marcarRealizado()
+    + puedeModificarse()
+    + agregarEstado()
+}
+
+class EstadoTurno {
+    estado
+    responsableCambio
+    fechaHora
+    motivo
+}
+
+enum Estado {
+    DISPONIBLE
+    RESERVADO
+    CONFIRMADO
+    CANCELADO
+    REALIZADO
+}
+
+class Notificacion {
+    destinatario
+    mensaje
+    fechaHoraEnviado
+    visto
+    fechaHoraVisto
+}
+
+@enduml
