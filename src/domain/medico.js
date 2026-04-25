@@ -18,7 +18,8 @@ class Medico{
         const nuevosTurnos = GeneradorDeTurnos.generarTurnos(this, nuevoBloqueHorario);
 
         this.turnosHistorico.push(nuevosTurnos);
-    } //FALTA chequear el tema de si la nueva disponibilidad cambia a otra, aca asumo que se crea un bloque horario completamente nuevo
+    } //FALTA chequear el tema de si la nueva disponibilidad cambia a otra, 
+    // aca asumo que se crea un bloque horario completamente nuevo
 }
 
 
