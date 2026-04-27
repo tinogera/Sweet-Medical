@@ -21,6 +21,7 @@ ObraSocial --> "*" Plan
 Plan --> "*" Cobertura
 
 Cobertura ..> EstadoCobertura
+Cobertura --> Servicio
 
 Turno --> "1" Paciente
 Turno --> "1" Medico
