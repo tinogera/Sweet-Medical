@@ -17,7 +17,7 @@ class Turno{
         this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
 
     }
-    
+
     cancelar(responsable, motivo) {
         if (!this.puedeCancelarse()) {
             throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
@@ -26,17 +26,15 @@ class Turno{
     }
 
     puedeCancelarse() {
-        // se puede cancelar si ests disponible o reservado Y falta mas de 1 hora 
+        // se puede cancelar si ests disponible o reservado Y falta mas de 1 hora
         const unaHora = 60*60*1000;
         return (this.estaDisponible() || this.estaReservado()) && ((this.fechaHora - new Date()) > unaHora);
     }
 
-
-
     cambiarEstado(nuevoEstado, responsableDeCambio, motivo){
         this.estadoActual().responsableDeCambio = responsableDeCambio;
         this.estadoActual().motivo = motivo;
-    
+
         const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, null, new Date(), null);
         this.estadosTurno.push(nuevoEstadoTurno);
         //modificas el estado anterior y depues creas uno nuevo
@@ -44,6 +42,10 @@ class Turno{
         const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, responsableDeCambio, new Date(), motivo);
         this.estadosTurno.push(nuevoEstadoTurno);
         */
+    }
+
+    solicitarCambioDeFecha(responsable, fecha){
+      // TODO: Implementar...
     }
 
     estaDisponible(){

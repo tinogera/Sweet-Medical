@@ -10,9 +10,9 @@ export class Paciente {
         this.plan = plan;
         this.notificacionesPendientes = [];
         this.notificacionesVistas = [];
-        thus.listaTurnos=[];
+        this.turnos = []
     }
-    
+
     agregarTurno(turno){
         this.turnos.push(turno)
     }
@@ -22,34 +22,15 @@ export class Paciente {
     }
 
     cancelarTurno(turno, motivo) {
-        this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
+      turno.cancelar(this, motivo)
     }
 
     consultarHistorial() {
-        return this.listaTurnos;
+        return this.turnos;
     }
 
     solicitarCambioDeFecha(turno, nuevaFechaHora) {
         turno.solicitarCambioDeFecha(this, nuevaFechaHora);
     }
-
-    buscarTurnos(turnosDisponibles, filtros) {
-        return turnosDisponibles
-            .filter(turno => turno.estaDisponible())
-    } // es una funcion que a esta hora mi cabeza no la puede procesar.
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
