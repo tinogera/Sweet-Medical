@@ -37,6 +37,15 @@ class Turno{
          destinatario.recibirNotificacion(noti);
     }
 
+     confirmar() {
+    
+        this.cambiarEstado(Estado.CONFIRMADO, this.medico,new Date(), "Turno confirmado ");
+   
+        const mensaje = `El turno ha sido confirmado`;
+        const noti = new Notificacion(mensaje, new Date());
+        this.paciente.recibirNotificacion(noti);
+    }
+
     puedeCancelarse() {
         // se puede cancelar si ests disponible o reservado Y falta mas de 1 hora
         const unaHora = 60*60*1000;
