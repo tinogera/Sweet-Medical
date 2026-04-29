@@ -8,10 +8,19 @@ class Medico{
         this.notificacionesPendientes = [];
         this.notificacionesVistas = [];
         this.turnosHistorico = [];
+        this.sedes = []
     }
 
 
+    agregarSede(sede) {
+         if (!this.sedes.includes(sede)) {
+                this.sedes.push(sede);
+            }
+        }
+
     agregarDisponibilidad(horaInicio, horaFin, sede, fecha, servicio){
+
+        
         const nuevoBloqueHorario = new BloqueHorario(horaInicio, horaFin, sede, fecha, servicio);
         this.agenda.push(nuevoBloqueHorario);
         
