@@ -16,6 +16,10 @@ class Turno{
         this.paciente = paciente;
         this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
 
+        // NOTIFICAR AL MÉDICO
+        const mensaje = `Nuevo turno reservado por ${paciente.nombre} para${this.servicio.nombre}`;
+        const noti = new Notificacion(this.medico, mensaje);
+        this.medico.recibirNotificacion(noti);
     }
 
     cancelar(responsable, motivo) {
@@ -23,6 +27,14 @@ class Turno{
             throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
         }
         this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
+
+        // DETERMINAR A QUIÉN NOTIFICAR
+        // Si cancela el médico, notificamos al paciente y viceversa
+        const destinatario = (responsable === this.medico) ? this.paciente : this.medico;
+   
+        const mensaje = `El turno ha sido cancelado`;
+        const noti = new Notificacion(destinatario, mensaje);
+        destinatario.recibirNotificacion(noti);
     }
 
     puedeCancelarse() {
@@ -59,5 +71,7 @@ class Turno{
     estaReservado(){
         return this.estadoActual().estaReservado();
     }
+
+
 
 }
