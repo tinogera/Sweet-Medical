@@ -39,7 +39,7 @@ class Turno{
 
      confirmar() {
     
-        this.cambiarEstado(Estado.CONFIRMADO, this.medico,new Date(), "Turno confirmado ");
+        this.cambiarEstado(Estado.CONFIRMADO, this.medico ,new Date(), "Turno confirmado ");
    
         const mensaje = `El turno ha sido confirmado`;
         const noti = new Notificacion(mensaje, new Date());
