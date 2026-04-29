@@ -32,9 +32,9 @@ class Turno{
         // Si cancela el médico, notificamos al paciente y viceversa
         const destinatario = (responsable === this.medico) ? this.paciente : this.medico;
    
-        const mensaje = `El turno ha sido cancelado`;
-        const noti = new Notificacion(destinatario, mensaje);
-        destinatario.recibirNotificacion(noti);
+         const mensaje = `El turno ha sido cancelado`;
+         const noti = new Notificacion(destinatario, mensaje);
+         destinatario.recibirNotificacion(noti);
     }
 
     puedeCancelarse() {
