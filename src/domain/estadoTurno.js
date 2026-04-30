@@ -1,37 +1,37 @@
-class EstadoTurno{
-    constructor(estado, responsableDeCambio, fechaHora, motivo) {
-        this.estado = estado;
-        this.responsableDeCambio = responsableDeCambio;
-        this.fechaHora = fechaHora;
-        this.motivo = motivo;
-    }
+export class EstadoTurno {
+  constructor(estado, responsableDeCambio, motivo) {
+    this.estado = estado;
+    this.responsableDeCambio = responsableDeCambio;
+    this.fechaHora = new Date();
+    this.motivo = motivo;
+  }
 
 
-    estaDisponible(){
-        return this.estado === Estado.DISPONIBLE;
-    }
+  estaDisponible() {
+    return this.estado === Estado.DISPONIBLE;
+  }
 
-    estaReservado(){
-        return this.estado === Estado.RESERVADO;
-    }
+  estaReservado() {
+    return this.estado === Estado.RESERVADO;
+  }
 
-    estaConfirmado(){
-        return this.estado === Estado.CONFIRMADO;
-    }
+  estaConfirmado() {
+    return this.estado === Estado.CONFIRMADO;
+  }
 
-    estaCancelado(){
-        return this.estado === Estado.CANCELADO;
-    }
+  estaCancelado() {
+    return this.estado === Estado.CANCELADO;
+  }
 
-    estaRealizado(){
-        return this.estado === Estado.REALIZADO;
-    }
+  estaRealizado() {
+    return this.estado === Estado.REALIZADO;
+  }
 }
 
 const Estado = Object.freeze({
-    DISPONIBLE: 'DISPONIBLE',
-    RESERVADO: 'RESERVADO',
-    CONFIRMADO: 'CONFIRMADO',
-    CANCELADO: 'CANCELADO',
-    REALIZADO: 'REALIZADO'
+  DISPONIBLE: 'DISPONIBLE',
+  RESERVADO: 'RESERVADO',
+  CONFIRMADO: 'CONFIRMADO',
+  CANCELADO: 'CANCELADO',
+  REALIZADO: 'REALIZADO'
 });

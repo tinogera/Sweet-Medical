@@ -1,7 +1,6 @@
-class sede{
-    constructor(nombre, ubicacion)
-    {
-        this.nombre = nombre
-        this.ubicacion = ubicacion
-    }
+export class Sede {
+  constructor(nombre, ubicacion) {
+    this.nombre = nombre
+    this.ubicacion = ubicacion
+  }
 }

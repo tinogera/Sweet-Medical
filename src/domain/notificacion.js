@@ -1,14 +1,14 @@
-class Notificacion {
-    constructor(destinatario, mensaje, fechaHoraEnviado = new Date(), visto = false, fechaHoraVisto = null){
-        this.destinatario = destinatario
-        this.mensaje = mensaje
-        this.fechaHoraEnviado = fechaHoraEnviado
-        this.visto = visto
-        this.fechaHoraVisto = fechaHoraVisto
-    }
+export class Notificacion {
+  constructor(destinatario, mensaje) {
+    this.destinatario = destinatario
+    this.mensaje = mensaje
+    this.fechaHoraEnviado = new Date()
+    this.visto = false
+    this.fechaHoraVisto = null
+  }
 
-    marcarComoVista(fecha){
-        visto = true
-        fechaHoraVisto = fecha
-    }
+  marcarComoVista() {
+    this.visto = true
+    this.fechaHoraVisto = new Date()
+  }
 }
