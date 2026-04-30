@@ -1,5 +1,3 @@
-import { Servicio } from './servicio.js'
-
 export class Cobertura {
   constructor(servicio, porcentaje) {
     if (porcentaje < 0 || porcentaje > 100) {

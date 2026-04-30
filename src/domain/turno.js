@@ -1,63 +1,82 @@
-class Turno{
-    constructor(fechaHora, medico, paciente, servicio,sede, costo) {
-        this.fechaHora = fechaHora;
-        this.medico = medico;
-        this.paciente = paciente;
-        this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, null, new Date(), null)];
-        this.sede = sede;
-        this.servicio = servicio;
-        this.costo = costo;
+export class Turno {
+  constructor(fechaHora, medico, servicio, sede) {
+    // Aunque los turnos los generan en base a la agenda propuesta por el medico.
+    // validar si un medico:
+    //  - ofrece el servicio
+    //  - atiende en esa sede
+    //  TODO: - tiene bloqueHorario disponible en fechaHora
+    if (!medico.antiendeEn(sede) || !medico.ofrece(servicio)) {
+      throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
-    reservar(paciente){
-        if(!this.estaDisponible()){
-            throw new Error('El turno no está disponible');
-        }
-        this.paciente = paciente;
-        this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
+    this.fechaHora = fechaHora;
+    this.medico = medico;
+    this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, null)];
+    this.sede = sede;
+    this.servicio = servicio;
+  }
 
+  // Consultar!!
+  costoEstimado() { }
+
+  reservar(paciente) {
+    if (!this.estaDisponible()) {
+      throw new Error('El turno no está disponible');
     }
+    this.paciente = paciente;
+    this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
+  }
 
-    cancelar(responsable, motivo) {
-        if (!this.puedeCancelarse()) {
-            throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
-        }
-        this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
+  cancelar(responsable, motivo) {
+    if (!this.puedeCancelarse()) {
+      throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
     }
+    this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
+  }
 
-    puedeCancelarse() {
-        // se puede cancelar si ests disponible o reservado Y falta mas de 1 hora
-        const unaHora = 60*60*1000;
-        return (this.estaDisponible() || this.estaReservado()) && ((this.fechaHora - new Date()) > unaHora);
-    }
+  confirmar(responsable) {
+    this.cambiarEstado(Estado.CONFIRMADO, responsable, new Date(), "Turno confirmado");
+  }
 
-    cambiarEstado(nuevoEstado, responsableDeCambio, motivo){
-        this.estadoActual().responsableDeCambio = responsableDeCambio;
-        this.estadoActual().motivo = motivo;
+  puedeCancelarse() {
+    // CRITERIOS:
+    // +  esta disponible o reservado
+    // +  falta más de 1 hora
+    const UNA_HORA_EN_MS = 60 * 60 * 1000;
+    const fechaHoraActual = new Date.now()
+    return (
+      this.estaDisponible() || this.estaReservado()) &&
+      ((fechaHoraActual - this.fechaHora.getTime()) > UNA_HORA_EN_MS
+      );
+  }
 
-        const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, null, new Date(), null);
-        this.estadosTurno.push(nuevoEstadoTurno);
-        //modificas el estado anterior y depues creas uno nuevo
-        /*
-        const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, responsableDeCambio, new Date(), motivo);
-        this.estadosTurno.push(nuevoEstadoTurno);
-        */
-    }
+  puedeModificarse() {
+    // CRITERIOS:
+    //  + Turnos a suceder
+    //  + No está reservado
+    return this.fechaHora > new Date() && this.estaDisponible()
+  }
 
-    solicitarCambioDeFecha(responsable, fecha){
-      // TODO: Implementar...
-    }
+  cambiarEstado(nuevoEstado, responsableDeCambio, motivo) {
+    const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, responsableDeCambio, new Date(), motivo);
+    this.estadosTurno.push(nuevoEstadoTurno);
+  }
 
-    estaDisponible(){
-        return this.estadoActual().estaDisponible();
-    }
+  estaDisponible() {
+    return this.estadoActual().estaDisponible();
+  }
 
-    estadoActual(){
-        return this.estadosTurno.at(-1);
-    }
+  estadoActual() {
+    const LAST = -1
+    return this.estadosTurno.at(LAST);
+  }
 
-    estaReservado(){
-        return this.estadoActual().estaReservado();
-    }
+  estaReservado() {
+    return this.estadoActual().estaReservado();
+  }
+
+  marcarRealizado() {
+    this.cambiarEstado(Estado.REALIZADO, this.medico, "El turno fue realizado con éxito")
+  }
 
 }

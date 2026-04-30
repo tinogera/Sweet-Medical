@@ -1,35 +1,91 @@
-class Medico{
-    constructor(nombre, apellido, documento, servicios, agenda) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.documento = documento;
-        this.servicios = servicios;
-        this.agenda = agenda;
-        this.notificacionesPendientes = [];
-        this.notificacionesVistas = [];
-        this.turnosHistorico = [];
+export class Medico {
+  constructor(nombre, apellido, documento, servicios, sedes, agenda) {
+    this.nombre = nombre;
+    this.apellido = apellido;
+    this.documento = documento;
+
+    this.servicios = servicios || [];
+    this.agenda = agenda || [];
+    this.sedes = sedes || []
+
+    this.notificacionesPendientes = [];
+    this.notificacionesVistas = [];
+  }
+
+  agregarSede(sede) {
+    if (!this.sedes.includes(sede)) {
+      this.sedes.push(sede);
+    }
+  }
+
+  agregarServicio(servicio) {
+    if (!this.servicios.includes(servicio)) {
+      this.servicios.push(servicio);
+    }
+  }
+
+  // TODO: Definir un formato para las "horas"
+  // Asumo que va a ser un objeto { hora: int, minutos: int }
+  agregarDisponibilidad(horaInicio, horaFin, sede, fecha, servicio) {
+    if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
+      throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
+    const fechaHoraInicio = fecha.setHours(horaInicio.hora, horaInicio.minutos)
+    const fechaHoraFin = fecha.setHours(horaFin.hora, horaFin.minutos)
+    const ahora = new Date()
 
-    agregarDisponibilidad(horaInicio, horaFin, sede, fecha, servicio){
-        const nuevoBloqueHorario = new BloqueHorario(horaInicio, horaFin, sede, fecha, servicio);
-        this.agenda.push(nuevoBloqueHorario);
-        
-        const nuevosTurnos = GeneradorDeTurnos.generarTurnos(this, nuevoBloqueHorario);
+    if (fechaHoraInicio < fechaHoraFin && fechaHoraInicio > ahora) {
+      throw new Error("No se puede cambiar la disponibilidad para fechas pasadas")
+    }
 
-        this.turnosHistorico.push(nuevosTurnos);
-    } //FALTA chequear el tema de si la nueva disponibilidad cambia a otra, 
-    // aca asumo que se crea un bloque horario completamente nuevo
+    const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
+    this.agenda.push(nuevoBloqueHorario);
+  }
+
+  recibirNotificacion(notificacion) {
+    this.notificacionesPendientes.push(notificacion)
+  }
+
+  verNotificacion(notificacion) {
+    //busca en qué posición (índice) se encuentra el objeto notificacion dentro del arreglo notificacionesPendientes
+    const index = this.notificacionesPendientes.indexOf(notificacion);
+
+    if (index === -1) {
+      throw new Error("La notificación no se encuentra en la lista de pendientes.");
+    }
+
+    //se elimina físicamente la notificación de la lista de pendientes. El 1 indica que solo quiero borrar un elemento a partir de esa posición.
+    this.notificacionesPendientes.splice(index, 1);
+
+    this.notificacionesVistas.push(notificacion);
+
+    notificacion.marcarComoVista();
+  }
+
+  obtenerNotificacionesSinLeer() {
+    return this.notificacionesPendientes
+  }
+
+  obtenerNotificacionesLeidas() {
+    return this.notificacionesVistas
+  }
+
+  atiendeEn(sede) {
+    return this.sedes.some(s => sede.nombre === s.nombre)
+  }
+
+  ofrece(servicio) {
+    return this.servicios.some(s => servicio.nombre === s.nombre)
+  }
 }
 
-
-
-class BloqueHorario{
-    constructor(horaInicio, horaFin, sede, fecha, servicio){
-        this.horaInicio = horaInicio;
-        this.horaFin = horaFin;
-        this.sede = sede;
-        this.fecha = fecha;
-        this.servicio = servicio;
-    }
+// TODO: separar en archivo
+class BloqueHorario {
+  constructor(fechaHoraInicio, fechaHoraFin, sede, servicio) {
+    this.horaInicio = fechaHoraInicio
+    this.horaFin = fechaHoraFin
+    this.sede = sede;
+    this.servicio = servicio;
+  }
 }
