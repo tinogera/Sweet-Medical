@@ -1,12 +1,12 @@
 export class Medico {
-  constructor(nombre, apellido, documento, servicios, sedes, agenda) {
+  constructor(nombre, apellido, documento, servicios, sedes) {
     this.nombre = nombre;
     this.apellido = apellido;
     this.documento = documento;
 
     this.servicios = servicios || [];
-    this.agenda = agenda || [];
-    this.sedes = sedes || []
+    this.agenda = [];
+    this.sedes = sedes || [];
 
     this.notificacionesPendientes = [];
     this.notificacionesVistas = [];
@@ -77,15 +77,5 @@ export class Medico {
 
   ofrece(servicio) {
     return this.servicios.some(s => servicio.nombre === s.nombre)
-  }
-}
-
-// TODO: separar en archivo
-class BloqueHorario {
-  constructor(fechaHoraInicio, fechaHoraFin, sede, servicio) {
-    this.horaInicio = fechaHoraInicio
-    this.horaFin = fechaHoraFin
-    this.sede = sede;
-    this.servicio = servicio;
   }
 }

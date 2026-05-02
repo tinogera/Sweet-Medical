@@ -21,7 +21,6 @@ ObraSocial --> "*" Plan
 Plan --> "*" Cobertura
 
 Cobertura ..> EstadoCobertura
-Cobertura --> Servicio
 
 Turno --> "1" Paciente
 Turno --> "1" Medico
@@ -30,6 +29,9 @@ Turno --> "1" Sede
 Turno --> "*" EstadoTurno
 
 EstadoTurno --> "1" Estado
+
+GeneradorDeTurnos ..> Turno
+GeneradorDeTurnos ..> BloqueHorario
 
 class Medico {
     nombre
@@ -116,12 +118,12 @@ class Turno {
     sede
     fechaHora
     estadosTurno: [EstadoTurno]
-    costo
 
     + reservar(paciente)
     + cancelar(responsable, motivo)
+    + confirmar(responsable)
+    + puedeCancelarse()
     + estadoActual() : EstadoTurno
-    + confirmarCambio()
     + marcarRealizado()
     + puedeModificarse()
     + agregarEstado()
@@ -148,6 +150,12 @@ class Notificacion {
     fechaHoraEnviado
     visto
     fechaHoraVisto
+
+    + marcarComoVista()
+}
+
+class GeneradorDeTurnos {
+    + generarTurnos(medico, bloqueHorario): [Turno]
 }
 
 @enduml

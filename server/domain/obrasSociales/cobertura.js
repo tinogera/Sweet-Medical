@@ -28,5 +28,5 @@ export class Cobertura {
 const EstadoCobertura = Object.freeze({
   TOTAL: 'TOTAL',
   PARCIAL: 'PARCIAL',
-  NINGUNA: 'NINGUNA',
+  NINGUNA: 'NINGUNA'
 });

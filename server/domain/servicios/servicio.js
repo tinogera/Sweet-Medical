@@ -13,7 +13,7 @@ export class Servicio {
 
 const TipoServicio = Object.freeze({
   ESPECIALIDAD: 'ESPECIALIDAD',
-  PRACTICA: 'PRACTICA',
+  PRACTICA: 'PRACTICA'
 });
 
 const DURACION_MAXIMA = 1440 // un dia??
