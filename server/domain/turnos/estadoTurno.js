@@ -28,7 +28,7 @@ export class EstadoTurno {
   }
 }
 
-const Estado = Object.freeze({
+export const Estado = Object.freeze({
   DISPONIBLE: 'DISPONIBLE',
   RESERVADO: 'RESERVADO',
   CONFIRMADO: 'CONFIRMADO',

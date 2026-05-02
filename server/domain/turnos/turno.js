@@ -1,3 +1,5 @@
+import { EstadoTurno, Estado } from '../turnos/estadoTurno.js'
+
 export class Turno {
   constructor(fechaHora, medico, servicio, sede) {
     // Aunque los turnos los generan en base a la agenda propuesta por el medico.
@@ -5,13 +7,13 @@ export class Turno {
     //  - ofrece el servicio
     //  - atiende en esa sede
     //  TODO: - tiene bloqueHorario disponible en fechaHora
-    if (!medico.antiendeEn(sede) || !medico.ofrece(servicio)) {
-      throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+    if (!medico.atiendeEn(sede) || !medico.ofrece(servicio)) {
+      throw new Error(`El médico ${medico.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
     this.fechaHora = fechaHora;
     this.medico = medico;
-    this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, null)];
+    this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, 'Turno disponible')];
     this.sede = sede;
     this.servicio = servicio;
   }
@@ -35,7 +37,7 @@ export class Turno {
   }
 
   confirmar(responsable) {
-    this.cambiarEstado(Estado.CONFIRMADO, responsable, new Date(), "Turno confirmado");
+    this.cambiarEstado(Estado.CONFIRMADO, responsable, "Turno confirmado");
   }
 
   puedeCancelarse() {
@@ -58,7 +60,7 @@ export class Turno {
   }
 
   cambiarEstado(nuevoEstado, responsableDeCambio, motivo) {
-    const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, responsableDeCambio, new Date(), motivo);
+    const nuevoEstadoTurno = new EstadoTurno(nuevoEstado, responsableDeCambio, motivo);
     this.estadosTurno.push(nuevoEstadoTurno);
   }
 

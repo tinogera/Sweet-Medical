@@ -10,7 +10,7 @@ export class Cobertura {
   }
 
   calcularMonto() {
-    return this.servicio.precio * (1 - (porcentaje / 100))
+    return this.servicio.precio * (1 - (this.porcentaje / 100))
   }
 
   tipoCobertura() {

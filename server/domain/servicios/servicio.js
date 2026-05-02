@@ -1,6 +1,6 @@
 export class Servicio {
   constructor(tipoDeServicio, nombre, precio, duracionEnMinutos) {
-    if (duracion < 0 || duracion > DURACION_MAXIMA) {
+    if (duracionEnMinutos < 0 || duracionEnMinutos > DURACION_MAXIMA) {
       throw new Error(`La duración ${duracionEnMinutos} tiene que tener sentido`)
     }
 
@@ -11,7 +11,7 @@ export class Servicio {
   }
 }
 
-const TipoServicio = Object.freeze({
+export const TipoServicio = Object.freeze({
   ESPECIALIDAD: 'ESPECIALIDAD',
   PRACTICA: 'PRACTICA'
 });
