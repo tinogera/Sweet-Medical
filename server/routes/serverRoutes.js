@@ -3,7 +3,7 @@ import { ServerController } from "../controllers/ServerController.js"
 
 const serverController = new ServerController()
 
-const  router = express.Router()
+const router = express.Router()
 
 router.route('/')
     .get((req, res) => serverController.healthcheck(req, res))
