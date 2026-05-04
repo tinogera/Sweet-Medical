@@ -1,7 +1,8 @@
 import {BusquedaTurnoService} from "../services/BusquedaTurnoService.js"
+import { BadRequestError } from "../errors/appErrors.js"
 
 export class BusquedaTurnoController {
-    constructor({ productoService = new ProductoService() } = {}) {
+    constructor({ busquedaTurnoService = new BusquedaTurnoService() } = {}) {
         this.busquedaTurnoService = busquedaTurnoService
     }
 
@@ -9,15 +10,21 @@ export class BusquedaTurnoController {
         try {
             const paginacion = this.extraerPaginacion(req.query)
             const filtros = this.extraerFiltros(req.query)
-            const resultado = this.busquedaTurnoService.buscarTurnos({ ...paginacion, filtros })
+            const idPaciente = parseInt(req.query.idPaciente)
+            if (isNaN(idPaciente)) {
+                throw new BadRequestError("El parámetro idPaciente es requerido y debe ser un número")
+            
+            }
+            
+            const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros } )
 
             return res.status(200).json({
-                data: resultado.turnos,
+                data: resultado.turnosDTO,
                 paginacion: {
                     numeroPagina: resultado.numeroPagina,
                     limitePorPagina: resultado.limitePorPagina,
                     totalPaginas: resultado.totalPaginas,
-                    totalProductos: resultado.totalTurnos
+                    totalTurnos: resultado.totalTurnos
                 }
             })
         } catch (error) {
