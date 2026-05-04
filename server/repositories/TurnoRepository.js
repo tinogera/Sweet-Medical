@@ -1,5 +1,6 @@
-import {clone, isUndefined, remove} from "lodash-es";
-import { BadRequestError } from "../errors/appErrors.js";
+import {clone, isUndefined, remove} from "lodash-es"
+import { BadRequestError } from "../errors/appErrors.js"
+import { TipoServicio } from "../domain/servicios/servicio.js"
 
 export const TurnoRepository = {
   turnos: [],
@@ -15,17 +16,17 @@ export const TurnoRepository = {
   },
 
   obtenerPorId(id){
-    const turno = this.turnos.find(c => c.id === id);
+    const turno = this.turnos.find(t => t.id === id);
     if(!turno){
       throw new BadRequestError(`El turno con id: ${id}, no existe`)
     }
     return turno;
   },
 
-  guardarturno(id, turnoActualizada){
-    remove(this.turnos, c=> c.id === id)
-    this.turnos.push(turnoActualizada);
-    return turnoActualizada;
+  guardarturno(id, turnoActualizado){
+    remove(this.turnos, t=> t.id === id)
+    this.turnos.push(turnoActualizado);
+    return turnoActualizado;
   },
 
   borrar(turno){
@@ -35,7 +36,29 @@ export const TurnoRepository = {
   obtenerPaginados(numeroPagina, limitePorPagina, filtros) {
     let turnos = this.listar()
 
-    // TODO agregar filtros
+    if (filtros.profesional) {
+      turnos = turnos.filter(t => t.medico.id === filtros.profesional)
+    }
+
+    if (filtros.especialidad) {
+      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.ESPECIALIDAD && t.servicio.nombre.toLowerCase().includes(filtros.especialidad.toLowerCase()))
+    }
+
+    if (filtros.practica) {
+      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.PRACTICA && t.servicio.nombre.toLowerCase().includes(filtros.practica.toLowerCase()))    
+    }
+
+    if (filtros.sede) {
+      turnos = turnos.filter(t => t.sede.nombre.toLowerCase().includes(filtros.sede.toLowerCase()))
+    }
+
+    if (filtros.fechaDesde) {
+      turnos = turnos.filter(t => t.fechaHora >= filtros.fechaDesde)
+    }
+
+    if (filtros.fechaHasta) {
+      turnos = turnos.filter(t => t.fechaHora <= filtros.fechaHasta)
+    }
 
     const inicio = (numeroPagina - 1) * limitePorPagina
     const fin = inicio + limitePorPagina

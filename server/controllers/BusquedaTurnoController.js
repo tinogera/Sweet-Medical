@@ -10,12 +10,9 @@ export class BusquedaTurnoController {
         try {
             const paginacion = this.extraerPaginacion(req.query)
             const filtros = this.extraerFiltros(req.query)
-            const idPaciente = parseInt(req.query.idPaciente)
-            if (isNaN(idPaciente)) {
-                throw new BadRequestError("El parámetro idPaciente es requerido y debe ser un número")
-            
-            }
-            
+            const idPaciente = Number(req.query.idPaciente)
+            this.validarEnteroPositivo(idPaciente, "idPaciente")
+
             const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros } )
 
             return res.status(200).json({

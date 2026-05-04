@@ -1,4 +1,4 @@
-class ubicacion {
+export class Ubicacion {
   constructor(latitud, longitud) {
     this.latitud = latitud
     this.longitud = longitud

@@ -1,24 +1,25 @@
 import { Turno } from "../domain/turnos/turno.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { PacienteRepository } from "../repositories/PacienteRepository.js"
-import { AppError, NotFoundError } from "../errors/appErrors.js"
+import { AppError, NotFoundError, BadRequestError } from "../errors/appErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
 export class BusquedaTurnoService {
 
+    /* Cuando tengamos la implementacion real descomentar esto
     constructor({ turnoRepository = new TurnoRepository(), pacienteRepository = new PacienteRepository() } = {} ) {
         this.turnoRepository = turnoRepository
         this.pacienteRepository = pacienteRepository
     }
+    */
 
     async buscarTurnos({ idPaciente, numeroPagina = 1, limitePorPagina = 10, filtros = {} } = {}) {
         this.validarPaginacion(numeroPagina, limitePorPagina)
         this.validarFiltros(filtros)
 
-        const paciente = await this.pacienteRepository.buscarPorId(idPaciente)
-        if( !paciente ) throw new NotFoundError(`No se encontro el paciente con id: ${idPaciente}`)
+        const paciente = PacienteRepository.obtenerPorId(idPaciente)
 
-        const { turnos, totalTurnos } = this.turnoRepository.obtenerPaginados(
+        const { turnos, totalTurnos } = TurnoRepository.obtenerPaginados(
             numeroPagina,
             limitePorPagina,
             filtros
@@ -50,6 +51,14 @@ export class BusquedaTurnoService {
     }
 
     validarFiltros(filtros) {
+        const hoy = new Date()
+
+        // Si debemos poder buscar el historial de un paciente esto habria que borrarlo
+        if (filtros.fechaDesde) {
+            if (filtros.fechaDesde < hoy) {
+                throw new BadRequestError("La fecha de búsqueda no puede ser anterior a la actual")
+            }
+        }
 
         if (filtros.fechaDesde && filtros.fechaHasta) {
             if (filtros.fechaDesde > filtros.fechaHasta) {

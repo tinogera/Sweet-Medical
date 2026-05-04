@@ -4,7 +4,7 @@ export class Servicio {
       throw new Error(`La duración ${duracionEnMinutos} tiene que tener sentido`)
     }
 
-    this.tipoDeServicio = tipoDeServicio;
+    this.tipoServicio = tipoDeServicio;
     this.nombre = nombre;
     this.precio = precio;
     this.duracion = duracionEnMinutos;
