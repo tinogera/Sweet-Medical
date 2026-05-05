@@ -1,5 +1,5 @@
 import {BusquedaTurnoService} from "../services/BusquedaTurnoService.js"
-import { BadRequestError } from "../errors/appErrors.js"
+import { BadRequestError } from "../errors/AppErrors.js"
 
 export class BusquedaTurnoController {
     constructor({ busquedaTurnoService = new BusquedaTurnoService() } = {}) {
@@ -10,13 +10,14 @@ export class BusquedaTurnoController {
         try {
             const paginacion = this.extraerPaginacion(req.query)
             const filtros = this.extraerFiltros(req.query)
+            const ordenamiento = this.extraerOrdenamiento(req.query)
             const idPaciente = Number(req.query.idPaciente)
             this.validarEnteroPositivo(idPaciente, "idPaciente")
 
-            const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros } )
+            const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros, ...ordenamiento } )
 
             return res.status(200).json({
-                data: resultado.turnosDTO,
+                turnos: resultado.turnosDTO,
                 paginacion: {
                     numeroPagina: resultado.numeroPagina,
                     limitePorPagina: resultado.limitePorPagina,
@@ -27,6 +28,24 @@ export class BusquedaTurnoController {
         } catch (error) {
             return next(error)
         }
+    }
+
+    extraerOrdenamiento(query) {
+        // Por defecto fecha
+        const ordenarPor = query.ordenarPor || 'fecha' 
+
+        // Por defecto ascendente
+        const direccion = query.direccion || 'asc' 
+
+        if (!['fecha', 'costo'].includes(ordenarPor)) {
+            throw new BadRequestError("Solo se puede ordenar por 'fecha' o 'costo'")
+        }
+
+        if (!['asc', 'desc'].includes(direccion)) {
+            throw new BadRequestError("La dirección debe ser 'asc' o 'desc'")
+        }
+
+        return { ordenarPor, direccion }
     }
 
     extraerFiltros(query) {
@@ -65,7 +84,11 @@ export class BusquedaTurnoController {
         }
 
         if (query.fechaDesde !== undefined) {
-            const fechaDesde = new Date(query.fechaDesde)
+            const partes = query.fechaDesde.split('-')
+            if (partes.length !== 3) throw new BadRequestError("Formato de fechaDesde inválido")
+
+            const [y, m, d] = partes.map(Number)
+            const fechaDesde = new Date(y, m - 1, d)
 
             if (isNaN(fechaDesde.getTime())) {
                 throw new BadRequestError("fechaDesde inválida")
@@ -75,24 +98,28 @@ export class BusquedaTurnoController {
         }
 
         if (query.fechaHasta !== undefined) {
-            const fechaHasta = new Date(query.fechaHasta)
+            const partes = query.fechaHasta.split('-')
+            if (partes.length !== 3) throw new BadRequestError("Formato de fechaHasta inválido")
+
+            const [y, m, d] = partes.map(Number)
+            const fechaHasta = new Date(y, m - 1, d, 23, 59, 59, 999)
 
             if (isNaN(fechaHasta.getTime())) {
-                throw new BadRequestError("fechaHasta inválida")
+                throw new BadRequestError("fechaHasta inválida");
             }
 
-            filtros.fechaHasta = fechaHasta
+            filtros.fechaHasta = fechaHasta;
         }
 
         return filtros
     }
 
     extraerPaginacion(query) {
-        const numeroPagina = query?.page === undefined ? 1 : Number(query.page)
-        const limitePorPagina = query?.limit === undefined ? 10 : Number(query.limit)
+        const numeroPagina = query?.pagina === undefined ? 1 : Number(query.pagina)
+        const limitePorPagina = query?.limite === undefined ? 10 : Number(query.limite)
 
-        this.validarEnteroPositivo(numeroPagina, "page")
-        this.validarEnteroPositivo(limitePorPagina, "limit")
+        this.validarEnteroPositivo(numeroPagina, "pagina")
+        this.validarEnteroPositivo(limitePorPagina, "limite")
 
         return { numeroPagina, limitePorPagina }
     }

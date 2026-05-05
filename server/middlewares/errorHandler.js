@@ -1,4 +1,4 @@
-import { AppError } from "../errors/AppError.js"
+import { AppError } from "../errors/AppErrors.js"
 
 export function errorHandler(err, req, res, next) {
     if (res.headersSent) {

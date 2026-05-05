@@ -1,5 +1,5 @@
 import {clone, isUndefined, remove} from "lodash-es"
-import { BadRequestError } from "../errors/appErrors.js"
+import { BadRequestError } from "../errors/AppErrors.js"
 
 export const PacienteRepository = {
   pacientes: [],

@@ -10,6 +10,7 @@ import { Ubicacion } from "../domain/sedes/ubicacion.js"
 
 import { PacienteRepository } from "../repositories/PacienteRepository.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
+import { MedicoRepository } from "../repositories/MedicoRepository.js"
 
 export class SeederService {
     async seed() {
@@ -50,15 +51,19 @@ export class SeederService {
         PacienteRepository.agregarPaciente(pacienteAna)  // ID 2
 
         // 5. Crear Médicos
-        const medicoGomez = new Medico("Carlos", "Gomez", "Gomez@med.com", "MN123")
+        const medicoGomez = new Medico("Carlos", "Gomez", "12344444")
         medicoGomez.agregarSede(sedePalermo)
         medicoGomez.agregarSede(sedeBelgrano)
         medicoGomez.agregarServicio(cardiologia)
         medicoGomez.agregarServicio(radiografia)
 
-        const medicoLopez = new Medico("Laura", "Lopez", 9999999)
+        MedicoRepository.agregarMedico(medicoGomez)
+
+        const medicoLopez = new Medico("Laura", "Lopez", "55555555")
         medicoLopez.agregarSede(sedeBelgrano)
         medicoLopez.agregarServicio(pediatria)
+
+        MedicoRepository.agregarMedico(medicoLopez)
 
         // 6. Crear Turnos (Fechas futuras)
         const hoy = new Date()

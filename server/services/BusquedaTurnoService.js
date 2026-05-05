@@ -1,7 +1,7 @@
 import { Turno } from "../domain/turnos/turno.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { PacienteRepository } from "../repositories/PacienteRepository.js"
-import { AppError, NotFoundError, BadRequestError } from "../errors/appErrors.js"
+import { AppError, NotFoundError, BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
 export class BusquedaTurnoService {
@@ -13,23 +13,27 @@ export class BusquedaTurnoService {
     }
     */
 
-    async buscarTurnos({ idPaciente, numeroPagina = 1, limitePorPagina = 10, filtros = {} } = {}) {
+    async buscarTurnos({ idPaciente, numeroPagina = 1, limitePorPagina = 10, filtros = {}, ordenarPor = 'fecha', direccion = 'asc' } = {}) {
+        const ahora = new Date()
         this.validarPaginacion(numeroPagina, limitePorPagina)
-        this.validarFiltros(filtros)
+        this.ajustarYValidarFiltros(filtros, ahora)
 
         const paciente = PacienteRepository.obtenerPorId(idPaciente)
 
-        const { turnos, totalTurnos } = TurnoRepository.obtenerPaginados(
+        const { turnos, totalTurnos } = TurnoRepository.obtenerDisponiblesPaginados(
             numeroPagina,
             limitePorPagina,
-            filtros
+            filtros,
+            ordenarPor,
+            direccion,
+            paciente
         )
 
         const turnosDTO = turnos.map(t => new TurnoOutputDTO(
             t.medico.nombre,
             t.servicio.nombre,
             t.fechaHora,
-            t.sede,
+            t.sede.nombre,
             t.estadoActual().estado,
             paciente.plan.precioDe(t.servicio)
         ))
@@ -50,22 +54,22 @@ export class BusquedaTurnoService {
         this.validarEnteroPositivo(limitePorPagina, "Límite por página")
     }
 
-    validarFiltros(filtros) {
-        const hoy = new Date()
-
-        // Si debemos poder buscar el historial de un paciente esto habria que borrarlo
+    ajustarYValidarFiltros(filtros, ahora) {
         if (filtros.fechaDesde) {
-            if (filtros.fechaDesde < hoy) {
+            if (filtros.fechaDesde.toDateString() === ahora.toDateString()) {
+                filtros.fechaDesde = ahora
+            }
+
+            if (filtros.fechaDesde.getTime() < ahora.getTime()) {
                 throw new BadRequestError("La fecha de búsqueda no puede ser anterior a la actual")
             }
         }
 
         if (filtros.fechaDesde && filtros.fechaHasta) {
-            if (filtros.fechaDesde > filtros.fechaHasta) {
+            if (filtros.fechaDesde.getTime() > filtros.fechaHasta.getTime()) {
                 throw new BadRequestError("fechaDesde no puede ser mayor que fechaHasta")
             }
         }
-
     }
 
     validarEnteroPositivo(numero, parametro) {

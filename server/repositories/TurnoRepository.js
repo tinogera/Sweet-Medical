@@ -1,6 +1,7 @@
 import {clone, isUndefined, remove} from "lodash-es"
-import { BadRequestError } from "../errors/appErrors.js"
+import { BadRequestError } from "../errors/AppErrors.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
+import { Estado } from "../domain/turnos/estadoTurno.js"
 
 export const TurnoRepository = {
   turnos: [],
@@ -33,8 +34,10 @@ export const TurnoRepository = {
     remove(this.turnos, t => t.id === turno.id);
   },
 
-  obtenerPaginados(numeroPagina, limitePorPagina, filtros) {
+  obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
     let turnos = this.listar()
+
+    turnos = turnos.filter(t => t.estadoActual().estado === Estado.DISPONIBLE)
 
     if (filtros.profesional) {
       turnos = turnos.filter(t => t.medico.id === filtros.profesional)
@@ -53,12 +56,31 @@ export const TurnoRepository = {
     }
 
     if (filtros.fechaDesde) {
-      turnos = turnos.filter(t => t.fechaHora >= filtros.fechaDesde)
+      turnos = turnos.filter(t => t.fechaHora.getTime() >= filtros.fechaDesde.getTime())
     }
 
     if (filtros.fechaHasta) {
-      turnos = turnos.filter(t => t.fechaHora <= filtros.fechaHasta)
+      turnos = turnos.filter(t => t.fechaHora.getTime() <= filtros.fechaHasta.getTime())
     }
+
+    // Ordenamos
+    turnos.sort((a, b) => {
+      let valorA, valorB
+
+      if (ordenarPor === 'fecha') {
+        valorA = a.fechaHora.getTime()
+        valorB = b.fechaHora.getTime()
+      } else if (ordenarPor === 'costo') {
+        valorA = paciente.plan.precioDe(a.servicio)
+        valorB = paciente.plan.precioDe(b.servicio)
+      }
+
+      if (direccion === 'asc') {
+        return valorA - valorB
+      } else {
+        return valorB - valorA
+      }
+    })
 
     const inicio = (numeroPagina - 1) * limitePorPagina
     const fin = inicio + limitePorPagina

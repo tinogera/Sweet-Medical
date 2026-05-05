@@ -45,10 +45,10 @@ export class Turno {
     // +  esta disponible o reservado
     // +  falta más de 1 hora
     const UNA_HORA_EN_MS = 60 * 60 * 1000;
-    const fechaHoraActual = new Date.now()
+    const fechaHoraActual = Date.now()
     return (
       this.estaDisponible() || this.estaReservado()) &&
-      ((fechaHoraActual - this.fechaHora.getTime()) > UNA_HORA_EN_MS
+      ((this.fechaHora.getTime() - fechaHoraActual) > UNA_HORA_EN_MS
       );
   }
 

@@ -6,6 +6,6 @@ const busquedaTurnoController = new BusquedaTurnoController()
 const router = express.Router()
 
 router.route('/')
-    .get((req, res) => busquedaTurnoController.buscarTodos(req, res))
+    .get((req, res, next) => busquedaTurnoController.buscarTodos(req, res, next))
 
 export default router
