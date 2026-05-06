@@ -5,7 +5,8 @@ import { GestionServiciosController } from
      const controller = new GestionServiciosController();
      const router = express.Router();
     
-     // Rutas anidadas bajo /medicos/:id/servicios (se configura en el router principal)
+
+    
     router.route('/:id/servicios')
       .get(controller.listarPorMedico)
       .post(controller.agregarAMedico);
