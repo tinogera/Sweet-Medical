@@ -52,6 +52,8 @@ import { ServicioOutputDTO } from "../dtos/servicioOutputDTO.js";
 
       actualizarEnMedico = async (req, res, next) => {
        try {
+
+        //obtengo el id
            const medicoId = Number(req.params.id);
            const nombre = req.params.nombre;
            const servicioEditado = await this.service.actualizarServicioDeMedico(medicoId, nombre, req.body);
