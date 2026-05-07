@@ -12,3 +12,10 @@ export class Notificacion {
     this.fechaHoraVisto = new Date()
   }
 }
+
+/*
+ *  GET   /notificaciones/:idPersona?leidas=false
+ *  PATCH /notificaciones/:idNotificacion
+ *
+ *
+ * */
