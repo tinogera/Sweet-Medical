@@ -1,7 +1,6 @@
-import { Turno } from "../domain/turnos/turno.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { PacienteRepository } from "../repositories/PacienteRepository.js"
-import { AppError, NotFoundError, BadRequestError } from "../errors/AppErrors.js"
+import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
 export class BusquedaTurnoService {

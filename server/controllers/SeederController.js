@@ -5,7 +5,7 @@ export class SeederController {
         this.seederService = seederService
     }
 
-    seeder = async (req, res, next) => {
+    seeder = async (_req, res, next) => {
         try {
             await this.seederService.seed()
             return res.status(201).json({ 

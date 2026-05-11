@@ -1,4 +1,4 @@
-class BloqueHorario {
+export class BloqueHorario {
   constructor(fechaHoraInicio, fechaHoraFin, sede, servicio) {
     this.horaInicio = fechaHoraInicio
     this.horaFin = fechaHoraFin

@@ -1,34 +1,30 @@
-import {clone, isUndefined, remove} from "lodash-es"
-import { BadRequestError } from "../errors/appErrors.js"
+import { remove } from "lodash-es"
 
 export const MedicoRepository = {
   medicos: [],
 
-  agregarMedico(medico){
+  agregarMedico(medico) {
     medico.id = this.obtenerSiguienteId()
     this.medicos.push(medico);
     return medico
   },
 
-  listar(){
+  listar() {
     return this.medicos;
   },
 
-  obtenerPorId(id){
-    const medico = this.medicos.find(m => m.id === id);
-    if(!medico){
-      throw new BadRequestError(`El medico con id: ${id}, no existe`)
-    }
+  obtenerPorId(id) {
+    const medico = this.medicos.find(m => m.id === id)
     return medico;
   },
 
-  guardarMedico(id, medicoActualizado){
-    remove(this.medicos, m=> m.id === id)
+  guardarMedico(id, medicoActualizado) {
+    remove(this.medicos, m => m.id === id)
     this.medicos.push(medicoActualizado);
     return medicoActualizado;
   },
 
-  borrar(id){
+  borrar(id) {
     remove(this.medicos, m => m.id === id);
   },
 

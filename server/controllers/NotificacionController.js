@@ -1,14 +1,13 @@
-import { NotificacionService } from '../services/NotificacionService.js'
+import { notificacionService } from '../services/NotificacionService.js'
 
 class NotificacionController {
-  service = NotificacionService
-
   getUserNotificaciones(req, res, next) {
-    const idUser = req.params.idUser
+    // TODO: validar y parsear correctamente los parametros
+    const idUser = Number(req.params.idUser)
     const vistas = req.query.leidas
 
     try {
-      const notificaciones = this.service.getUserNotificaciones(idUser, vistas)
+      const notificaciones = notificacionService.getUserNotificaciones(idUser, vistas)
       res.json(notificaciones.map(notificacionDTO))
     } catch (e) {
       next(e)
@@ -20,7 +19,7 @@ class NotificacionController {
     const idUser = req.params.idUser
 
     try {
-      this.service.verNotificacion(idUser, idNotificacion)
+      notificacionService.verNotificacion(idUser, idNotificacion)
       res.status(204).json()
     } catch (e) {
       next(e)

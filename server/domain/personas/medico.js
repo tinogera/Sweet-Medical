@@ -11,6 +11,25 @@ export class Medico {
     this.notificaciones = [];
   }
 
+  atiendeEn(sede) {
+    return this.sedes.some(s => s.nombre === sede.nombre)
+  }
+
+  ofrece(servicio) {
+    return this.servicios.some(s => s.nombre === servicio.nombre)
+  }
+
+  dejarDeOfrecer(servicio) {
+    const index = this.servicios.findIndex(s => s.nombre === servicio.nombre);
+    
+    // Si el servicio no lo ofrece, es redundante intentar eliminarlo
+    if (index === -1) {
+      return
+    }
+
+    this.servicios.splice(index, 1);
+  }
+
   agregarSede(sede) {
     if (!this.sedes.includes(sede)) {
       this.sedes.push(sede);

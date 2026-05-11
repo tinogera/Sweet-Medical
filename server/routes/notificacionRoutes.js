@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { NotificacionController } from '../controllers/NotificacionController.js'
+import { notificacionController } from '../controllers/NotificacionController.js'
 
 // TODO: refactor como inyeccion de deps
-export const notificacionRouter = Router()
+const notificacionRouter = Router()
 
-notificacionRouter.get('/:idUser', NotificacionController.getUserNotificaciones)
-notificacionRouter.patch('/:idUser/:idNotificacion', NotificacionController.verNotificacion)
+notificacionRouter.get('/:idUser', notificacionController.getUserNotificaciones)
+notificacionRouter.patch('/:idUser/:idNotificacion', notificacionController.verNotificacion)
 
+export default notificacionRouter
