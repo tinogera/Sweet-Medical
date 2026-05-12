@@ -2,6 +2,7 @@ import { remove } from "lodash-es"
 
 export const MedicoRepository = {
   medicos: [],
+  bloqueIdCounter: 0,
 
   agregarMedico(medico) {
     medico.id = this.obtenerSiguienteId()
@@ -30,5 +31,10 @@ export const MedicoRepository = {
 
   obtenerSiguienteId() {//TODO en una DB real no es necesario
     return (this.medicos[this.medicos.length - 1]?.id || 0) + 1;
+  },
+
+  obtenerSiguienteIdBloque() {
+    this.bloqueIdCounter += 1;
+    return this.bloqueIdCounter;
   }
 }

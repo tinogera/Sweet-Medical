@@ -34,6 +34,19 @@ export const TurnoRepository = {
     remove(this.turnos, t => t.id === turno.id);
   },
 
+  borrarDisponiblesFuturos(medicoId, bloqueHorario) {
+    const now = new Date();
+    remove(this.turnos, t =>
+      t.medico.id === medicoId &&
+      t.sede.nombre === bloqueHorario.sede.nombre &&
+      t.servicio.nombre === bloqueHorario.servicio.nombre &&
+      t.fechaHora >= now &&
+      t.fechaHora >= bloqueHorario.horaInicio &&
+      t.fechaHora < bloqueHorario.horaFin &&
+      t.estadoActual().estado === Estado.DISPONIBLE
+    );
+  },
+
   obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
     let turnos = this.listar()
 

@@ -8,7 +8,7 @@ export function generarTurnos(medico, bloqueHorario) {
 
   while (horaInicio.getTime() + duracionEnMs <= horaFin.getTime()) {
     const fechaHoraTurno = new Date(horaInicio.getTime());
-    const nuevoTurno = new Turno(fechaHoraTurno, medico, null, servicio, sede);
+    const nuevoTurno = new Turno(fechaHoraTurno, medico, servicio, sede);
     turnos.push(nuevoTurno);
     horaInicio = new Date(horaInicio.getTime() + duracionEnMs);
   }

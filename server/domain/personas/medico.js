@@ -42,25 +42,29 @@ export class Medico {
     }
   }
 
-  // TODO: Definir un formato para las "horas"
-  // Asumo que va a ser un objeto { hora: int, minutos: int }
-  agregarDisponibilidad(horaInicio, horaFin, sede, fecha, servicio) {
+  agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio) {
     if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
       throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
-    const fechaHoraInicio = fecha.setHours(horaInicio.hora, horaInicio.minutos)
-    const fechaHoraFin = fecha.setHours(horaFin.hora, horaFin.minutos)
-    const ahora = new Date()
-
-    if (fechaHoraInicio < fechaHoraFin && fechaHoraInicio > ahora) {
-      throw new Error("No se puede cambiar la disponibilidad para fechas pasadas")
+    if (fechaHoraInicio >= fechaHoraFin) {
+      throw new Error("La hora de inicio debe ser anterior a la hora de fin")
+    }
+    if (fechaHoraInicio <= new Date()) {
+      throw new Error("No se puede agregar disponibilidad para fechas pasadas")
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
     this.agenda.push(nuevoBloqueHorario);
+
+    return nuevoBloqueHorario;
   }
 
+  eliminarBloque(bloqueId) {
+    const index = this.agenda.findIndex(b => b.id === bloqueId);
+    if (index === -1) throw new Error(`Bloque con id ${bloqueId} no encontrado en la agenda`);
+    this.agenda.splice(index, 1);
+  }
 
   recibirNotificacion(notificacion) {
     this.notificaciones.push(notificacion)
