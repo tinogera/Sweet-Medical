@@ -13,6 +13,7 @@ import { PacienteRepository } from "../repositories/PacienteRepository.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { MedicoRepository } from "../repositories/MedicoRepository.js"
 import { ServicioRepository } from "../repositories/ServicioRepository.js"
+import { SedeRepository } from "../repositories/SedeRepository.js"
 
 export class SeederService {
   async seed() {
@@ -21,6 +22,7 @@ export class SeederService {
     TurnoRepository.turnos = []
     MedicoRepository.medicos = []
     ServicioRepository.servicios = []
+    SedeRepository.servicios = []
 
     // 1. Crear Ubicación y Sedes
     const ubicacionPalermo = new Ubicacion(-34.5889, -58.4306)
@@ -28,6 +30,9 @@ export class SeederService {
 
     const ubicacionBelgrano = new Ubicacion(-34.5621, -58.4564)
     const sedeBelgrano = new Sede("Sede Belgrano", ubicacionBelgrano)
+
+    SedeRepository.agregar(sedeBelgrano)
+    SedeRepository.agregar(sedePalermo)
 
     // 2. Crear Servicios (Especialidades y Prácticas)
     const cardiologia = new Servicio(TipoServicio.ESPECIALIDAD, "Cardiología", 2500, 20)
@@ -65,6 +70,8 @@ export class SeederService {
     medicoGomez.agregarServicio(cardiologia)
     medicoGomez.agregarServicio(radiografia)
 
+    medicoGomez.agregarDisponibilidad(new Date("2026-05-13T14:30:00"), new Date("2026-05-13T21:30:00"), sedePalermo, cardiologia)
+
     MedicoRepository.agregarMedico(medicoGomez)
 
     const medicoLopez = new Medico("Laura", "Lopez", "55555555")
@@ -92,10 +99,13 @@ export class SeederService {
 
     // Turno 1: Cardiología en Palermo con Gomez
     const turno1 = new Turno(fecha1, medicoGomez, cardiologia, sedePalermo)
+    turno1.reservar(pacienteAna)
     // Turno 2: Radiografía en Belgrano con Gomez
     const turno2 = new Turno(fecha2, medicoGomez, radiografia, sedeBelgrano)
+    turno2.reservar(pacienteAna)
     // Turno 3: Pediatría en Belgrano con Lopez
     const turno3 = new Turno(fecha3, medicoLopez, pediatria, sedeBelgrano)
+    turno3.reservar(pacienteJuan)
 
     TurnoRepository.agregarTurno(turno1)
     TurnoRepository.agregarTurno(turno2)
@@ -109,9 +119,11 @@ export class SeederService {
       new Notificacion("test@mail.com", "Recordatorio: Tienes un turno de Radiografía en Belgrano"),
     ]
     
+    let NOTIFICACIONES_ID = 1
+    for (const n of notificaciones){ n.id = NOTIFICACIONES_ID++}
     const personas = [pacienteJuan, pacienteAna, medicoGomez, medicoLopez]
-    personas.forEach(persona => {
-      persona.recibirNotificacion(notificaciones[Math.floor(Math.random() * notificaciones.length)])
+    personas.forEach((persona, i) => {
+      persona.recibirNotificacion(notificaciones[i])
     })
     
     

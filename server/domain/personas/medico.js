@@ -57,6 +57,7 @@ export class Medico {
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
+    nuevoBloqueHorario.id = Math.floor(Math.random() * 10);
     this.agenda.push(nuevoBloqueHorario);
 
     return nuevoBloqueHorario;

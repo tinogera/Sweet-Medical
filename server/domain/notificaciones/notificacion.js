@@ -13,9 +13,3 @@ export class Notificacion {
   }
 }
 
-/*
- *  GET   /notificaciones/:idPersona?leidas=false
- *  PATCH /notificaciones/:idNotificacion
- *
- *
- * */

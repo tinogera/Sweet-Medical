@@ -24,7 +24,7 @@ export class Paciente {
       throw new Error("La notificación no se encuentra en la lista de pendientes.");
     }
 
-    notificaciones[index].marcarComoVista();
+    this.notificaciones[index].marcarComoVista();
   }
 
   obtenerNotificacionesSinLeer() {

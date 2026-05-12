@@ -11,8 +11,14 @@ dotenv.config()
 
 const app = express()
 
+const test = (req, res, next) => {
+    console.log("Hola")
+    next()
+}
+
 app.use(morgan('tiny'))
 app.use(express.json())
+app.use(test)
 app.use(cors())
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use(router)

@@ -3,24 +3,29 @@ import { TurnoRepository } from "../repositories/TurnoRepository.js";
 import { generarTurnos } from "../domain/turnos/generadorDeTurnos.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
+import { SedeRepository } from "../repositories/SedeRepository.js";
+import { ServicioRepository } from "../repositories/ServicioRepository.js";
 
 export class MedicoService {
   constructor({
     medicoRepository = MedicoRepository,
-    turnoRepository = TurnoRepository
+    turnoRepository = TurnoRepository,
+    sedeRepo = SedeRepository,
+    servicioRepo = ServicioRepository
   } = {}) {
     this.medicoRepository = medicoRepository;
     this.turnoRepository = turnoRepository;
+    this.sedeReposotory = sedeRepo
+    this.servicioRepository = servicioRepo
   }
 
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName, servicioName }) {
     const medico = this.medicoRepository.obtenerPorId(medicoId);
+    const sede = this.sedeReposotory.obtenerPorNombre(sedeName)
+    const servicio = this.servicioRepository.obtenerPorNombre(servicioName)
 
-    const sede = medico.sedes.find(s => s.nombre === sedeName);
-    if (!sede) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
-
-    const servicio = medico.servicios.find(s => s.nombre === servicioName);
-    if (!servicio) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);
+    if (!medico.atiendeEn(sede)) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
+    if (!medico.ofrece(servicio)) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);
 
     const fechaBase = new Date(fecha);
     const fechaHoraInicio = new Date(fechaBase);
@@ -28,6 +33,8 @@ export class MedicoService {
 
     const fechaHoraFin = new Date(fechaBase);
     fechaHoraFin.setHours(horaFin.hora, horaFin.minutos, 0, 0);
+    console.log(fechaHoraInicio)
+    console.log(fechaHoraFin)
 
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio);
     bloqueHorario.id = this.medicoRepository.obtenerSiguienteIdBloque(); 

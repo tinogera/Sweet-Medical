@@ -15,8 +15,8 @@ class NotificacionController {
   }
 
   verNotificacion(req, res, next) {
-    const idNotificacion = req.params.idNotificacion
-    const idUser = req.params.idUser
+    const idNotificacion = Number(req.params.idNotificacion)
+    const idUser = Number(req.params.idUser)
 
     try {
       notificacionService.verNotificacion(idUser, idNotificacion)
@@ -32,6 +32,7 @@ function notificacionDTO(notificacion) {
     id: notificacion.id,
     mensaje: notificacion.mensaje,
     fecha: notificacion.fechaHoraEnviado,
+    visto: notificacion.visto
   }
 }
 
