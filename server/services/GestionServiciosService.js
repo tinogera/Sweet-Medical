@@ -14,6 +14,11 @@ export class GestionServiciosService {
 
 	async obtenerServiciosDeMedico(medicoId) {
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+		if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
+		
 		return medico.servicios;
 	}
 
@@ -22,20 +27,19 @@ export class GestionServiciosService {
 		{ tipoServicio, nombre, precio, duracion },
 	) {
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
-		const nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
+
+		if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
+		let nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
 
     if (!nuevoServicio){
       nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
+	  this.servicioRepository.agregar(nuevoServicio);
+
     }
 
 	medico.agregarServicio(nuevoServicio);
-
-
-	try {
-		this.servicioRepository.agregar(nuevoServicio);
-	} catch (e) {
-		throw new Error("No se pudo guardar el servicio correctamente.");
-	}
 
 	return nuevoServicio;
 	}
@@ -43,6 +47,11 @@ export class GestionServiciosService {
 	async eliminarServicioDeMedico(medicoId, nombreServicio) {
 	
 	const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+	if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
+
     const servicio = this.servicioRepository.obtenerPorNombre(nombreServicio);
 
     if(!servicio){
