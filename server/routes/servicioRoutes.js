@@ -12,6 +12,6 @@ router
 router
 	.route("/:id/servicios/:nombre")
 	.delete(controller.eliminarDeMedico)
-	.put(controller.actualizarEnMedico);
+	.patch(controller.actualizarEnMedico);
 
 export default router;
