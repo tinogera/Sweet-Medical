@@ -33,7 +33,9 @@ export class MedicoService {
     bloqueHorario.id = this.medicoRepository.obtenerSiguienteIdBloque(); 
 
     const turnosGenerados = generarTurnos(medico, bloqueHorario);
-    turnosGenerados.forEach(t => this.turnoRepository.agregarTurno(t));
+    for (const t of turnosGenerados) {
+      this.turnoRepository.agregarTurno(t);
+    }
 
     this.medicoRepository.guardarMedico(medico.id, medico);
 

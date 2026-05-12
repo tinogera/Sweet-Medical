@@ -43,8 +43,8 @@ export class PacienteController{
 
 
     extraerPaginacion(query){
-        const numeroDePagina = query?.page == undefined ? 1 : Number(query.page)
-        const limite = query?.limit == undefined ? 10 : Number(query.limit)
+        const numeroDePagina = query?.page === undefined ? 1 : Number(query.page)
+        const limite = query?.limit === undefined ? 10 : Number(query.limit)
 
         this.validarEnteroPositivo(numeroDePagina)
         this.validarEnteroPositivo(limite)
