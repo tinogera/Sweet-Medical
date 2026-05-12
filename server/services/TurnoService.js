@@ -14,12 +14,17 @@ export class TurnoService{
     async actualizar(id, actualizaciones) {
         const ESTADOS = ['DISPONIBLE', 'RESERVADO', 'CONFIRMADO', 'CANCELADO', 'REALIZADO']
 
+        if(!ESTADOS.includes(actualizaciones.estado)){
+            throw new BadRequestError(`Estado inválido. Ingrese uno de: ${ESTADOS.join(', ')}`)
+        }
+
         const turno = await this.turnoRepository.obtenerPorId(id) 
         const estado = actualizaciones.estado 
         const rol = actualizaciones.rol
         
 
         if(estado === "RESERVADO"){
+            if(!actualizaciones.responsableId) throw new BadRequestError("Se requiere responsableId para reservar un turno")
             const paciente = await this.pacienteRepository.obtenerPorId(actualizaciones.responsableId) 
             turno.reservar(paciente)
 
@@ -70,8 +75,8 @@ export class TurnoService{
     }
 
     validarMotivo(motivo){
-        if(!typeof motivo === 'string'){
-            throw new BadRequestError("El motivo debe ser un string")
+        if(typeof motivo !== 'string'){
+            throw new BadRequestError("El motivo debe ser un texto válido")
         } 
     }
 }

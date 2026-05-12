@@ -71,6 +71,7 @@ export class SeederService {
     medicoLopez.agregarSede(sedeBelgrano)
     medicoLopez.agregarServicio(pediatria)
     medicoLopez.agregarServicio(ecografia)
+    medicoLopez.agregarServicio(cardiologia)
 
     MedicoRepository.agregarMedico(medicoLopez)
 

@@ -14,6 +14,11 @@ export class GestionServiciosService {
 
 	async obtenerServiciosDeMedico(medicoId) {
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+		if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
+		
 		return medico.servicios;
 	}
 
@@ -22,47 +27,51 @@ export class GestionServiciosService {
 		{ tipoServicio, nombre, precio, duracion },
 	) {
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+		if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
 		let nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
 
     if (!nuevoServicio){
       nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
+	  this.servicioRepository.agregar(nuevoServicio);
+
     }
 
-		// Agregamos al médico (usando el método del dominio)
-		medico.agregarServicio(nuevoServicio);
-		try {
-			this.servicioRepository.agregar(nuevoServicio);
-		} catch (_e) {
-      // TODO: gestionar excepciones
-		}
+	medico.agregarServicio(nuevoServicio);
 
-		return nuevoServicio;
+	return nuevoServicio;
 	}
 
 	async eliminarServicioDeMedico(medicoId, nombreServicio) {
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
+	
+	const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+	if (!medico) {
+                throw new NotFoundError("No se encontró el médico.");
+		}
+
     const servicio = this.servicioRepository.obtenerPorNombre(nombreServicio);
 
     if(!servicio){
       throw new NotFoundError("El servicio especificado no existe.");
     }
 
-		if (!medico.ofrece(servicio)) {
-			throw new NotFoundError("El médico no ofrece el servicio especificado.");
-		}
-
-		medico.dejarDeOfrecer(servicio)
+	if (!medico.ofrece(servicio)) {
+		throw new NotFoundError("El médico no ofrece el servicio especificado.");
 	}
 
-  // El medico puede actualizar los servicios??? SUS...
-  // tener en cuenta que muchos medicos pueden ofrecer el mismo servicio
-  // entonces un cambio se ve reflejado en todos los medicos que lo ofrecen e incluso sobre las obras sociales que lo incluyen
-  // TODO: consultar
+	medico.dejarDeOfrecer(servicio)
+	}
+
+
 	async actualizarServicioDeMedico(
 		medicoId,
 		nombreServicio,
-		{ precio, duracion },
+		datosNuevos,
 	) {
+		/* Primera forma que lo hice que esta mal ya que cambia al servicio de todos los medicos
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
 
 		const servicio = medico.servicios.find(
@@ -79,5 +88,43 @@ export class GestionServiciosService {
 		// Guardamos los cambios en el repositorio
 		this.medicoRepository.guardarMedico(medicoId, medico);
 		return servicio;
+	*/
+
+		//la forma correcta que afecta solo a este medico particular el cambio
+		
+		const medico = this.medicoRepository.obtenerPorId(medicoId);
+
+    	 if (!medico) {
+    	     throw new NotFoundError("No se encontró el médico.");
+    	 }
+
+    	 const indice = medico.servicios.findIndex(
+    	     (s) => s.nombre.toLowerCase() === nombreServicio.toLowerCase()
+    	    );
+   
+        if (indice === -1) {
+            throw new NotFoundError("El médico no ofrece el servicio especificado.");
+        }
+   
+        const servicioOriginal = medico.servicios[indice];
+   
+        // Uso el operador spread (...) para crear un objeto nuevo con los mismos datos
+        // pero en una dirección de memoria distinta.
+        const servicioPropio = { ...servicioOriginal };
+   
+        if (datosNuevos.precio !== undefined) {
+            servicioPropio.precio = datosNuevos.precio;
+        }
+        if (datosNuevos.duracion !== undefined) {
+            servicioPropio.duracion = datosNuevos.duracion;
+        }
+   
+        // Ahora este médico apunta a su propia versión, mientras los demás
+        // siguen apuntando al original.
+        medico.servicios[indice] = servicioPropio;
+   
+        this.medicoRepository.guardarMedico(medicoId, medico);
+        return servicioPropio;
+		
 	}
 }

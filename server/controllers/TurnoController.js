@@ -1,5 +1,6 @@
 import { TurnoService } from "../services/TurnoService.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
+import { BadRequestError } from "../errors/AppErrors.js"
 
 export class TurnoController{
     constructor({turnoService = new TurnoService} = {}){
@@ -11,6 +12,13 @@ export class TurnoController{
         try{
             const turnoId = Number(req.params.id)
             const actualizacionesTurno = req.body
+
+            if (!Number.isInteger(turnoId) || turnoId <= 0) {
+                throw new BadRequestError("El id del turno debe ser un entero positivo")
+            }
+            if (!actualizacionesTurno || !actualizacionesTurno.estado) {
+                throw new BadRequestError("Se requiere proveer un 'estado' para actualizar el turno")
+            }
 
             const turnoActualizado = await this.turnoService.actualizar(turnoId, actualizacionesTurno)
 

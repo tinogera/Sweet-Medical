@@ -15,6 +15,9 @@ export const PacienteRepository = {
 
   obtenerPorId(id){
     const paciente = this.pacientes.find(p => p.id === id);
+    if(!paciente){
+      throw new BadRequestError(`El paciente con id: ${id}, no existe`)
+    }
     return paciente;
   },
 
