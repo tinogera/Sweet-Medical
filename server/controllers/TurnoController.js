@@ -16,7 +16,7 @@ export class TurnoController{
             if (!Number.isInteger(turnoId) || turnoId <= 0) {
                 throw new BadRequestError("El id del turno debe ser un entero positivo")
             }
-            if (!actualizacionesTurno || !actualizacionesTurno.estado) {
+            if (!actualizacionesTurno?.estado) {
                 throw new BadRequestError("Se requiere proveer un 'estado' para actualizar el turno")
             }
 

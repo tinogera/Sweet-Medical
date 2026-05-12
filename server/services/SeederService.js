@@ -22,7 +22,7 @@ export class SeederService {
     TurnoRepository.turnos = []
     MedicoRepository.medicos = []
     ServicioRepository.servicios = []
-    SedeRepository.servicios = []
+    SedeRepository.sedes = []
 
     // 1. Crear Ubicación y Sedes
     const ubicacionPalermo = new Ubicacion(-34.5889, -58.4306)
