@@ -62,7 +62,23 @@
         "tags": ["Sistema"],
         "responses": {
           "200": {
-            "description": "Datos inicializados correctamente"
+            "description": "Datos inicializados correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Error al inicializar datos"
@@ -73,7 +89,7 @@
     "/turnos": {
       "get": {
         "summary": "Buscar turnos",
-        "description": "Obtiene una lista paginada de turnos con filtros opcionales",
+        "description": "Obtiene una lista paginada de turnos disponibles con filtros opcionales",
         "tags": ["Turnos"],
         "parameters": [
           {
@@ -202,6 +218,151 @@
         }
       }
     },
+    "/turnos/{id}": {
+      "patch": {
+        "summary": "Actualizar turno",
+        "description": "Actualiza el estado de un turno específico (reservar, confirmar, cancelar, realizar)",
+        "tags": ["Turnos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del turno"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "estado": {
+                    "type": "string",
+                    "enum": ["DISPONIBLE", "RESERVADO", "CONFIRMADO", "CANCELADO", "REALIZADO"],
+                    "description": "Nuevo estado del turno"
+                  },
+                  "responsableId": {
+                    "type": "integer",
+                    "description": "ID del paciente responsable (requerido para estado RESERVADO)"
+                  },
+                  "rol": {
+                    "type": "string",
+                    "enum": ["PACIENTE", "MEDICO"],
+                    "description": "Rol que realiza la cancelación"
+                  },
+                  "motivo": {
+                    "type": "string",
+                    "description": "Motivo de la cancelación"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turno actualizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Turno"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "Turno no encontrado"
+          }
+        }
+      }
+    },
+    "/pacientes/{id}/turnos": {
+      "get": {
+        "summary": "Listar turnos de paciente",
+        "description": "Obtiene todos los turnos de un paciente específico con paginación",
+        "tags": ["Pacientes"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del paciente"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Número de página"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "Cantidad de resultados por página"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de turnos del paciente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "turnos": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Turno"
+                      }
+                    },
+                    "paginacion": {
+                      "type": "object",
+                      "properties": {
+                        "numeroDePagina": {
+                          "type": "integer"
+                        },
+                        "limite": {
+                          "type": "integer"
+                        },
+                        "totalPaginas": {
+                          "type": "integer"
+                        },
+                        "totalTurnos": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Paciente no encontrado"
+          }
+        }
+      }
+    },
     "/medicos/{id}/servicios": {
       "get": {
         "summary": "Listar servicios de un médico",
@@ -274,13 +435,16 @@
             }
           },
           "400": {
-            "description": "Datos inválidos"
+            "description": "Datos inválidos o servicio duplicado"
+          },
+          "404": {
+            "description": "Médico no encontrado"
           }
         }
       }
     },
     "/medicos/{id}/servicios/{nombre}": {
-      "put": {
+      "patch": {
         "summary": "Actualizar servicio de médico",
         "description": "Actualiza los datos de un servicio específico de un médico",
         "tags": ["Médicos"],
@@ -309,7 +473,15 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServicioInput"
+                "type": "object",
+                "properties": {
+                  "precio": {
+                    "type": "number"
+                  },
+                  "duracion": {
+                    "type": "integer"
+                  }
+                }
               }
             }
           }
@@ -364,10 +536,236 @@
         }
       }
     },
+    "/medicos/{id}/disponibilidad": {
+      "get": {
+        "summary": "Obtener disponibilidad de médico",
+        "description": "Obtiene los bloques de disponibilidad de un médico con filtros opcionales",
+        "tags": ["Médicos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del médico"
+          },
+          {
+            "name": "especialidad",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filtrar por nombre de especialidad"
+          },
+          {
+            "name": "practica",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filtrar por nombre de práctica"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agenda del médico",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "medicoId": {
+                      "type": "integer"
+                    },
+                    "nombre": {
+                      "type": "string"
+                    },
+                    "agenda": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "horaInicio": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "horaFin": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "sede": {
+                            "type": "string"
+                          },
+                          "servicio": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Médico no encontrado"
+          }
+        }
+      },
+      "post": {
+        "summary": "Agregar disponibilidad a médico",
+        "description": "Agrega un nuevo bloque de disponibilidad y genera turnos automáticamente",
+        "tags": ["Médicos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del médico"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fecha", "horaInicio", "horaFin", "sedeName", "servicioName"],
+                "properties": {
+                  "fecha": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Fecha del bloque (YYYY-MM-DD)"
+                  },
+                  "horaInicio": {
+                    "type": "object",
+                    "properties": {
+                      "hora": {
+                        "type": "integer"
+                      },
+                      "minutos": {
+                        "type": "integer"
+                      }
+                    },
+                    "description": "Hora de inicio"
+                  },
+                  "horaFin": {
+                    "type": "object",
+                    "properties": {
+                      "hora": {
+                        "type": "integer"
+                      },
+                      "minutos": {
+                        "type": "integer"
+                      }
+                    },
+                    "description": "Hora de fin"
+                  },
+                  "sedeName": {
+                    "type": "string",
+                    "description": "Nombre de la sede"
+                  },
+                  "servicioName": {
+                    "type": "string",
+                    "description": "Nombre del servicio"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Disponibilidad agregada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bloqueId": {
+                      "type": "integer"
+                    },
+                    "horaInicio": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "horaFin": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "sede": {
+                      "type": "string"
+                    },
+                    "servicio": {
+                      "type": "string"
+                    },
+                    "turnosGenerados": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos o sede/servicio no disponible"
+          },
+          "404": {
+            "description": "Médico no encontrado"
+          }
+        }
+      }
+    },
+    "/medicos/{id}/disponibilidad/{bloqueId}": {
+      "delete": {
+        "summary": "Eliminar disponibilidad de médico",
+        "description": "Elimina un bloque de disponibilidad y sus turnos futuros",
+        "tags": ["Médicos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del médico"
+          },
+          {
+            "name": "bloqueId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del bloque de disponibilidad"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Disponibilidad eliminada exitosamente"
+          },
+          "400": {
+            "description": "ID inválido"
+          },
+          "404": {
+            "description": "Médico o bloque no encontrado"
+          }
+        }
+      }
+    },
     "/notificaciones/{idUser}": {
       "get": {
         "summary": "Obtener notificaciones de usuario",
-        "description": "Retrieves all notifications for a specific user",
+        "description": "Obtiene todas las notificaciones de un usuario específico",
         "tags": ["Notificaciones"],
         "parameters": [
           {
@@ -385,7 +783,7 @@
             "schema": {
               "type": "boolean"
             },
-            "description": "Filtrar por notificaciones leídas (true/false)"
+            "description": "Filtrar notificaciones leídas (true) o no leídas (false)"
           }
         ],
         "responses": {
@@ -446,38 +844,30 @@
       "Turno": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "ID del turno"
+          "medico": {
+            "type": "string",
+            "description": "Nombre del médico"
+          },
+          "servicio": {
+            "type": "string",
+            "description": "Nombre del servicio"
           },
           "fecha": {
             "type": "string",
             "format": "date-time",
             "description": "Fecha y hora del turno"
           },
-          "paciente": {
-            "type": "object",
-            "description": "Datos del paciente"
-          },
-          "profesional": {
-            "type": "object",
-            "description": "Datos del profesional"
-          },
-          "servicio": {
-            "type": "object",
-            "description": "Datos del servicio"
-          },
           "sede": {
             "type": "string",
             "description": "Nombre de la sede"
           },
-          "costo": {
-            "type": "number",
-            "description": "Costo del turno"
-          },
           "estado": {
             "type": "string",
             "description": "Estado del turno"
+          },
+          "costo": {
+            "type": "number",
+            "description": "Costo del turno"
           }
         }
       },
@@ -507,7 +897,7 @@
           },
           "tipoServicio": {
             "type": "string",
-            "description": "Tipo de servicio"
+            "description": "Tipo de servicio (ESPECIALIDAD o PRACTICA)"
           },
           "nombre": {
             "type": "string",
@@ -529,7 +919,7 @@
         "properties": {
           "tipoServicio": {
             "type": "string",
-            "description": "Tipo de servicio"
+            "description": "Tipo de servicio (ESPECIALIDAD o PRACTICA)"
           },
           "nombre": {
             "type": "string",
