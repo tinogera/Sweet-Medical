@@ -22,36 +22,38 @@ export class GestionServiciosService {
 		{ tipoServicio, nombre, precio, duracion },
 	) {
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
-		let nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
+		const nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
 
     if (!nuevoServicio){
       nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
     }
 
-		// Agregamos al médico (usando el método del dominio)
-		medico.agregarServicio(nuevoServicio);
-		try {
-			this.servicioRepository.agregar(nuevoServicio);
-		} catch (_e) {
-      // TODO: gestionar excepciones
-		}
+	medico.agregarServicio(nuevoServicio);
 
-		return nuevoServicio;
+
+	try {
+		this.servicioRepository.agregar(nuevoServicio);
+	} catch (e) {
+		throw new Error("No se pudo guardar el servicio correctamente.");
+	}
+
+	return nuevoServicio;
 	}
 
 	async eliminarServicioDeMedico(medicoId, nombreServicio) {
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
+	
+	const medico = this.medicoRepository.obtenerPorId(medicoId);
     const servicio = this.servicioRepository.obtenerPorNombre(nombreServicio);
 
     if(!servicio){
       throw new NotFoundError("El servicio especificado no existe.");
     }
 
-		if (!medico.ofrece(servicio)) {
-			throw new NotFoundError("El médico no ofrece el servicio especificado.");
-		}
+	if (!medico.ofrece(servicio)) {
+		throw new NotFoundError("El médico no ofrece el servicio especificado.");
+	}
 
-		medico.dejarDeOfrecer(servicio)
+	medico.dejarDeOfrecer(servicio)
 	}
 
 
