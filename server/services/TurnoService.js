@@ -35,7 +35,7 @@ export class TurnoService{
 
         if(estado === "CANCELADO"){
             const motivo = actualizaciones.motivo 
-const _rol = actualizaciones.rol
+            const _rol = actualizaciones.rol
             this.validarMotivo(motivo)
             this.validarRol(rol)
             const [responsable, contraparte] = (rol === "PACIENTE") 

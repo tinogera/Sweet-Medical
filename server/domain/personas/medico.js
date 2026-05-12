@@ -1,3 +1,5 @@
+import { BloqueHorario } from '../turnos/bloqueHorario.js';
+
 export class Medico {
   constructor(nombre, apellido, documento, servicios, sedes) {
     this.nombre = nombre;
@@ -78,7 +80,7 @@ export class Medico {
       throw new Error("La notificación no se encuentra en la lista de pendientes.");
     }
 
-    notificaciones[index].marcarComoVista();
+    this.notificaciones[index].marcarComoVista();
   }
 
   obtenerNotificacionesSinLeer() {

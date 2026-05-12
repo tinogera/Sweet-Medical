@@ -29,7 +29,7 @@ export class TurnoController{
                     turnoActualizado.fechaHora,
                     turnoActualizado.sede.nombre,
                     turnoActualizado.estadoActual().estado,
-                    turnoActualizado.paciente.plan.precioDe(turnoActualizado.servicio)
+                    turnoActualizado.paciente ? turnoActualizado.paciente.plan.precioDe(turnoActualizado.servicio) : null
                 )
             )
 
