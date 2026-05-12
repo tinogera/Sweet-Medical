@@ -91,6 +91,18 @@ export const TurnoRepository = {
     }
   },
 
+  obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
+    const turnosDelPaciente = this.turnos.filter(t => t.paciente && t.paciente.id === pacienteId);
+
+    const inicio = (numeroPagina - 1) * limitePorPagina;
+    const fin = inicio + limitePorPagina;
+
+    return {
+      turnos: turnosDelPaciente.slice(inicio, fin),
+      totalTurnos: turnosDelPaciente.length
+    };
+  },
+
   obtenerSiguienteId() {//TODO en una DB real no es necesario
     return (this.turnos[this.turnos.length - 1]?.id || 0) + 1;
   }
