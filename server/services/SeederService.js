@@ -107,9 +107,16 @@ export class SeederService {
     const turno3 = new Turno(fecha3, medicoLopez, pediatria, sedeBelgrano)
     turno3.reservar(pacienteJuan)
 
+    const turno4 = new Turno(fecha1, medicoLopez, pediatria, sedeBelgrano)
+    const turno5 = new Turno(fecha2, medicoGomez, radiografia, sedeBelgrano)
+    const turno6 = new Turno(fecha3, medicoGomez, cardiologia, sedePalermo)
+
     TurnoRepository.agregarTurno(turno1)
     TurnoRepository.agregarTurno(turno2)
     TurnoRepository.agregarTurno(turno3)
+    TurnoRepository.agregarTurno(turno4)
+    TurnoRepository.agregarTurno(turno5)
+    TurnoRepository.agregarTurno(turno6)
 
     // Paciente Juan, Ana. Medico Gomez, Lopez. 
     const notificaciones = [

@@ -1,5 +1,6 @@
 export class TurnoOutputDTO {
-    constructor(profesional, servicio, fechaHora, sede, estadoTurno, costo) {
+    constructor(id,profesional, servicio, fechaHora, sede, estadoTurno, costo) {
+        this.id = id
         this.profesional = profesional
         this.servicio = servicio
         this.fechaHora = fechaHora

@@ -19,7 +19,9 @@ export class Turno {
   }
 
   // Consultar!!
-  costoEstimado() { }
+  costoEstimado() { 
+    return this.paciente.plan.precioDe(this.servicio)
+  }
 
   reservar(paciente) {
     if (!this.estaDisponible()) {

@@ -21,15 +21,17 @@ export class TurnoController{
             }
 
             const turnoActualizado = await this.turnoService.actualizar(turnoId, actualizacionesTurno)
+            console.log(turnoActualizado)
 
             res.status(200).json(
                 new TurnoOutputDTO(
+                    turnoActualizado.id,
                     turnoActualizado.medico.nombre,
                     turnoActualizado.servicio.nombre,
                     turnoActualizado.fechaHora,
                     turnoActualizado.sede.nombre,
                     turnoActualizado.estadoActual().estado,
-                    turnoActualizado.paciente ? turnoActualizado.paciente.plan.precioDe(turnoActualizado.servicio) : null
+                    turnoActualizado.paciente ? turnoActualizado.costoEstimado(turnoActualizado.servicio) : null
                 )
             )
 

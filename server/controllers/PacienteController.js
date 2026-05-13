@@ -18,6 +18,7 @@ export class PacienteController{
             const resultado = await this.pacienteService.listarTurnos(pacienteId, paginacion)
 
             const turnosDTO = resultado.turnos.map(t => new TurnoOutputDTO(
+                t.id,
                 t.medico.nombre,
                 t.servicio.nombre,
                 t.fechaHora,

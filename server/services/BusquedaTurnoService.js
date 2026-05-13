@@ -29,6 +29,7 @@ export class BusquedaTurnoService {
         )
 
         const turnosDTO = turnos.map(t => new TurnoOutputDTO(
+            t.id,
             t.medico.nombre,
             t.servicio.nombre,
             t.fechaHora,
