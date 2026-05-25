@@ -90,7 +90,7 @@ export class BusquedaTurnoController {
             const [y, m, d] = partes.map(Number)
             const fechaDesde = new Date(y, m - 1, d)
 
-            if (isNaN(fechaDesde.getTime())) {
+            if (Number.isNaN(fechaDesde.getTime())) {
                 throw new BadRequestError("fechaDesde inválida")
             }
 
@@ -104,7 +104,7 @@ export class BusquedaTurnoController {
             const [y, m, d] = partes.map(Number)
             const fechaHasta = new Date(y, m - 1, d, 23, 59, 59, 999)
 
-            if (isNaN(fechaHasta.getTime())) {
+            if (Number.isNaN(fechaHasta.getTime())) {
                 throw new BadRequestError("fechaHasta inválida");
             }
 

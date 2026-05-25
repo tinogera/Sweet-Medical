@@ -1,3 +1,5 @@
+import { BloqueHorario } from '../turnos/bloqueHorario.js';
+
 export class Medico {
   constructor(nombre, apellido, documento, servicios, sedes) {
     this.nombre = nombre;
@@ -8,8 +10,26 @@ export class Medico {
     this.agenda = [];
     this.sedes = sedes || [];
 
-    this.notificacionesPendientes = [];
-    this.notificacionesVistas = [];
+    this.notificaciones = [];
+  }
+
+  atiendeEn(sede) {
+    return this.sedes.some(s => s.nombre === sede.nombre)
+  }
+
+  ofrece(servicio) {
+    return this.servicios.some(s => s.nombre === servicio.nombre)
+  }
+
+  dejarDeOfrecer(servicio) {
+    const index = this.servicios.findIndex(s => s.nombre === servicio.nombre);
+    
+    // Si el servicio no lo ofrece, es redundante intentar eliminarlo
+    if (index === -1) {
+      return
+    }
+
+    this.servicios.splice(index, 1);
   }
 
   agregarSede(sede) {
@@ -24,58 +44,51 @@ export class Medico {
     }
   }
 
-  // TODO: Definir un formato para las "horas"
-  // Asumo que va a ser un objeto { hora: int, minutos: int }
-  agregarDisponibilidad(horaInicio, horaFin, sede, fecha, servicio) {
+  agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio) {
     if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
       throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
-    const fechaHoraInicio = fecha.setHours(horaInicio.hora, horaInicio.minutos)
-    const fechaHoraFin = fecha.setHours(horaFin.hora, horaFin.minutos)
-    const ahora = new Date()
-
-    if (fechaHoraInicio < fechaHoraFin && fechaHoraInicio > ahora) {
-      throw new Error("No se puede cambiar la disponibilidad para fechas pasadas")
+    if (fechaHoraInicio >= fechaHoraFin) {
+      throw new Error("La hora de inicio debe ser anterior a la hora de fin")
+    }
+    if (fechaHoraInicio <= new Date()) {
+      throw new Error("No se puede agregar disponibilidad para fechas pasadas")
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
+    nuevoBloqueHorario.id = Math.floor(Math.random() * 10);
     this.agenda.push(nuevoBloqueHorario);
+
+    return nuevoBloqueHorario;
+  }
+
+  eliminarBloque(bloqueId) {
+    const index = this.agenda.findIndex(b => b.id === bloqueId);
+    if (index === -1) throw new Error(`Bloque con id ${bloqueId} no encontrado en la agenda`);
+    this.agenda.splice(index, 1);
   }
 
   recibirNotificacion(notificacion) {
-    this.notificacionesPendientes.push(notificacion)
+    this.notificaciones.push(notificacion)
   }
 
-  verNotificacion(notificacion) {
+  verNotificacion(idNotificacion) {
     //busca en qué posición (índice) se encuentra el objeto notificacion dentro del arreglo notificacionesPendientes
-    const index = this.notificacionesPendientes.indexOf(notificacion);
+    const index = this.notificaciones.findIndex(n => n.id === idNotificacion);
 
     if (index === -1) {
       throw new Error("La notificación no se encuentra en la lista de pendientes.");
     }
 
-    //se elimina físicamente la notificación de la lista de pendientes. El 1 indica que solo quiero borrar un elemento a partir de esa posición.
-    this.notificacionesPendientes.splice(index, 1);
-
-    this.notificacionesVistas.push(notificacion);
-
-    notificacion.marcarComoVista();
+    this.notificaciones[index].marcarComoVista();
   }
 
   obtenerNotificacionesSinLeer() {
-    return this.notificacionesPendientes
+    return this.notificaciones.filter((n) => !n.visto)
   }
 
   obtenerNotificacionesLeidas() {
-    return this.notificacionesVistas
-  }
-
-  atiendeEn(sede) {
-    return this.sedes.some(s => sede.nombre === s.nombre)
-  }
-
-  ofrece(servicio) {
-    return this.servicios.some(s => servicio.nombre === s.nombre)
+    return this.notificaciones.filter((n) => n.visto)
   }
 }

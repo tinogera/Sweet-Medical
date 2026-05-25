@@ -9,35 +9,30 @@ export class Paciente {
     this.obraSocial = obraSocial;
     this.plan = plan;
 
-    this.notificacionesPendientes = [];
-    this.notificacionesVistas = [];
+    this.notificaciones = [];
   }
 
   recibirNotificacion(notificacion) {
-    this.notificacionesPendientes.push(notificacion)
+    this.notificaciones.push(notificacion)
   }
 
-  verNotificacion(notificacion) {
+  verNotificacion(idNotificacion) {
     //busca en qué posición (índice) se encuentra el objeto notificacion dentro del arreglo notificacionesPendientes
-    const index = this.notificacionesPendientes.indexOf(notificacion);
+    const index = this.notificaciones.findIndex(n => n.id === idNotificacion);
 
     if (index === -1) {
       throw new Error("La notificación no se encuentra en la lista de pendientes.");
     }
 
-    //se elimina físicamente la notificación de la lista de pendientes. El 1 indica que solo quiero borrar un elemento a partir de esa posición.
-    this.notificacionesPendientes.splice(index, 1);
-    this.notificacionesVistas.push(notificacion);
-    notificacion.marcarComoVista();
+    this.notificaciones[index].marcarComoVista();
   }
 
-
   obtenerNotificacionesSinLeer() {
-    return this.notificacionesPendientes
+    return this.notificaciones.filter((n) => !n.visto)
   }
 
   obtenerNotificacionesLeidas() {
-    return this.notificacionesVistas
+    return this.notificaciones.filter((n) => n.visto)
   }
 }
 

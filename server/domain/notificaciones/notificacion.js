@@ -12,3 +12,4 @@ export class Notificacion {
     this.fechaHoraVisto = new Date()
   }
 }
+

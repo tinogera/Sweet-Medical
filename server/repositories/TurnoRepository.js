@@ -1,4 +1,4 @@
-import {clone, isUndefined, remove} from "lodash-es"
+import {remove} from "lodash-es"
 import { BadRequestError } from "../errors/AppErrors.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
 import { Estado } from "../domain/turnos/estadoTurno.js"
@@ -32,6 +32,19 @@ export const TurnoRepository = {
 
   borrar(turno){
     remove(this.turnos, t => t.id === turno.id);
+  },
+
+  borrarDisponiblesFuturos(medicoId, bloqueHorario) {
+    const now = new Date();
+    remove(this.turnos, t =>
+      t.medico.id === medicoId &&
+      t.sede.nombre === bloqueHorario.sede.nombre &&
+      t.servicio.nombre === bloqueHorario.servicio.nombre &&
+      t.fechaHora >= now &&
+      t.fechaHora >= bloqueHorario.horaInicio &&
+      t.fechaHora < bloqueHorario.horaFin &&
+      t.estadoActual().estado === Estado.DISPONIBLE
+    );
   },
 
   obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
@@ -89,6 +102,18 @@ export const TurnoRepository = {
       turnos: turnos.slice(inicio, fin),
       totalTurnos: turnos.length
     }
+  },
+
+  obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
+    const turnosDelPaciente = this.turnos.filter(t => t.paciente && t.paciente.id === pacienteId);
+
+    const inicio = (numeroPagina - 1) * limitePorPagina;
+    const fin = inicio + limitePorPagina;
+
+    return {
+      turnos: turnosDelPaciente.slice(inicio, fin),
+      totalTurnos: turnosDelPaciente.length
+    };
   },
 
   obtenerSiguienteId() {//TODO en una DB real no es necesario

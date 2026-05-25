@@ -1,29 +1,28 @@
 import { remove } from "lodash-es";
 
-export const ServicioRepository = {
-	servicios: [],
+export const SedeRepository = {
+	sedes: [],
 
 	agregar(servicio) {
 		//miro que no haya repetido por poner nombre con minuscula y otro en mayud
 		//si encuentra alguno el find es true
 		if (
-			this.servicios.find(
+			this.sedes.find(
 				(s) => s.nombre.toLowerCase() === servicio.nombre.toLowerCase(),
 			)
 		) {
-			throw new BadRequestError(`El servicio ${servicio.nombre}
-      ya existe.`);
+			throw new BadRequestError(`El servicio ${servicio.nombre} ya existe.`);
 		}
-		this.servicios.push(servicio);
+		this.sedes.push(servicio);
 		return servicio;
 	},
 
 	listar() {
-		return this.servicios;
+		return this.sedes;
 	},
 
 	obtenerPorNombre(nombre) {
-		const servicio = this.servicios.find(
+		const servicio = this.sedes.find(
 			(s) => s.nombre.toLowerCase() === nombre.toLowerCase(),
 		);
 
@@ -32,9 +31,6 @@ export const ServicioRepository = {
 
 	borrar(nombre) {
 		//saca el servicio con ese nombre
-		remove(
-			this.servicios,
-			(s) => s.nombre.toLowerCase() === nombre.toLowerCase(),
-		);
+		remove(this.sedes, (s) => s.nombre.toLowerCase() === nombre.toLowerCase());
 	},
 };
