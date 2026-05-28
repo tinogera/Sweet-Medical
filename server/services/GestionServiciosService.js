@@ -71,60 +71,14 @@ export class GestionServiciosService {
 		nombreServicio,
 		datosNuevos,
 	) {
-		/* Primera forma que lo hice que esta mal ya que cambia al servicio de todos los medicos
 		const medico = this.medicoRepository.obtenerPorId(medicoId);
 
-		const servicio = medico.servicios.find(
-			(s) => s.nombre.toLowerCase() === nombreServicio.toLowerCase(),
-		);
-
-		if (!servicio) {
-			throw new NotFoundError("El médico no ofrece el servicio especificado.");
+		if (!medico) {
+			throw new NotFoundError("No se encontró el médico.");
 		}
 
-		servicio.precio = precio;
-		servicio.duracion = duracion;
-
-		// Guardamos los cambios en el repositorio
-		this.medicoRepository.guardarMedico(medicoId, medico);
-		return servicio;
-	*/
-
-		//la forma correcta que afecta solo a este medico particular el cambio
-		
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
-
-    	 if (!medico) {
-    	     throw new NotFoundError("No se encontró el médico.");
-    	 }
-
-    	 const indice = medico.servicios.findIndex(
-    	     (s) => s.nombre.toLowerCase() === nombreServicio.toLowerCase()
-    	    );
-   
-        if (indice === -1) {
-            throw new NotFoundError("El médico no ofrece el servicio especificado.");
-        }
-   
-        const servicioOriginal = medico.servicios[indice];
-   
-        // Uso el operador spread (...) para crear un objeto nuevo con los mismos datos
-        // pero en una dirección de memoria distinta.
-        const servicioPropio = { ...servicioOriginal };
-   
-        if (datosNuevos.precio !== undefined) {
-            servicioPropio.precio = datosNuevos.precio;
-        }
-        if (datosNuevos.duracion !== undefined) {
-            servicioPropio.duracion = datosNuevos.duracion;
-        }
-   
-        // Ahora este médico apunta a su propia versión, mientras los demás
-        // siguen apuntando al original.
-        medico.servicios[indice] = servicioPropio;
-   
-        this.medicoRepository.guardarMedico(medicoId, medico);
-        return servicioPropio;
-		
-	}
+			const servicioPropio = medico.actualizarServicio(nombreServicio, datosNuevos);
+			this.medicoRepository.guardarMedico(medicoId, medico);
+			return servicioPropio;
+		}
 }
