@@ -91,4 +91,14 @@ export class Medico {
   obtenerNotificacionesLeidas() {
     return this.notificaciones.filter((n) => n.visto)
   }
+
+  actualizarServicio(nombreServicio, datosNuevos) {
+    const index = this.servicios.findIndex(s => s.tieneNombre(nombreServicio));
+    if (index === -1) {
+      throw new Error("El médico no ofrece el servicio especificado.");
+    }
+    const servicioPropio = this.servicios[index].clonarCon(datosNuevos);
+    this.servicios[index] = servicioPropio;
+    return servicioPropio;
+  }
 }
