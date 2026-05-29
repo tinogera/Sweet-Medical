@@ -30,9 +30,6 @@ Turno --> "*" EstadoTurno
 
 EstadoTurno --> "1" Estado
 
-GeneradorDeTurnos ..> Turno
-GeneradorDeTurnos ..> BloqueHorario
-
 class Medico {
     nombre
     apellido
@@ -42,6 +39,8 @@ class Medico {
     agenda: [BloqueHorario]
     notificacionesPendientes
     notificacionesVistas
+
+    + generarTurnos(bloqueHorario): [Turno]
 }
 
 class Servicio {
@@ -152,10 +151,6 @@ class Notificacion {
     fechaHoraVisto
 
     + marcarComoVista()
-}
-
-class GeneradorDeTurnos {
-    + generarTurnos(medico, bloqueHorario): [Turno]
 }
 
 @enduml

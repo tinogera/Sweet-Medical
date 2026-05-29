@@ -3,8 +3,28 @@ import { ServicioInexistente } from '../servicios/excepcion.servicio.js';
 import { BloqueHorario } from '../turnos/bloqueHorario.js';
 import { BloqueHorarioInexistente } from '../turnos/excepcion.turno.js';
 import { DisponibilidadInvalida } from './excepcion.persona.js';
+import { Turno } from '../turnos/turno.js';
 
 export class Medico {
+  generarTurnos(bloqueHorario) {
+    const turnos = [];
+    const { horaInicio, horaFin, sede, servicio } = bloqueHorario;
+
+    const duracionEnMs = servicio.duracion * 60 * 1000;
+    let horaInicioActual = new Date(horaInicio.getTime());
+    const horaFinLimite = horaFin.getTime();
+
+    while (horaInicioActual.getTime() + duracionEnMs <= horaFinLimite) {
+      const fechaHoraTurno = new Date(horaInicioActual.getTime());
+      // Se pasa 'this' ya que el médico actual es el responsable de generar sus turnos
+      const nuevoTurno = new Turno(fechaHoraTurno, this, servicio, sede);
+      turnos.push(nuevoTurno);
+      horaInicioActual = new Date(horaInicioActual.getTime() + duracionEnMs);
+    }
+
+    return turnos;
+  }
+
   constructor(nombre, apellido, documento, servicios, sedes) {
     this.nombre = nombre;
     this.apellido = apellido;

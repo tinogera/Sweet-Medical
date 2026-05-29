@@ -1,6 +1,5 @@
 import { MedicoRepository } from "../repositories/MedicoRepository.js";
 import { TurnoRepository } from "../repositories/TurnoRepository.js";
-import { generarTurnos } from "../domain/turnos/generadorDeTurnos.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
 import { SedeRepository } from "../repositories/SedeRepository.js";
@@ -39,7 +38,7 @@ export class MedicoService {
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio);
     bloqueHorario.id = this.medicoRepository.obtenerSiguienteIdBloque(); 
 
-    const turnosGenerados = generarTurnos(medico, bloqueHorario);
+    const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
       this.turnoRepository.agregarTurno(t);
     }
