@@ -1,3 +1,4 @@
+import { Usuario } from '../notificaciones/usuario.js';
 import { BloqueHorario } from '../turnos/bloqueHorario.js';
 
 export class Medico {
@@ -10,7 +11,7 @@ export class Medico {
     this.agenda = [];
     this.sedes = sedes || [];
 
-    this.notificaciones = [];
+    this.usuario = new Usuario();
   }
 
   atiendeEn(sede) {
@@ -23,7 +24,7 @@ export class Medico {
 
   dejarDeOfrecer(servicio) {
     const index = this.servicios.findIndex(s => s.nombre === servicio.nombre);
-    
+
     // Si el servicio no lo ofrece, es redundante intentar eliminarlo
     if (index === -1) {
       return
@@ -67,29 +68,6 @@ export class Medico {
     const index = this.agenda.findIndex(b => b.id === bloqueId);
     if (index === -1) throw new Error(`Bloque con id ${bloqueId} no encontrado en la agenda`);
     this.agenda.splice(index, 1);
-  }
-
-  recibirNotificacion(notificacion) {
-    this.notificaciones.push(notificacion)
-  }
-
-  verNotificacion(idNotificacion) {
-    //busca en qué posición (índice) se encuentra el objeto notificacion dentro del arreglo notificacionesPendientes
-    const index = this.notificaciones.findIndex(n => n.id === idNotificacion);
-
-    if (index === -1) {
-      throw new Error("La notificación no se encuentra en la lista de pendientes.");
-    }
-
-    this.notificaciones[index].marcarComoVista();
-  }
-
-  obtenerNotificacionesSinLeer() {
-    return this.notificaciones.filter((n) => !n.visto)
-  }
-
-  obtenerNotificacionesLeidas() {
-    return this.notificaciones.filter((n) => n.visto)
   }
 
   actualizarServicio(nombreServicio, datosNuevos) {
