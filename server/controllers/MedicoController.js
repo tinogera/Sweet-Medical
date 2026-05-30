@@ -1,5 +1,6 @@
 import { MedicoService } from "../services/MedicoService.js";
 import { BadRequestError } from "../errors/AppErrors.js";
+import { toHttpError } from "../errors/httpErrorMapper.js";
 
 export class MedicoController {
   constructor({ medicoService = new MedicoService() } = {}) {
@@ -28,7 +29,8 @@ export class MedicoController {
         turnosGenerados: turnosGenerados.length
       });
     } catch (error) {
-      return next(error);
+      const { status, message } = toHttpError(error)
+      return res.status(status).json({ message })
     }
   }
 
@@ -48,7 +50,8 @@ export class MedicoController {
 
       return res.status(204).send();
     } catch (error) {
-      return next(error);
+      const { status, message } = toHttpError(error)
+      return res.status(status).json({ message })
     }
   }
 
@@ -71,7 +74,8 @@ export class MedicoController {
         }))
       });
     } catch (error) {
-      return next(error);
+      const { status, message } = toHttpError(error)
+      return res.status(status).json({ message })
     }
   }
 }

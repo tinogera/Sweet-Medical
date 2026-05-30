@@ -1,5 +1,6 @@
 import { GestionServiciosService } from "../services/GestionServiciosService.js";
 import { ServicioOutputDTO } from "../dtos/servicioOutputDTO.js";
+import { toHttpError } from "../errors/httpErrorMapper.js";
 
 export class GestionServiciosController {
   constructor({ gestionServiciosService = new GestionServiciosService() } =
@@ -16,7 +17,8 @@ export class GestionServiciosController {
       const respuesta = servicios.map(s => new ServicioOutputDTO(s));
       res.status(200).json(respuesta);
     } catch (error) {
-      next(error);
+      const { status, message } = toHttpError(error)
+      res.status(status).json({ message })
     }
   };
 
@@ -31,7 +33,8 @@ export class GestionServiciosController {
       // Envía el nuevo objeto y finaliza.
       res.status(201).json(new ServicioOutputDTO(nuevoServicio));
     } catch (error) {
-      next(error);
+      const { status, message } = toHttpError(error)
+      res.status(status).json({ message })
     }
   };
 
@@ -43,7 +46,8 @@ export class GestionServiciosController {
       //No envía datos y finaliza.
       res.status(204).send();
     } catch (error) {
-      next(error);
+      const { status, message } = toHttpError(error)
+      res.status(status).json({ message })
     }
   };
 
@@ -56,7 +60,8 @@ export class GestionServiciosController {
 
       res.status(200).json(new ServicioOutputDTO(servicioEditado));
     } catch (error) {
-      next(error);
+      const { status, message } = toHttpError(error)
+      res.status(status).json({ message })
     }
   };
 }

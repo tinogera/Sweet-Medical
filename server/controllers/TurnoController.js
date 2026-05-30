@@ -1,6 +1,7 @@
 import { TurnoService } from "../services/TurnoService.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 import { BadRequestError } from "../errors/AppErrors.js"
+import { toHttpError } from "../errors/httpErrorMapper.js"
 
 export class TurnoController{
     constructor({turnoService = new TurnoService} = {}){
@@ -36,7 +37,8 @@ export class TurnoController{
             )
 
         }catch(error){
-            next(error)
+            const { status, message } = toHttpError(error)
+            res.status(status).json({ message })
         }
     
     }

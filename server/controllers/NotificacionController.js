@@ -1,4 +1,5 @@
 import { notificacionService } from '../services/NotificacionService.js'
+import { toHttpError } from '../errors/httpErrorMapper.js'
 
 class NotificacionController {
   getUserNotificaciones(req, res, next) {
@@ -10,7 +11,8 @@ class NotificacionController {
       const notificaciones = notificacionService.getUserNotificaciones(idUser, vistas)
       res.json(notificaciones.map(notificacionDTO))
     } catch (e) {
-      next(e)
+      const { status, message } = toHttpError(e)
+      res.status(status).json({ message })
     }
   }
 
@@ -22,7 +24,8 @@ class NotificacionController {
       notificacionService.verNotificacion(idUser, idNotificacion)
       res.status(204).json()
     } catch (e) {
-      next(e)
+      const { status, message } = toHttpError(e)
+      res.status(status).json({ message })
     }
   }
 }

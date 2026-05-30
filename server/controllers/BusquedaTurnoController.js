@@ -1,5 +1,6 @@
 import {BusquedaTurnoService} from "../services/BusquedaTurnoService.js"
 import { BadRequestError } from "../errors/AppErrors.js"
+import { toHttpError } from "../errors/httpErrorMapper.js"
 
 export class BusquedaTurnoController {
     constructor({ busquedaTurnoService = new BusquedaTurnoService() } = {}) {
@@ -26,7 +27,8 @@ export class BusquedaTurnoController {
                 }
             })
         } catch (error) {
-            return next(error)
+            const { status, message } = toHttpError(error)
+            return res.status(status).json({ message })
         }
     }
 
