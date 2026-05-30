@@ -1,3 +1,4 @@
+import { NotificacionInexistente } from "./excepcion.notificacion.js";
 
 export class Usuario {
   constructor() {
@@ -13,7 +14,7 @@ export class Usuario {
     const index = this.notificaciones.findIndex(n => n.id === idNotificacion);
 
     if (index === -1) {
-      throw new Error("La notificación no se encuentra en la lista de pendientes.");
+      throw new NotificacionInexistente(this.id, idNotificacion);
     }
 
     this.notificaciones[index].marcarComoVista();

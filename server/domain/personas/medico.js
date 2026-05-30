@@ -1,5 +1,8 @@
 import { Usuario } from '../notificaciones/usuario.js';
+import { ServicioInexistente } from '../servicios/excepcion.servicio.js';
 import { BloqueHorario } from '../turnos/bloqueHorario.js';
+import { BloqueHorarioInexistente } from '../turnos/excepcion.turno.js';
+import { DisponibilidadInvalida } from './excepcion.persona.js';
 
 export class Medico {
   constructor(nombre, apellido, documento, servicios, sedes) {
@@ -47,14 +50,13 @@ export class Medico {
 
   agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio) {
     if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
-      throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+      throw new DisponibilidadInvalida(`El médico [${this.id}] NO atiende en [${sede.nombre}] o NO ofrece [${servicio.nombre}] como servicio.`)
     }
-
     if (fechaHoraInicio >= fechaHoraFin) {
-      throw new Error("La hora de inicio debe ser anterior a la hora de fin")
+      throw new DisponibilidadInvalida("La hora de inicio debe ser anterior a la hora de fin")
     }
     if (fechaHoraInicio <= new Date()) {
-      throw new Error("No se puede agregar disponibilidad para fechas pasadas")
+      throw new DisponibilidadInvalida("No se puede agregar disponibilidad para fechas pasadas")
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
@@ -66,14 +68,14 @@ export class Medico {
 
   eliminarBloque(bloqueId) {
     const index = this.agenda.findIndex(b => b.id === bloqueId);
-    if (index === -1) throw new Error(`Bloque con id ${bloqueId} no encontrado en la agenda`);
+    if (index === -1) throw new BloqueHorarioInexistente(bloqueId);
     this.agenda.splice(index, 1);
   }
 
   actualizarServicio(nombreServicio, datosNuevos) {
     const index = this.servicios.findIndex(s => s.tieneNombre(nombreServicio));
     if (index === -1) {
-      throw new Error("El médico no ofrece el servicio especificado.");
+      throw new ServicioInexistente("El médico no ofrece el servicio especificado.");
     }
     const servicioPropio = this.servicios[index].clonarCon(datosNuevos);
     this.servicios[index] = servicioPropio;
