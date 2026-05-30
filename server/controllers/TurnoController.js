@@ -40,4 +40,18 @@ export class TurnoController{
         }
     
     }
+
+    generarTurnos = async (_req, res, next) => {
+        try {
+            const resultado = await this.turnoService.generarTodosLosTurnos()
+
+            res.status(201).json({
+                status: "success",
+                message: "Turnos generados internamente con éxito",
+                data: resultado
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
 }
