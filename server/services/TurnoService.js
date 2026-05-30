@@ -79,4 +79,21 @@ export class TurnoService{
             throw new BadRequestError("El motivo debe ser un texto válido")
         } 
     }
+
+    async generarTodosLosTurnos() {
+        const medicos = await this.medicoRepository.obtenerTodos()
+
+        // Recorremos los médicos y obtenemos una lista plana de todos los turnos generados
+        const todosLosTurnosNuevos = medicos.flatMap(medico => 
+            medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
+        )
+
+        // Guardamos todos los turnos generados en el repositorio general
+        for (const turno of todosLosTurnosNuevos) {
+            this.turnoRepository.agregarTurno(turno)
+        }
+
+        return todosLosTurnosNuevos.length
+        
+    }
 }

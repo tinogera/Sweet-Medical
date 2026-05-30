@@ -133,7 +133,14 @@ export class SeederService {
       persona.recibirNotificacion(notificaciones[i])
     })
     
-    
+    const todosLosTurnosLibres = MedicoRepository.medicos.flatMap(medico =>
+            medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
+        );
+
+        // Los agregamos al repositorio de turnos
+        for (const turno of todosLosTurnosLibres) { 
+                TurnoRepository.agregarTurno(turno);
+        }
     
     console.log("Seeding completado: 2 pacientes, 2 médicos, 3 turnos cargados.")
   }
