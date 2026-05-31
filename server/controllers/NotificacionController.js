@@ -1,13 +1,13 @@
 import { notificacionService } from '../services/NotificacionService.js'
 
 class NotificacionController {
-  getUserNotificaciones(req, res, next) {
+  async getUserNotificaciones(req, res, next) {
     // TODO: validar y parsear correctamente los parametros
-    const idUser = Number(req.params.idUser)
+    const idUser = req.params.idUser
     const vistas = req.query.leidas
 
     try {
-      const notificaciones = notificacionService.getUserNotificaciones(idUser, vistas)
+      const notificaciones = await notificacionService.getUserNotificaciones(idUser, vistas)
       res.json(notificaciones.map(notificacionDTO))
     } catch (e) {
       next(e)
@@ -16,7 +16,7 @@ class NotificacionController {
 
   verNotificacion(req, res, next) {
     const idNotificacion = Number(req.params.idNotificacion)
-    const idUser = Number(req.params.idUser)
+    const idUser = req.params.idUser
 
     try {
       notificacionService.verNotificacion(idUser, idNotificacion)

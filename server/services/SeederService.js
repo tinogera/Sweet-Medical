@@ -120,10 +120,10 @@ export class SeederService {
 
     // Paciente Juan, Ana. Medico Gomez, Lopez. 
     const notificaciones = [
-      new Notificacion("test@mail.com", "Recordatorio: Tienes un turno de Cardiología"),
-      new Notificacion("test@mail.com", "Turno confirmado: Radiografía en Belgrano "),
-      new Notificacion("test@mail.com", "Turno cancelado: Pediatría en Belgrano"),
-      new Notificacion("test@mail.com", "Recordatorio: Tienes un turno de Radiografía en Belgrano"),
+      new Notificacion({ destinatario: "test@mail.com", mensaje: "Recordatorio: Tienes un turno de Cardiología" }),
+      new Notificacion({ destinatario: "test@mail.com", mensaje: "Turno confirmado: Radiografía en Belgrano" }),
+      new Notificacion({ destinatario: "test@mail.com", mensaje: "Turno cancelado: Pediatría en Belgrano" }),
+      new Notificacion({ destinatario: "test@mail.com", mensaje: "Recordatorio: Tienes un turno de Radiografía en Belgrano" }),
     ]
     
     let NOTIFICACIONES_ID = 1

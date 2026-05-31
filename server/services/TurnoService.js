@@ -29,7 +29,7 @@ export class TurnoService{
             turno.reservar(paciente)
 
             const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
-            turno.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+            turno.medico.recibirNotificacion(new Notificacion({ destinatario: "sistema@clinica.com", mensaje }))
         }
 
 
@@ -43,7 +43,7 @@ export class TurnoService{
                 : [turno.medico, turno.paciente];
             turno.cancelar(responsable, motivo)
             const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
-            contraparte.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeCancelacion))
+            contraparte.recibirNotificacion(new Notificacion({ destinatario: "sistema@clinica.com", mensaje: mensajeCancelacion }))
 
         }
 
@@ -56,7 +56,7 @@ export class TurnoService{
             
             if (turno.paciente) {
                 const mensajeConfirmacion = `Tu turno para ${turno.servicio.nombre} ha sido confirmado por el médico.`
-                turno.paciente.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeConfirmacion))
+                turno.paciente.recibirNotificacion(new Notificacion({ destinatario: "sistema@clinica.com", mensaje: mensajeConfirmacion }))
             }
         }
 

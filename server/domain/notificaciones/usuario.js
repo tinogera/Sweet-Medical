@@ -1,8 +1,10 @@
 import { NotificacionInexistente } from "./excepcion.notificacion.js";
 
 export class Usuario {
-  constructor() {
-    this.notificaciones = []
+  constructor({ id, notificaciones, nombre } = {}) {
+    this.id = id
+    this.nombre = nombre
+    this.notificaciones = notificaciones ?? []
   }
 
   recibirNotificacion(notificacion) {
