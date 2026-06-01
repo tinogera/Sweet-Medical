@@ -1,6 +1,7 @@
 import { TurnoService } from "../services/TurnoService.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 import { BadRequestError } from "../errors/AppErrors.js"
+import { toHttpError } from "../errors/httpErrorMapper.js"
 
 export class TurnoController{
     constructor({turnoService = new TurnoService} = {}){
@@ -20,7 +21,30 @@ export class TurnoController{
                 throw new BadRequestError("Se requiere proveer un 'estado' para actualizar el turno")
             }
 
-            const turnoActualizado = await this.turnoService.actualizar(turnoId, actualizacionesTurno)
+            let turnoActualizado;
+            const estado = actualizacionesTurno.estado;
+
+            switch (estado) {
+                case 'RESERVADO':
+                    turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno.responsableId);
+                    break;
+                case 'CANCELADO':
+                    const rol = actualizacionesTurno.rol;
+                    const motivo = actualizacionesTurno.motivo;
+                    this.validarRol(rol);
+                    this.validarMotivo(motivo);
+                    turnoActualizado = await this.turnoService.cancelar(turnoId, rol, motivo);
+                    break;
+                case 'CONFIRMADO':
+                    turnoActualizado = await this.turnoService.confirmar(turnoId);
+                    break;
+                case 'REALIZADO':
+                    turnoActualizado = await this.turnoService.marcarRealizado(turnoId);
+                    break;
+                default:
+                    throw new BadRequestError(`Estado inválido. Ingrese uno de: RESERVADO, CONFIRMADO, CANCELADO, REALIZADO`);
+            }
+
             console.log(turnoActualizado)
 
             res.status(200).json(
@@ -36,7 +60,8 @@ export class TurnoController{
             )
 
         }catch(error){
-            next(error)
+            const { status, message } = toHttpError(error)
+            res.status(status).json({ message })
         }
     
     }
@@ -51,7 +76,21 @@ export class TurnoController{
                 data: resultado
             })
         } catch (error) {
-            next(error)
+            const { status, message } = toHttpError(error)
+            return res.status(status).json({ message })
+        }
+    }
+
+    validarRol(rol) {
+        const ROLES = ['PACIENTE', 'MEDICO'];
+        if (!ROLES.includes(rol)) {
+            throw new BadRequestError("Rol inválido. ingrese PACIENTE o MEDICO");
+        }
+    }
+
+    validarMotivo(motivo) {
+        if (typeof motivo !== 'string' || motivo.trim() === '') {
+            throw new BadRequestError("El motivo debe ser un texto válido");
         }
     }
 }
