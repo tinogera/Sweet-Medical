@@ -1,6 +1,30 @@
+import { Usuario } from '../notificaciones/usuario.js';
+import { ServicioInexistente } from '../servicios/excepcion.servicio.js';
 import { BloqueHorario } from '../turnos/bloqueHorario.js';
+import { BloqueHorarioInexistente } from '../turnos/excepcion.turno.js';
+import { DisponibilidadInvalida } from './excepcion.persona.js';
+import { Turno } from '../turnos/turno.js';
 
 export class Medico {
+  generarTurnos(bloqueHorario) {
+    const turnos = [];
+    const { horaInicio, horaFin, sede, servicio } = bloqueHorario;
+
+    const duracionEnMs = servicio.duracion * 60 * 1000;
+    let horaInicioActual = new Date(horaInicio.getTime());
+    const horaFinLimite = horaFin.getTime();
+
+    while (horaInicioActual.getTime() + duracionEnMs <= horaFinLimite) {
+      const fechaHoraTurno = new Date(horaInicioActual.getTime());
+      // Se pasa 'this' ya que el médico actual es el responsable de generar sus turnos
+      const nuevoTurno = new Turno(fechaHoraTurno, this, servicio, sede);
+      turnos.push(nuevoTurno);
+      horaInicioActual = new Date(horaInicioActual.getTime() + duracionEnMs);
+    }
+
+    return turnos;
+  }
+
   constructor(nombre, apellido, documento, servicios, sedes) {
     this.nombre = nombre;
     this.apellido = apellido;
@@ -10,7 +34,7 @@ export class Medico {
     this.agenda = [];
     this.sedes = sedes || [];
 
-    this.notificaciones = [];
+    this.usuario = new Usuario();
   }
 
   atiendeEn(sede) {
@@ -23,7 +47,7 @@ export class Medico {
 
   dejarDeOfrecer(servicio) {
     const index = this.servicios.findIndex(s => s.nombre === servicio.nombre);
-    
+
     // Si el servicio no lo ofrece, es redundante intentar eliminarlo
     if (index === -1) {
       return
@@ -46,14 +70,13 @@ export class Medico {
 
   agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio) {
     if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
-      throw new Error(`El médico ${this.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+      throw new DisponibilidadInvalida(`El médico [${this.id}] NO atiende en [${sede.nombre}] o NO ofrece [${servicio.nombre}] como servicio.`)
     }
-
     if (fechaHoraInicio >= fechaHoraFin) {
-      throw new Error("La hora de inicio debe ser anterior a la hora de fin")
+      throw new DisponibilidadInvalida("La hora de inicio debe ser anterior a la hora de fin")
     }
     if (fechaHoraInicio <= new Date()) {
-      throw new Error("No se puede agregar disponibilidad para fechas pasadas")
+      throw new DisponibilidadInvalida("No se puede agregar disponibilidad para fechas pasadas")
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
@@ -65,37 +88,14 @@ export class Medico {
 
   eliminarBloque(bloqueId) {
     const index = this.agenda.findIndex(b => b.id === bloqueId);
-    if (index === -1) throw new Error(`Bloque con id ${bloqueId} no encontrado en la agenda`);
+    if (index === -1) throw new BloqueHorarioInexistente(bloqueId);
     this.agenda.splice(index, 1);
-  }
-
-  recibirNotificacion(notificacion) {
-    this.notificaciones.push(notificacion)
-  }
-
-  verNotificacion(idNotificacion) {
-    //busca en qué posición (índice) se encuentra el objeto notificacion dentro del arreglo notificacionesPendientes
-    const index = this.notificaciones.findIndex(n => n.id === idNotificacion);
-
-    if (index === -1) {
-      throw new Error("La notificación no se encuentra en la lista de pendientes.");
-    }
-
-    this.notificaciones[index].marcarComoVista();
-  }
-
-  obtenerNotificacionesSinLeer() {
-    return this.notificaciones.filter((n) => !n.visto)
-  }
-
-  obtenerNotificacionesLeidas() {
-    return this.notificaciones.filter((n) => n.visto)
   }
 
   actualizarServicio(nombreServicio, datosNuevos) {
     const index = this.servicios.findIndex(s => s.tieneNombre(nombreServicio));
     if (index === -1) {
-      throw new Error("El médico no ofrece el servicio especificado.");
+      throw new ServicioInexistente("El médico no ofrece el servicio especificado.");
     }
     const servicioPropio = this.servicios[index].clonarCon(datosNuevos);
     this.servicios[index] = servicioPropio;

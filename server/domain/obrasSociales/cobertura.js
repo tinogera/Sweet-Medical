@@ -1,8 +1,7 @@
 export class Cobertura {
   constructor(servicio, porcentaje) {
     if (porcentaje < 0 || porcentaje > 100) {
-      // TODO: Crear excepciones personalizadas para el dominio
-      throw new Error(`Porcentaje ${porcentaje} debe estar entre 0-100%`)
+      throw new RangeError(`Porcentaje ${porcentaje} debe estar entre [0-100] %`)
     }
 
     this.servicio = servicio

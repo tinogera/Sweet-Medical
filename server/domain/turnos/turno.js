@@ -1,4 +1,5 @@
 import { EstadoTurno, Estado } from '../turnos/estadoTurno.js'
+import { TurnoInvalido, TurnoNoPuedeCambiarEstado } from './excepcion.turno.js';
 
 export class Turno {
   constructor(fechaHora, medico, servicio, sede) {
@@ -8,7 +9,7 @@ export class Turno {
     //  - atiende en esa sede
     //  TODO: - tiene bloqueHorario disponible en fechaHora
     if (!medico.atiendeEn(sede) || !medico.ofrece(servicio)) {
-      throw new Error(`El médico ${medico.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+      throw new TurnoInvalido(`El médico ${medico.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
     }
 
     this.fechaHora = fechaHora;
@@ -18,14 +19,13 @@ export class Turno {
     this.servicio = servicio;
   }
 
-  // Consultar!!
-  costoEstimado() { 
+  costoEstimado() {
     return this.paciente.plan.precioDe(this.servicio)
   }
 
   reservar(paciente) {
     if (!this.estaDisponible()) {
-      throw new Error('El turno no está disponible');
+      throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no está disponible para ser reservado`);
     }
     this.paciente = paciente;
     this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
@@ -33,7 +33,7 @@ export class Turno {
 
   cancelar(responsable, motivo) {
     if (!this.puedeCancelarse()) {
-      throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
+      throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no se puede cancelar, solo turnos disponibles o reservados pueden ser cancelado`);
     }
     this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
   }

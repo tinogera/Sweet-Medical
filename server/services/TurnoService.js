@@ -11,72 +11,64 @@ export class TurnoService{
         this.medicoRepository = medicoRepository
     }
 
-    async actualizar(id, actualizaciones) {
-        const ESTADOS = ['DISPONIBLE', 'RESERVADO', 'CONFIRMADO', 'CANCELADO', 'REALIZADO']
-
-        if(!ESTADOS.includes(actualizaciones.estado)){
-            throw new BadRequestError(`Estado inválido. Ingrese uno de: ${ESTADOS.join(', ')}`)
-        }
-
+    async reservar(id, responsableId) {
         const turno = await this.turnoRepository.obtenerPorId(id) 
-        const estado = actualizaciones.estado 
-        const rol = actualizaciones.rol
+        const paciente = await this.pacienteRepository.obtenerPorId(responsableId) 
+        turno.reservar(paciente)
+
+        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
+        turno.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+
+        return await this.turnoRepository.guardarturno(id, turno)
+    }
+
+    async cancelar(id, rol, motivo) {
+        const turno = await this.turnoRepository.obtenerPorId(id)
+
+        const [responsable, contraparte] = (rol === "PACIENTE") 
+            ? [turno.paciente, turno.medico] 
+            : [turno.medico, turno.paciente];
         
+        turno.cancelar(responsable, motivo)
+        const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
+        contraparte.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeCancelacion))
 
-        if(estado === "RESERVADO"){
-            if(!actualizaciones.responsableId) throw new BadRequestError("Se requiere responsableId para reservar un turno")
-            const paciente = await this.pacienteRepository.obtenerPorId(actualizaciones.responsableId) 
-            turno.reservar(paciente)
+        return await this.turnoRepository.guardarturno(id, turno)
+    }
 
-            const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
-            turno.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+    async confirmar(id) {
+        const turno = await this.turnoRepository.obtenerPorId(id)
+        turno.confirmar(turno.medico)
+        
+        if (turno.paciente) {
+            const mensajeConfirmacion = `Tu turno para ${turno.servicio.nombre} ha sido confirmado por el médico.`
+            turno.paciente.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeConfirmacion))
         }
 
+        return await this.turnoRepository.guardarturno(id, turno)
+    }
 
-        if(estado === "CANCELADO"){
-            const motivo = actualizaciones.motivo 
-            const _rol = actualizaciones.rol
-            this.validarMotivo(motivo)
-            this.validarRol(rol)
-            const [responsable, contraparte] = (rol === "PACIENTE") 
-                ? [turno.paciente, turno.medico] 
-                : [turno.medico, turno.paciente];
-            turno.cancelar(responsable, motivo)
-            const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
-            contraparte.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeCancelacion))
-
-        }
-
-        if(estado === "REALIZADO"){
-            turno.marcarRealizado()
-        }
-
-        if(estado === "CONFIRMADO"){
-            turno.confirmar(turno.medico)
-            
-            if (turno.paciente) {
-                const mensajeConfirmacion = `Tu turno para ${turno.servicio.nombre} ha sido confirmado por el médico.`
-                turno.paciente.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeConfirmacion))
-            }
-        }
-
-
-        const turnoActualizado = await this.turnoRepository.guardarturno(id, turno)
-        return turnoActualizado
-    
+    async marcarRealizado(id) {
+        const turno = await this.turnoRepository.obtenerPorId(id)
+        turno.marcarRealizado()
+        return await this.turnoRepository.guardarturno(id, turno)
     }
 
 
-    validarRol(rol){
-        const ROLES = ['PACIENTE', 'MEDICO']
-        if(!ROLES.includes(rol)){
-            throw new BadRequestError("Rol inválido. ingrese PACIENTE o MEDICO")
-        }
-    }
+    async generarTodosLosTurnos() {
+        const medicos = await this.medicoRepository.obtenerTodos()
 
-    validarMotivo(motivo){
-        if(typeof motivo !== 'string'){
-            throw new BadRequestError("El motivo debe ser un texto válido")
-        } 
+        // Recorremos los médicos y obtenemos una lista plana de todos los turnos generados
+        const todosLosTurnosNuevos = medicos.flatMap(medico => 
+            medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
+        )
+
+        // Guardamos todos los turnos generados en el repositorio general
+        for (const turno of todosLosTurnosNuevos) {
+            this.turnoRepository.agregarTurno(turno)
+        }
+
+        return todosLosTurnosNuevos.length
+        
     }
 }
