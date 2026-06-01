@@ -6,7 +6,7 @@ import { NotFoundError } from "../errors/AppErrors.js";
 export class GestionServiciosService {
 	constructor({
 		medicoRepository = MedicoRepository,
-		servicioRepository = ServicioRepository,
+		servicioRepository = new ServicioRepository(),
 	} = {}) {
 		this.medicoRepository = medicoRepository;
 		this.servicioRepository = servicioRepository;
@@ -31,12 +31,11 @@ export class GestionServiciosService {
 		if (!medico) {
                 throw new NotFoundError("No se encontró el médico.");
 		}
-		let nuevoServicio = this.servicioRepository.obtenerPorNombre(nombre);
+		let nuevoServicio = await this.servicioRepository.findByName(nombre);
 
     if (!nuevoServicio){
       nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
-	  this.servicioRepository.agregar(nuevoServicio);
-
+	    nuevoServicio = await this.servicioRepository.save(nuevoServicio);
     }
 
 	medico.agregarServicio(nuevoServicio);
@@ -52,7 +51,7 @@ export class GestionServiciosService {
                 throw new NotFoundError("No se encontró el médico.");
 		}
 
-    const servicio = this.servicioRepository.obtenerPorNombre(nombreServicio);
+    const servicio = await this.servicioRepository.findByName(nombreServicio);
 
     if(!servicio){
       throw new NotFoundError("El servicio especificado no existe.");
