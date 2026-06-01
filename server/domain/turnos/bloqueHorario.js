@@ -4,6 +4,5 @@ export class BloqueHorario {
     this.horaInicio = fechaHoraInicio
     this.horaFin = fechaHoraFin
     this.sede = sede;
-    this.servicio = servicio;
   }
 }

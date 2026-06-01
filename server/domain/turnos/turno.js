@@ -8,8 +8,8 @@ export class Turno {
     //  - ofrece el servicio
     //  - atiende en esa sede
     //  TODO: - tiene bloqueHorario disponible en fechaHora
-    if (!medico.atiendeEn(sede) || !medico.ofrece(servicio)) {
-      throw new TurnoInvalido(`El médico ${medico.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+    if (!medico.atiendeEn(sede)) {
+      throw new TurnoInvalido(`El médico ${medico.nombre} NO atiende en ${sede.nombre}.`)
     }
 
     this.fechaHora = fechaHora;
@@ -26,6 +26,11 @@ export class Turno {
     if (!this.estaDisponible()) {
       throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no está disponible para ser reservado`);
     }
+
+    if (!this.medico.ofrece(servicio)) {
+      throw new TurnoInvalido(`El médico ${medico.nombre} NO ofrece el servicio de ${servicio.nombre}.`)
+    }
+
     this.paciente = paciente;
     this.servicio = servicio;
     this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");

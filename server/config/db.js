@@ -1,13 +1,13 @@
 import { connect } from "mongoose";
 
-export async function connectToDB(dbConnectionString) {
+export async function connectToDB(dbConnectionString, dbName) {
   // Hace un retry de 3 intentos
   for (let i = 0; i < 3; ++i) {
     try {
       await connect(dbConnectionString, {
         user: 'root',
         pass: 'root',
-        dbName: 'sweetmedical'
+        dbName: dbName
       });
       console.log('Se conecto a la base de datos con éxito.')
       break;

@@ -8,7 +8,6 @@ Medico --> "*" Notificacion
 
 Servicio --> "1" TipoServicio
 
-BloqueHorario --> "1" Servicio
 BloqueHorario --> "1" Sede
 
 Sede --> "1" Ubicacion
@@ -69,7 +68,6 @@ enum TipoServicio {
 
 class BloqueHorario {
     sede
-    servicios
     horaInicio
     horaFin
 }
