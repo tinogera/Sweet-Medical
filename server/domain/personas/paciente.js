@@ -7,7 +7,6 @@ export class Paciente {
     this.nombre = nombre;
     this.apellido = apellido;
     this.documento = documento;
-
     this.obraSocial = obraSocial;
     this.plan = plan;
     this.usuario = new Usuario();

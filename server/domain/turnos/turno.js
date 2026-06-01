@@ -2,7 +2,7 @@ import { EstadoTurno, Estado } from '../turnos/estadoTurno.js'
 import { TurnoInvalido, TurnoNoPuedeCambiarEstado } from './excepcion.turno.js';
 
 export class Turno {
-  constructor(fechaHora, medico, servicio, sede) {
+  constructor(fechaHora, medico, sede) {
     // Aunque los turnos los generan en base a la agenda propuesta por el medico.
     // validar si un medico:
     //  - ofrece el servicio
@@ -16,18 +16,18 @@ export class Turno {
     this.medico = medico;
     this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, 'Turno disponible')];
     this.sede = sede;
-    this.servicio = servicio;
   }
 
   costoEstimado() {
     return this.paciente.plan.precioDe(this.servicio)
   }
 
-  reservar(paciente) {
+  reservar(paciente, servicio) {
     if (!this.estaDisponible()) {
       throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no está disponible para ser reservado`);
     }
     this.paciente = paciente;
+    this.servicio = servicio;
     this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
   }
 

@@ -1,5 +1,6 @@
 @startuml
 
+Medico --> Usuario
 Medico --> "*" BloqueHorario
 Medico --> "1..*" Servicio
 Medico --> "1..*" Sede
@@ -12,6 +13,7 @@ BloqueHorario --> "1" Sede
 
 Sede --> "1" Ubicacion
 
+Paciente --> Usuario
 Paciente --> "1" ObraSocial
 Paciente --> "1" Plan
 Paciente --> "*" Notificacion
@@ -30,17 +32,26 @@ Turno --> "*" EstadoTurno
 
 EstadoTurno --> "1" Estado
 
+class Usuario {
+    id
+    nombre
+    notificaciones
+
+    + recibirNotificacion(notificacion): void
+    + verNotificacion(idNotificacion): void
+}
+
 class Medico {
+    usuario
     nombre
     apellido
     documento
     servicios
     sedes
     agenda: [BloqueHorario]
-    notificacionesPendientes
-    notificacionesVistas
 
     + generarTurnos(bloqueHorario): [Turno]
+    + agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio): BloqueHorario
 }
 
 class Servicio {
@@ -57,7 +68,6 @@ enum TipoServicio {
 }
 
 class BloqueHorario {
-    fecha
     sede
     servicios
     horaInicio
@@ -75,13 +85,12 @@ class Ubicacion {
 }
 
 class Paciente {
+    usuario
     nombre
     apellido
     documento
     obraSocial
     plan
-    notificacionesPendientes
-    notificacionesVistas
 }
 
 class ObraSocial {
@@ -118,14 +127,14 @@ class Turno {
     fechaHora
     estadosTurno: [EstadoTurno]
 
-    + reservar(paciente)
-    + cancelar(responsable, motivo)
-    + confirmar(responsable)
-    + puedeCancelarse()
+    + reservar(paciente, servicio): void
+    + cancelar(responsable, motivo): void
+    + confirmar(responsable): void
+    + puedeCancelarse(): bool
     + estadoActual() : EstadoTurno
-    + marcarRealizado()
-    + puedeModificarse()
-    + agregarEstado()
+    + marcarRealizado(): void
+    + puedeModificarse(): bool
+    + agregarEstado(): void
 }
 
 class EstadoTurno {
@@ -144,6 +153,7 @@ enum Estado {
 }
 
 class Notificacion {
+    id
     destinatario
     mensaje
     fechaHoraEnviado
