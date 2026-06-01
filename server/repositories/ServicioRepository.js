@@ -1,5 +1,5 @@
 import { remove } from "lodash-es";
-import { BadRequestError } from "../errors/AppErrors.js";
+import { ConflictError, NotFoundError } from "../errors/AppErrors.js";
 
 export const ServicioRepository = {
 	servicios: [],
@@ -8,7 +8,7 @@ export const ServicioRepository = {
 		//miro que no haya repetido por poner nombre con minuscula y otro en mayud
 		//si encuentra alguno el find es true
 		if (this.servicios.find((s) => s.tieneNombre(servicio.nombre))) {
-			throw new BadRequestError(`El servicio ${servicio.nombre} ya existe.`);
+			throw new ConflictError(`El servicio ${servicio.nombre} ya existe.`);
 		}
 		this.servicios.push(servicio);
 		return servicio;
@@ -20,6 +20,9 @@ export const ServicioRepository = {
 
 	obtenerPorNombre(nombre) {
 		const servicio = this.servicios.find((s) => s.tieneNombre(nombre));
+		if (!servicio) {
+			throw new NotFoundError(`El servicio ${nombre} no existe`);
+		}
 		return servicio;
 	},
 

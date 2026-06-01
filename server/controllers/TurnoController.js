@@ -26,7 +26,7 @@ export class TurnoController{
 
             switch (estado) {
                 case 'RESERVADO':
-                    turnoActualizado = await this.turnoService.reservar(turnoId, responsableId);
+                    turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno.responsableId);
                     break;
                 case 'CANCELADO':
                     const rol = actualizacionesTurno.rol;
@@ -76,7 +76,8 @@ export class TurnoController{
                 data: resultado
             })
         } catch (error) {
-            next(error)
+            const { status, message } = toHttpError(error)
+            return res.status(status).json({ message })
         }
     }
 

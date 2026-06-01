@@ -1,7 +1,9 @@
+import { BadRequestError } from '../../errors/AppErrors.js'
+
 export class Servicio {
   constructor(tipoDeServicio, nombre, precio, duracionEnMinutos) {
     if (duracionEnMinutos < 0 || duracionEnMinutos > DURACION_MAXIMA) {
-      throw new Error(`La duración ${duracionEnMinutos} tiene que tener sentido`)
+      throw new BadRequestError(`La duración ${duracionEnMinutos} tiene que tener sentido`)
     }
 
     this.tipoServicio = tipoDeServicio;

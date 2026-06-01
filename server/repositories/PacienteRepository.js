@@ -1,5 +1,5 @@
 import {remove} from "lodash-es"
-import { BadRequestError } from "../errors/AppErrors.js";
+import { NotFoundError } from "../errors/AppErrors.js";
 
 export const PacienteRepository = {
   pacientes: [],
@@ -17,7 +17,7 @@ export const PacienteRepository = {
   obtenerPorId(id){
     const paciente = this.pacientes.find(p => p.id === id);
     if(!paciente){
-      throw new BadRequestError(`El paciente con id: ${id}, no existe`)
+      throw new NotFoundError(`El paciente con id: ${id}, no existe`)
     }
     return paciente;
   },

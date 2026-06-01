@@ -1,7 +1,7 @@
 import { MedicoRepository } from "../repositories/MedicoRepository.js";
 import { TurnoRepository } from "../repositories/TurnoRepository.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
-import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
+import { NotFoundError, UnprocessableEntityError } from "../errors/AppErrors.js";
 import { SedeRepository } from "../repositories/SedeRepository.js";
 import { ServicioRepository } from "../repositories/ServicioRepository.js";
 
@@ -23,8 +23,8 @@ export class MedicoService {
     const sede = this.sedeReposotory.obtenerPorNombre(sedeName)
     const servicio = this.servicioRepository.obtenerPorNombre(servicioName)
 
-    if (!medico.atiendeEn(sede)) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
-    if (!medico.ofrece(servicio)) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);
+    if (!medico.atiendeEn(sede)) throw new UnprocessableEntityError(`El médico no atiende en la sede '${sedeName}'`);
+    if (!medico.ofrece(servicio)) throw new UnprocessableEntityError(`El médico no ofrece el servicio '${servicioName}'`);
 
     const fechaBase = new Date(fecha);
     const fechaHoraInicio = new Date(fechaBase);

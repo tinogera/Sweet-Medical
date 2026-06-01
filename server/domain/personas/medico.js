@@ -101,4 +101,8 @@ export class Medico {
     this.servicios[index] = servicioPropio;
     return servicioPropio;
   }
+
+  recibirNotificacion(notificacion) {
+    this.usuario.recibirNotificacion(notificacion);
+  }
 }

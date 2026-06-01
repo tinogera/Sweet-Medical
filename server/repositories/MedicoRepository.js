@@ -1,4 +1,5 @@
 import { remove } from "lodash-es"
+import { NotFoundError } from "../errors/AppErrors.js"
 
 export const MedicoRepository = {
   medicos: [],
@@ -14,8 +15,15 @@ export const MedicoRepository = {
     return this.medicos;
   },
 
+  obtenerTodos() {
+    return this.medicos;
+  },
+
   obtenerPorId(id) {
     const medico = this.medicos.find(m => m.id === id)
+    if (!medico) {
+      throw new NotFoundError(`El médico con id: ${id}, no existe`)
+    }
     return medico;
   },
 

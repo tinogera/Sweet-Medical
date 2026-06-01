@@ -1,4 +1,5 @@
 import { remove } from "lodash-es";
+import { ConflictError, NotFoundError } from "../errors/AppErrors.js";
 
 export const SedeRepository = {
 	sedes: [],
@@ -11,7 +12,7 @@ export const SedeRepository = {
 				(s) => s.nombre.toLowerCase() === servicio.nombre.toLowerCase(),
 			)
 		) {
-			throw new BadRequestError(`El servicio ${servicio.nombre} ya existe.`);
+			throw new ConflictError(`El servicio ${servicio.nombre} ya existe.`);
 		}
 		this.sedes.push(servicio);
 		return servicio;
@@ -22,11 +23,15 @@ export const SedeRepository = {
 	},
 
 	obtenerPorNombre(nombre) {
-		const servicio = this.sedes.find(
+		const sede = this.sedes.find(
 			(s) => s.nombre.toLowerCase() === nombre.toLowerCase(),
 		);
 
-		return servicio;
+		if (!sede) {
+			throw new NotFoundError(`La sede ${nombre} no existe`);
+		}
+
+		return sede;
 	},
 
 	borrar(nombre) {

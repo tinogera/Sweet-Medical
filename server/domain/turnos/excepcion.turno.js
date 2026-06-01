@@ -11,8 +11,8 @@ export class TurnoNoPuedeCambiarEstado extends Error {
 }
 
 export class BloqueHorarioInexistente extends Error {
-  constructor(message) {
-    super(message);
+  constructor(bloqueId) {
+    super(`Bloque con id ${bloqueId} no encontrado en la agenda`);
   }
 }
 

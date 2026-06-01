@@ -1,5 +1,5 @@
 import {remove} from "lodash-es"
-import { BadRequestError } from "../errors/AppErrors.js"
+import { NotFoundError } from "../errors/AppErrors.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
 import { Estado } from "../domain/turnos/estadoTurno.js"
 
@@ -19,7 +19,7 @@ export const TurnoRepository = {
   obtenerPorId(id){
     const turno = this.turnos.find(t => t.id === id);
     if(!turno){
-      throw new BadRequestError(`El turno con id: ${id}, no existe`)
+      throw new NotFoundError(`El turno con id: ${id}, no existe`)
     }
     return turno;
   },
