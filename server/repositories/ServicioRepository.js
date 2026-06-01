@@ -12,28 +12,14 @@ export class ServicioRepository {
 
 	}
 
-	// listar() {
-	// 	return this.servicios;
-	// }
-
 	async findAll(){
 		return await this.model.find()
 	}
 
 
-	// obtenerPorNombre(nombre) {
-	// 	const servicio = this.servicios.find((s) => s.tieneNombre(nombre));
-	// 	return servicio;
-	// }
-
 	async findByName(nombre){
 		return await this.model.findOne({ nombre})
 	}
-
-	// borrar(nombre) {
-	// 	//saca el servicio con ese nombre
-	// 	remove(this.servicios, (s) => s.tieneNombre(nombre));
-	// }
 
 	async delete(id){
 		return await this.model.deleteOne({id})
