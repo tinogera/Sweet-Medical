@@ -136,7 +136,7 @@ class TurnoRepositoryImpl {
     return await this.model.findByIdAndUpdate(id, turnoModificado, { new: true });
   }
 
-  async reservarAtomicamente(id, paciente, nuevoEstado) {
+  async reservarTurnoDisponible(id, paciente, nuevoEstado) {
     return await this.model.findOneAndUpdate(
       { _id: id, paciente: null },
       { 

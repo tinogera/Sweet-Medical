@@ -32,7 +32,7 @@ export class TurnoService{
             motivo: "Turno reservado por el paciente"
         }
 
-        const turnoReservado = await this.turnoRepository.reservarAtomicamente(id, paciente, nuevoEstadoDoc)
+        const turnoReservado = await this.turnoRepository.reservarTurnoDisponible(id, paciente, nuevoEstadoDoc)
         if (!turnoReservado) {
             throw new ConflictError("El turno ya ha sido reservado por otro paciente en este instante.")
         }
