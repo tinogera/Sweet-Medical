@@ -10,7 +10,7 @@ export class MedicoService {
     medicoRepository = MedicoRepository,
     turnoRepository = TurnoRepository,
     sedeRepo = SedeRepository,
-    servicioRepo = ServicioRepository
+    servicioRepo = new ServicioRepository()
   } = {}) {
     this.medicoRepository = medicoRepository;
     this.turnoRepository = turnoRepository;
@@ -21,7 +21,7 @@ export class MedicoService {
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName, servicioName }) {
     const medico = this.medicoRepository.obtenerPorId(medicoId);
     const sede = this.sedeReposotory.obtenerPorNombre(sedeName)
-    const servicio = this.servicioRepository.obtenerPorNombre(servicioName)
+    const servicio = await this.servicioRepository.findByName(servicioName)
 
     if (!medico.atiendeEn(sede)) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
     if (!medico.ofrece(servicio)) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);

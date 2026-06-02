@@ -29,13 +29,13 @@ export function pacienteToDocument(paciente) {
   };
 }
 
-export function pacienteFromDocument(doc) {
+export async function pacienteFromDocument(doc) {
   const obj = doc.toObject ? doc.toObject({ versionKey: false }) : doc;
 
   const obraSocial = new ObraSocial(obj.obraSocial.nombre);
   // El mismo Plan se usa en la obra social y en el Paciente: el constructor de
   // Paciente valida obraSocial.ofrece(plan) por identidad (===).
-  const plan = planFromEmbedded(obj.plan);
+  const plan = await planFromEmbedded(obj.plan);
   obraSocial.agregarPlan(plan);
 
   const usuario = usuarioFromRef(obj.usuarioId);
@@ -53,14 +53,15 @@ export function pacienteFromDocument(doc) {
   return paciente;
 }
 
-function planFromEmbedded(planDoc) {
+async function planFromEmbedded(planDoc) {
+  const servicioRepository = new ServicioRepository();
   const plan = new Plan(planDoc.tipo);
   for (const coberturaDoc of planDoc.coberturaPorServicio ?? []) {
-    // Re-vincula el Servicio al que vive en ServicioRepository para que
-    // Plan.precioDe / coberturaDe (comparan con ===) funcionen contra el
-    // Servicio vivo del turno. Si no existe, crea uno nuevo (fallback).
+    // Re-vincula el Servicio al que vive persistido en Mongo (vía
+    // ServicioRepository) por nombre. Si no existe, crea uno nuevo desde los
+    // datos embebidos (fallback).
     const servicio =
-      ServicioRepository.obtenerPorNombre(coberturaDoc.servicio.nombre) ??
+      (await servicioRepository.findByName(coberturaDoc.servicio.nombre)) ??
       new Servicio(
         coberturaDoc.servicio.tipoServicio,
         coberturaDoc.servicio.nombre,

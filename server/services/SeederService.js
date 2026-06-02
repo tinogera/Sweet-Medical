@@ -17,11 +17,13 @@ import { SedeRepository } from "../repositories/SedeRepository.js"
 
 export class SeederService {
   async seed() {
+    const servicioRepository = new ServicioRepository()
+
     // 0. Limpiar repositorios para evitar duplicados si se llama varias veces
     await pacienteRepository.limpiar()
     TurnoRepository.turnos = []
     MedicoRepository.medicos = []
-    ServicioRepository.servicios = []
+    await servicioRepository.deleteAll()
     SedeRepository.sedes = []
 
     // 1. Crear Ubicación y Sedes
@@ -39,10 +41,10 @@ export class SeederService {
     const pediatria = new Servicio(TipoServicio.ESPECIALIDAD, "Pediatría", 2000, 30)
     const radiografia = new Servicio(TipoServicio.PRACTICA, "Radiografía de Tórax", 5000, 15)
     const ecografia = new Servicio(TipoServicio.PRACTICA, "Ecografía Abdominal", 7000, 30)
-    ServicioRepository.agregar(cardiologia)
-    ServicioRepository.agregar(pediatria)
-    ServicioRepository.agregar(radiografia)
-    ServicioRepository.agregar(ecografia)
+    await servicioRepository.save(cardiologia)
+    await servicioRepository.save(pediatria)
+    await servicioRepository.save(radiografia)
+    await servicioRepository.save(ecografia)
 
     // 3. Crear Obra Social y Planes
     const osde = new ObraSocial("OSDE")

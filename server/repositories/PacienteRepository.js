@@ -20,7 +20,7 @@ class PacienteRepository {
 
   async listar() {
     const docs = await PacienteModel.find().sort({ id: 1 }).conUsuario();
-    return docs.map((doc) => pacienteFromDocument(doc));
+    return Promise.all(docs.map((doc) => pacienteFromDocument(doc)));
   }
 
   async obtenerPorId(id) {

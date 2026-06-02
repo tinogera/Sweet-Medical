@@ -1,30 +1,36 @@
 import { remove } from "lodash-es";
-import { BadRequestError } from "../errors/AppErrors.js";
+import { ServicioModel } from "../schemas/servicioSchema.js";
 
-export const ServicioRepository = {
-	servicios: [],
+export class ServicioRepository {
+	constructor() {
+		this.model = ServicioModel;
+	}
 
-	agregar(servicio) {
-		//miro que no haya repetido por poner nombre con minuscula y otro en mayud
-		//si encuentra alguno el find es true
-		if (this.servicios.find((s) => s.tieneNombre(servicio.nombre))) {
-			throw new BadRequestError(`El servicio ${servicio.nombre} ya existe.`);
-		}
-		this.servicios.push(servicio);
-		return servicio;
-	},
+	async save(servicio){
+		const newServicio = new this.model(servicio)
+		return await newServicio.save()
 
-	listar() {
-		return this.servicios;
-	},
+	}
 
-	obtenerPorNombre(nombre) {
-		const servicio = this.servicios.find((s) => s.tieneNombre(nombre));
-		return servicio;
-	},
+	async findAll(){
+		return await this.model.find()
+	}
 
-	borrar(nombre) {
-		//saca el servicio con ese nombre
-		remove(this.servicios, (s) => s.tieneNombre(nombre));
-	},
-};
+	async deleteAll(){
+		return await this.model.deleteMany({})
+	}
+
+
+	async findByName(nombre){
+		return await this.model.findOne({ nombre})
+	}
+
+	async delete(id){
+		return await this.model.deleteOne({id})
+	}
+
+
+	async update(id, servicioModificado){
+		return await this.model.findByIdAndUpdate(id, servicioModificado, {new: true})
+	}
+}
