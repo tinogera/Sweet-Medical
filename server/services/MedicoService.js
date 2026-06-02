@@ -40,7 +40,7 @@ export class MedicoService {
 
     const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
-      this.turnoRepository.agregarTurno(t);
+      await this.turnoRepository.agregarTurno(t);
     }
 
     this.medicoRepository.guardarMedico(medico.id, medico);
@@ -54,7 +54,7 @@ export class MedicoService {
     const bloqueHorario = medico.agenda.find(b => b.id === bloqueId);
     if (!bloqueHorario) throw new NotFoundError(`No existe un bloque con id ${bloqueId} en la agenda del médico`);
 
-    this.turnoRepository.borrarDisponiblesFuturos(medico.id, bloqueHorario);
+    await this.turnoRepository.borrarDisponiblesFuturos(medico.id, bloqueHorario);
     medico.eliminarBloque(bloqueId);
     this.medicoRepository.guardarMedico(medico.id, medico);
   }

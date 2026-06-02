@@ -14,14 +14,15 @@ import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { MedicoRepository } from "../repositories/MedicoRepository.js"
 import { ServicioRepository } from "../repositories/ServicioRepository.js"
 import { SedeRepository } from "../repositories/SedeRepository.js"
+import { TurnoModel } from "../schemas/turno.schema.js"
 
 export class SeederService {
   async seed() {
     const servicioRepository = new ServicioRepository()
 
     // 0. Limpiar repositorios para evitar duplicados si se llama varias veces
-    await pacienteRepository.limpiar()
-    TurnoRepository.turnos = []
+    PacienteRepository.pacientes = []
+    await TurnoModel.deleteMany({})
     MedicoRepository.medicos = []
     await servicioRepository.deleteAll()
     SedeRepository.sedes = []
@@ -113,12 +114,12 @@ export class SeederService {
     const turno5 = new Turno(fecha2, medicoGomez, radiografia, sedeBelgrano)
     const turno6 = new Turno(fecha3, medicoGomez, cardiologia, sedePalermo)
 
-    TurnoRepository.agregarTurno(turno1)
-    TurnoRepository.agregarTurno(turno2)
-    TurnoRepository.agregarTurno(turno3)
-    TurnoRepository.agregarTurno(turno4)
-    TurnoRepository.agregarTurno(turno5)
-    TurnoRepository.agregarTurno(turno6)
+    await TurnoRepository.agregarTurno(turno1)
+    await TurnoRepository.agregarTurno(turno2)
+    await TurnoRepository.agregarTurno(turno3)
+    await TurnoRepository.agregarTurno(turno4)
+    await TurnoRepository.agregarTurno(turno5)
+    await TurnoRepository.agregarTurno(turno6)
 
     // Paciente Juan, Ana. Medico Gomez, Lopez. 
     const notificaciones = [
@@ -144,7 +145,7 @@ export class SeederService {
 
         // Los agregamos al repositorio de turnos
         for (const turno of todosLosTurnosLibres) { 
-                TurnoRepository.agregarTurno(turno);
+                await TurnoRepository.agregarTurno(turno);
         }
     
     console.log("Seeding completado: 2 pacientes, 2 médicos, 3 turnos cargados.")

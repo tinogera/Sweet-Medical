@@ -19,7 +19,7 @@ export class BusquedaTurnoService {
 
         const paciente = await pacienteRepository.obtenerPorId(idPaciente)
 
-        const { turnos, totalTurnos } = TurnoRepository.obtenerDisponiblesPaginados(
+        const { turnos, totalTurnos } = await TurnoRepository.obtenerDisponiblesPaginados(
             numeroPagina,
             limitePorPagina,
             filtros,
