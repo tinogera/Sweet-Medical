@@ -1,5 +1,5 @@
 export class BloqueHorario {
-  constructor(fechaHoraInicio, fechaHoraFin, sede, servicio) {
+  constructor(fechaHoraInicio, fechaHoraFin, sede) {
     this.id = null
     this.horaInicio = fechaHoraInicio
     this.horaFin = fechaHoraFin

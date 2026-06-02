@@ -1,46 +1,7 @@
 import { remove } from "lodash-es"
 import { MedicoModel } from "../schemas/medicoSchema.js";
-
-/*
-export const MedicoRepository = {
-  medicos: [],
-  bloqueIdCounter: 0,
-
-  agregarMedico(medico) {
-    medico.id = this.obtenerSiguienteId()
-    this.medicos.push(medico);
-    return medico
-  },
-
-  listar() {
-    return this.medicos;
-  },
-
-  obtenerPorId(id) {
-    const medico = this.medicos.find(m => m.id === id)
-    return medico;
-  },
-
-  guardarMedico(id, medicoActualizado) {
-    remove(this.medicos, m => m.id === id)
-    this.medicos.push(medicoActualizado);
-    return medicoActualizado;
-  },
-
-  borrar(id) {
-    remove(this.medicos, m => m.id === id);
-  },
-
-  obtenerSiguienteId() {//TODO en una DB real no es necesario
-    return (this.medicos[this.medicos.length - 1]?.id || 0) + 1;
-  },
-
-  obtenerSiguienteIdBloque() {
-    this.bloqueIdCounter += 1;
-    return this.bloqueIdCounter;
-  }
-}
-*/
+import { medicoToDocument } from "./medicoMapper.js";
+import { UsuarioModel } from "../schemas/usuario.schema.js";
 
 export class MedicoRepository {
   constructor() {
@@ -48,20 +9,34 @@ export class MedicoRepository {
   }
 
   async findAll() {
-    return await this.model.find()
+    return await this.model.find().populate('servicios sedes usuario agenda.sede')
   }
 
   async findById(id) {
-    return await this.model.findById(id)
+    return await this.model.findById(id).populate('servicios sedes usuario agenda.sede')
   }
 
   async save(medico) {
-    const medicoNuevo = new this.model(medico)
-    return await medicoNuevo.save()
+    // 1. Crear el usuario para el médico si no existe
+    if (medico.usuario && !medico.usuario.id) {
+      const usuarioDoc = await UsuarioModel.create({
+        nombre: `${medico.nombre} ${medico.apellido}`,
+        notificaciones: []
+      });
+      medico.usuario.id = usuarioDoc._id.toString();
+    }
+
+    // 2. Mapear y guardar
+    const medicoNuevo = new this.model(medicoToDocument(medico))
+    const savedDoc = await medicoNuevo.save()
+    
+    // Devolvemos el _id al objeto de dominio por si se necesita
+    medico._id = savedDoc._id
+    return savedDoc
   }
 
   async update(id, medicoModificado) {
-    return await this.model.findByIdAndUpdate(id, medicoModificado, {new: true})
+    return await this.model.findByIdAndUpdate(id, medicoToDocument(medicoModificado), {new: true})
   }
 
   async delete(id) {
@@ -71,4 +46,10 @@ export class MedicoRepository {
   async count() {
     return await this.model.countDocuments()
   }
+
+  async deleteAll() {
+    return await this.model.deleteMany({})
+  }
 }
+
+export const medicoRepository = new MedicoRepository()

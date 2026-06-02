@@ -17,12 +17,7 @@ export function pacienteToDocument(paciente) {
     plan: {
       tipo: paciente.plan.tipo,
       coberturaPorServicio: paciente.plan.coberturaPorServicio.map((c) => ({
-        servicio: {
-          tipoServicio: c.servicio.tipoServicio,
-          nombre: c.servicio.nombre,
-          precio: c.servicio.precio,
-          duracion: c.servicio.duracion,
-        },
+        servicio: c.servicio._id || c.servicio.id || c.servicio,
         porcentaje: c.porcentaje,
       })),
     },

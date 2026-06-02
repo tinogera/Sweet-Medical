@@ -22,3 +22,5 @@ export class SedeRepository {
 		return await this.model.deleteOne({ nombre })
 	}
 }
+
+export const sedeRepository = new SedeRepository()

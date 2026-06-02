@@ -122,18 +122,23 @@ export const TurnoRepository = {
 }
   */
 
+import { TurnoModel } from "../schemas/turno.schema.js";
+import { turnoToDocument } from "./turnoMapper.js";
+import { TipoServicio } from "../domain/servicios/servicio.js";
+import { Estado } from "../domain/turnos/estadoTurno.js";
+
 class TurnoRepositoryImpl {
   constructor() {
     this.model = TurnoModel;
   }
 
   async agregarTurno(turno) {
-    const nuevoDoc = new this.model(turno);
+    const nuevoDoc = new this.model(turnoToDocument(turno));
     return await nuevoDoc.save();
   }
 
   async guardarturno(id, turnoModificado) {
-    return await this.model.findByIdAndUpdate(id, turnoModificado, { new: true });
+    return await this.model.findByIdAndUpdate(id, turnoToDocument(turnoModificado), { new: true });
   }
 
   async reservarTurnoDisponible(id, paciente, nuevoEstado) {
@@ -152,99 +157,99 @@ class TurnoRepositoryImpl {
   }
 
   async listar() {
-    return await this.model.find();  }
-
-  async obtenerPorId(id) {
-    return await this.model.findById(id);
+    return await this.model.find()
+      .populate({
+        path: 'medico',
+        populate: { path: 'servicios' }
+      })
+      .populate('sede servicio');
   }
 
-  async obtenerSiguienteId() {
-    const ultimo = await this.model.findOne().sort({ _id: -1 });
-    return (ultimo?._id || 0) + 1;
+  async obtenerPorId(id) {
+    return await this.model.findById(id)
+      .populate({
+        path: 'medico',
+        populate: { path: 'servicios' }
+      })
+      .populate('sede servicio');
   }
 
   async borrarDisponiblesFuturos(medicoId, bloqueHorario) {
-    const turnos = await this.encontrarTodos();
     const now = new Date();
+    // Buscamos directamente en la DB los candidatos a borrar
+    const turnos = await this.model.find({
+      medico: medicoId,
+      fechaHora: { $gte: now }
+    }).populate('sede');
 
     const aEliminar = turnos.filter(t =>
-      (t.medico?.id === medicoId || t.medico === medicoId) &&
       t.sede.nombre === bloqueHorario.sede.nombre &&
-      t.servicio.nombre === bloqueHorario.servicio.nombre &&
-      t.fechaHora >= now &&
       t.fechaHora >= bloqueHorario.horaInicio &&
       t.fechaHora < bloqueHorario.horaFin &&
       t.estadoActual().estado === Estado.DISPONIBLE
     );
 
     for (const t of aEliminar) {
-      await this.borrar(t._id);
+      await this.model.findByIdAndDelete(t._id);
     }
   }
 
   async obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
-    let turnos = await this.encontrarTodos();
+    let query = { 
+      paciente: { $eq: null } // Asegura que no tenga paciente asignado
+    };
 
-    turnos = turnos.filter(t => t.estadoActual().estado === Estado.DISPONIBLE);
-
-    if (filtros.profesional) {
-      turnos = turnos.filter(t => t.medico?.id === filtros.profesional || t.medico === filtros.profesional);
+    if (filtros.profesional) query.medico = filtros.profesional;
+    if (filtros.fechaDesde) query.fechaHora = { $gte: filtros.fechaDesde };
+    if (filtros.fechaHasta) {
+      query.fechaHora = { ...query.fechaHora, $lte: filtros.fechaHasta };
     }
 
+    // Traemos médicos con sus servicios Y el servicio del turno
+    let turnos = await this.model.find(query)
+      .populate({
+        path: 'medico',
+        populate: { path: 'servicios' }
+      })
+      .populate('sede servicio');
+
+    turnos = turnos.filter(t => t.estaDisponible());
+
     if (filtros.especialidad) {
-      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.ESPECIALIDAD && t.servicio.nombre.toLowerCase().includes(filtros.especialidad.toLowerCase()));
+      turnos = turnos.filter(t => 
+        t.medico?.servicios?.some(s => 
+          s.tipoServicio === TipoServicio.ESPECIALIDAD && 
+          s.nombre.toLowerCase().includes(filtros.especialidad.toLowerCase())
+        )
+      );
     }
 
     if (filtros.practica) {
-      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.PRACTICA && t.servicio.nombre.toLowerCase().includes(filtros.practica.toLowerCase()));
+      turnos = turnos.filter(t => 
+        t.medico?.servicios?.some(s => 
+          s.tipoServicio === TipoServicio.PRACTICA && 
+          s.nombre.toLowerCase().includes(filtros.practica.toLowerCase())
+        )
+      );
     }
+if (filtros.sede) {
+  turnos = turnos.filter(t => t.sede.nombre.toLowerCase().includes(filtros.sede.toLowerCase()));
+}
 
-    if (filtros.sede) {
-      turnos = turnos.filter(t => t.sede.nombre.toLowerCase().includes(filtros.sede.toLowerCase()));
-    }
+return {
+  turnos, // Devolvemos todos para que el service los expanda y pagine
+  totalTurnos: turnos.length
+};
+}
 
-    if (filtros.fechaDesde) {
-      turnos = turnos.filter(t => t.fechaHora.getTime() >= filtros.fechaDesde.getTime());
-    }
-
-    if (filtros.fechaHasta) {
-      turnos = turnos.filter(t => t.fechaHora.getTime() <= filtros.fechaHasta.getTime());
-    }
-
-    // Ordenamiento
-    turnos.sort((a, b) => {
-      let valorA, valorB;
-
-      if (ordenarPor === 'fecha') {
-        valorA = a.fechaHora.getTime();
-        valorB = b.fechaHora.getTime();
-      } else if (ordenarPor === 'costo') {
-        valorA = paciente.plan.precioDe(a.servicio);
-        valorB = paciente.plan.precioDe(b.servicio);
-      }
-
-      return direccion === 'asc' ? valorA - valorB : valorB - valorA;
-    });
-
-    const inicio = (numeroPagina - 1) * limitePorPagina;
-    const fin = inicio + limitePorPagina;
-
-    return {
-      turnos: turnos.slice(inicio, fin),
-      totalTurnos: turnos.length
-    };
-  }
 
   async obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
-    const turnos = await this.encontrarTodos();
-    const turnosDelPaciente = turnos.filter(t => t.paciente && (t.paciente.id === pacienteId || t.paciente === pacienteId));
-
+    const turnos = await this.model.find({ paciente: pacienteId }).populate('medico sede servicio');
+    
     const inicio = (numeroPagina - 1) * limitePorPagina;
-    const fin = inicio + limitePorPagina;
-
     return {
-      turnos: turnosDelPaciente.slice(inicio, fin),
-      totalTurnos: turnosDelPaciente.length
+      turnos: turnos.slice(inicio, inicio + limitePorPagina),
+      totalTurnos: turnos.length
     };
   }
 }

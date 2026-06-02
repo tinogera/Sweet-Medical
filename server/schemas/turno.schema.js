@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Estado } from "../domain/turnos/estadoTurno.js";
+import { Estado, EstadoTurno } from "../domain/turnos/estadoTurno.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { MedicoModel } from "./medicoSchema.js";
 import { PacienteModel } from "./paciente.schema.js";
@@ -24,6 +24,8 @@ const EstadoTurnoSchema = new mongoose.Schema({
   _id: false,
   versionKey: false
 });
+
+EstadoTurnoSchema.loadClass(EstadoTurno);
 
 const TurnoSchema = new mongoose.Schema({
   fechaHora: {

@@ -6,7 +6,7 @@ export async function connectToDB(dbConnectionString, dbName) {
     try {
       await mongoose.connect(`${dbConnectionString}/${dbName}`)
       console.log('Se conecto a la base de datos con éxito.')
-      
+      break;
     } catch (err) {
       console.warn(`Intento ${i + 1}: La conexion a MongoDB falló, reintentando...`);
       console.error("Error:", err.message);
