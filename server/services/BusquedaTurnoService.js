@@ -1,5 +1,5 @@
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
-import { PacienteRepository } from "../repositories/PacienteRepository.js"
+import { pacienteRepository } from "../repositories/PacienteRepository.js"
 import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
@@ -17,7 +17,7 @@ export class BusquedaTurnoService {
         this.validarPaginacion(numeroPagina, limitePorPagina)
         this.ajustarYValidarFiltros(filtros, ahora)
 
-        const paciente = PacienteRepository.obtenerPorId(idPaciente)
+        const paciente = await pacienteRepository.obtenerPorId(idPaciente)
 
         const { turnos, totalTurnos } = TurnoRepository.obtenerDisponiblesPaginados(
             numeroPagina,

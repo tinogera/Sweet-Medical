@@ -1,7 +1,7 @@
 import { Usuario } from "../notificaciones/usuario.js";
 
 export class Paciente {
-  constructor(nombre, apellido, documento, obraSocial, plan) {
+  constructor(nombre, apellido, documento, obraSocial, plan,usuario=new Usuario({ nombre: `${nombre} ${apellido}` })){
     if (!obraSocial.ofrece(plan)) { throw new Error(`La obra social ${obraSocial.nombre} no tiene un plan ${plan.tipo}`) }
 
     this.nombre = nombre;
@@ -10,7 +10,11 @@ export class Paciente {
 
     this.obraSocial = obraSocial;
     this.plan = plan;
-    this.usuario = new Usuario();
+    this.usuario = usuario
+  }
+
+  recibirNotificacion(notificacion){
+    this.usuario.recibirNotificacion(notificacion);
   }
 }
 

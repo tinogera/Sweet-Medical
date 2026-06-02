@@ -9,7 +9,7 @@ import { Cobertura } from "../domain/obrasSociales/cobertura.js"
 import { Ubicacion } from "../domain/sedes/ubicacion.js"
 import { Notificacion } from "../domain/notificaciones/notificacion.js"
 
-import { PacienteRepository } from "../repositories/PacienteRepository.js"
+import { pacienteRepository } from "../repositories/PacienteRepository.js"
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { MedicoRepository } from "../repositories/MedicoRepository.js"
 import { ServicioRepository } from "../repositories/ServicioRepository.js"
@@ -18,7 +18,7 @@ import { SedeRepository } from "../repositories/SedeRepository.js"
 export class SeederService {
   async seed() {
     // 0. Limpiar repositorios para evitar duplicados si se llama varias veces
-    PacienteRepository.pacientes = []
+    await pacienteRepository.limpiar()
     TurnoRepository.turnos = []
     MedicoRepository.medicos = []
     ServicioRepository.servicios = []
@@ -60,8 +60,8 @@ export class SeederService {
     const pacienteJuan = new Paciente("Juan", "Perez", "12345678", osde, plan210)
     const pacienteAna = new Paciente("Ana", "Gomez", "87654321", osde, plan410)
 
-    PacienteRepository.agregarPaciente(pacienteJuan) // ID 1
-    PacienteRepository.agregarPaciente(pacienteAna)  // ID 2
+    await pacienteRepository.agregarPaciente(pacienteJuan) // ID 1
+    await pacienteRepository.agregarPaciente(pacienteAna)  // ID 2
 
     // 5. Crear Médicos
     const medicoGomez = new Medico("Carlos", "Gomez", "12344444")
@@ -129,9 +129,12 @@ export class SeederService {
     let NOTIFICACIONES_ID = 1
     for (const n of notificaciones){ n.id = NOTIFICACIONES_ID++}
     const personas = [pacienteJuan, pacienteAna, medicoGomez, medicoLopez]
-    personas.forEach((persona, i) => {
+    for (const [i, persona] of personas.entries()) {
       persona.recibirNotificacion(notificaciones[i])
-    })
+      if (persona instanceof Paciente) {
+        await pacienteRepository.guardarUsuario(persona)
+      }
+    }
     
     const todosLosTurnosLibres = MedicoRepository.medicos.flatMap(medico =>
             medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
