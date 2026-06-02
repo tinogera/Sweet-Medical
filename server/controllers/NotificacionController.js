@@ -15,7 +15,7 @@ class NotificacionController {
   }
 
   async verNotificacion(req, res, next) {
-    const idNotificacion = Number(req.params.idNotificacion)
+    const idNotificacion = req.params.idNotificacion
     const idUser = req.params.idUser
 
     try {

@@ -1,4 +1,4 @@
-import { NotFoundError } from "../errors/AppErrors.js";
+import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
 import { PacienteModel } from "../schemas/paciente.schema.js";
 import { UsuarioModel } from "../schemas/usuario.schema.js";
 import { pacienteFromDocument, pacienteToDocument } from "./pacienteMapper.js";
@@ -24,11 +24,18 @@ class PacienteRepository {
   }
 
   async obtenerPorId(id) {
-    const doc = await PacienteModel.findById(id).conUsuario();
-    if (!doc) {
-      throw new NotFoundError(`El paciente con id: ${id}, no existe`);
+    try {
+      const doc = await PacienteModel.findById(id).conUsuario();
+      if (!doc) {
+        throw new NotFoundError(`El paciente con id: ${id}, no existe`);
+      }
+      return pacienteFromDocument(doc);
+    } catch (err) {
+      if (err.name === 'CastError') {
+        throw new BadRequestError(`El id proporcionado no es válido: ${id}`);
+      }
+      throw err;
     }
-    return pacienteFromDocument(doc);
   }
 
   async agregarPaciente(paciente) {

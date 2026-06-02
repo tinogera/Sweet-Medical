@@ -11,8 +11,8 @@ export class PacienteController{
 
     async listarTurnos(req, res, next){
         try{
-            const pacienteId = Number(req.params.id)
-            this.validarEnteroPositivo(pacienteId)
+            const pacienteId = req.params.id
+            if (!pacienteId) throw new BadRequestError("El id del paciente es requerido")
             const paginacion = this.extraerPaginacion(req.query)
 
             const resultado = await this.pacienteService.listarTurnos(pacienteId, paginacion)

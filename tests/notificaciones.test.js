@@ -26,8 +26,8 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
-          new Notificacion({ id: 1, mensaje: "Noti 2", visto: true }),
+          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: "1", mensaje: "Noti 2", visto: true }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);
@@ -36,7 +36,7 @@ describe("Notificaciones Endpoints", () => {
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(2);
       expect(res.body[0]).toEqual({
-        id: 0,
+        id: "0",
         mensaje: "Noti 1",
         fecha: expect.any(String),
         visto: false,
@@ -48,8 +48,8 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
-          new Notificacion({ id: 1, mensaje: "Noti 2", visto: true }),
+          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: "1", mensaje: "Noti 2", visto: true }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);
@@ -76,7 +76,7 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);

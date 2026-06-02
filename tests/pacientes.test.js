@@ -67,10 +67,10 @@ describe("Paciente Endpoints", () => {
       });
     });
 
-    it("debería retornar 400 si el id del paciente no es un entero positivo (escenario de error)", async () => {
+    it("debería retornar 400 si el id del paciente no es un ObjectId válido (escenario de error)", async () => {
       const res = await request(app).get("/pacientes/abc/turnos");
       expect(res.status).toBe(400);
-      expect(res.body.message).toContain("El parámetro debe ser un entero positivo");
+      expect(res.body.message).toContain("no es válido");
     });
 
     it("debería retornar 404 si el paciente no existe (escenario de error)", async () => {
