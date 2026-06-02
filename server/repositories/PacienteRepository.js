@@ -19,12 +19,12 @@ class PacienteRepository {
   
 
   async listar() {
-    const docs = await PacienteModel.find().sort({ id: 1 }).conUsuario();
+    const docs = await PacienteModel.find().conUsuario();
     return Promise.all(docs.map((doc) => pacienteFromDocument(doc)));
   }
 
   async obtenerPorId(id) {
-    const doc = await PacienteModel.findOne({ id: Number(id) }).conUsuario();
+    const doc = await PacienteModel.findById(id).conUsuario();
     if (!doc) {
       throw new NotFoundError(`El paciente con id: ${id}, no existe`);
     }
@@ -38,19 +38,19 @@ class PacienteRepository {
     });
 
     paciente.usuario.id = usuarioDoc._id.toString();
-    paciente.id = await this.#obtenerSiguienteId();
 
-    await PacienteModel.create({
+    const nuevoDoc = await PacienteModel.create({
       ...pacienteToDocument(paciente),
       usuarioId: usuarioDoc._id,
     });
 
+    paciente.id = nuevoDoc._id.toString();
     return paciente;
   }
 
   async guardarPaciente(id, pacienteActualizado) {
-    const doc = await PacienteModel.findOneAndUpdate(
-      { id: Number(id) },
+    const doc = await PacienteModel.findByIdAndUpdate(
+      id,
       pacienteToDocument(pacienteActualizado),
       { new: true },
     ).conUsuario();
@@ -62,7 +62,7 @@ class PacienteRepository {
   }
 
   async borrar(id) {
-    const doc = await PacienteModel.findOneAndDelete({ id: Number(id) });
+    const doc = await PacienteModel.findByIdAndDelete(id);
     if (doc?.usuarioId) {
       await UsuarioModel.findByIdAndDelete(doc.usuarioId);
     }
@@ -71,14 +71,6 @@ class PacienteRepository {
   async guardarUsuario(paciente) {
     if (!paciente.usuario?.id) return;
     await usuarioRepository.save(paciente.usuario);
-  }
-
-  async #obtenerSiguienteId() {
-    const ultimo = await PacienteModel.findOne()
-      .sort({ id: -1 })
-      .select("id")
-      .lean();
-    return (ultimo?.id || 0) + 1;
   }
 }
 

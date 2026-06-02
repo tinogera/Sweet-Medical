@@ -1,8 +1,8 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 import { Usuario } from "../domain/notificaciones/usuario.js";
 import { Notificacion } from "../domain/notificaciones/notificacion.js";
 
-const NotificacionSchema = new Schema({
+const NotificacionSchema = new mongoose.Schema({
   id: Number,
   destinatario: String,
   mensaje: {
@@ -23,7 +23,7 @@ const NotificacionSchema = new Schema({
   versionKey: false,
 })
 
-const UsuarioSchema = new Schema({
+const UsuarioSchema = new mongoose.Schema({
   nombre: String,
   notificaciones: [NotificacionSchema]
 }, {
@@ -33,4 +33,4 @@ const UsuarioSchema = new Schema({
 UsuarioSchema.loadClass(Usuario)
 NotificacionSchema.loadClass(Notificacion)
 
-export const UsuarioModel = model('Usuario', UsuarioSchema)
+export const UsuarioModel = mongoose.model('Usuario', UsuarioSchema)

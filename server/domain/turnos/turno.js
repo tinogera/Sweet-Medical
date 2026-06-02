@@ -28,7 +28,7 @@ export class Turno {
     }
 
     if (!this.medico.ofrece(servicio)) {
-      throw new TurnoInvalido(`El médico ${medico.nombre} NO ofrece el servicio de ${servicio.nombre}.`)
+      throw new TurnoInvalido(`El médico ${this.medico.nombre} NO ofrece el servicio de ${servicio.nombre}.`)
     }
 
     this.paciente = paciente;
@@ -72,16 +72,17 @@ export class Turno {
   }
 
   estaDisponible() {
-    return this.estadoActual().estaDisponible();
+    const actual = this.estadoActual();
+    return actual.estaDisponible ? actual.estaDisponible() : actual.estado === Estado.DISPONIBLE;
   }
 
   estadoActual() {
-    const LAST = -1
-    return this.estadosTurno.at(LAST);
+    return this.estadosTurno.at(-1);
   }
 
   estaReservado() {
-    return this.estadoActual().estaReservado();
+    const actual = this.estadoActual();
+    return actual.estaReservado ? actual.estaReservado() : actual.estado === Estado.RESERVADO;
   }
 
   marcarRealizado() {

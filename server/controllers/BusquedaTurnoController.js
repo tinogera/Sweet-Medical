@@ -11,8 +11,10 @@ export class BusquedaTurnoController {
             const paginacion = this.extraerPaginacion(req.query)
             const filtros = this.extraerFiltros(req.query)
             const ordenamiento = this.extraerOrdenamiento(req.query)
-            const idPaciente = Number(req.query.idPaciente)
-            this.validarEnteroPositivo(idPaciente, "idPaciente")
+            const idPaciente = String(req.query.idPaciente)
+            if (!idPaciente || idPaciente.trim() === "") {
+                throw new BadRequestError("El ID del paciente debe ser válido")
+            }
 
             const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros, ...ordenamiento } )
 
@@ -52,9 +54,9 @@ export class BusquedaTurnoController {
         const filtros = {}
 
         if (query.profesional !== undefined) {
-            const profesional = Number(query.profesional)
-            if (!Number.isFinite(profesional)) {
-                throw new BadRequestError("El profesional debe ser un ID con número válido")
+            const profesional = String(query.profesional)
+            if (profesional.trim() === "") {
+                throw new BadRequestError("El ID del profesional debe ser válido")
             }
             filtros.profesional = profesional
         }

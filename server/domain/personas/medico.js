@@ -43,7 +43,12 @@ export class Medico {
   }
 
   ofrece(servicio) {
-    return this.servicios.some(s => s.nombre === servicio.nombre)
+    if (!servicio) return false;
+    const nombreBusqueda = servicio.nombre?.toLowerCase();
+    return this.servicios.some(s => {
+      const nombreServicio = s.nombre || s.servicio?.nombre;
+      return nombreServicio?.toLowerCase() === nombreBusqueda;
+    });
   }
 
   dejarDeOfrecer(servicio) {
@@ -69,9 +74,9 @@ export class Medico {
     }
   }
 
-  agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio) {
-    if (!this.atiendeEn(sede) || !this.ofrece(servicio)) {
-      throw new DisponibilidadInvalida(`El médico [${this.id}] NO atiende en [${sede.nombre}] o NO ofrece [${servicio.nombre}] como servicio.`)
+  agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede) {
+    if (!this.atiendeEn(sede)) {
+      throw new DisponibilidadInvalida(`El médico [${this.id}] NO atiende en [${sede.nombre}].`)
     }
     if (fechaHoraInicio >= fechaHoraFin) {
       throw new DisponibilidadInvalida("La hora de inicio debe ser anterior a la hora de fin")
@@ -80,7 +85,7 @@ export class Medico {
       throw new DisponibilidadInvalida("No se puede agregar disponibilidad para fechas pasadas")
     }
 
-    const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
+    const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede);
     this.agenda.push(nuevoBloqueHorario);
 
     return nuevoBloqueHorario;
