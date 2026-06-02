@@ -1,11 +1,11 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 import { Estado } from "../domain/turnos/estadoTurno.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { MedicoModel } from "./medicoSchema.js";
-import { PacienteModel } from "./paciente.shema.js";
+import { PacienteModel } from "./paciente.schema.js";
 import { Turno } from "../domain/turnos/turno.js";
 
-const EstadoTurnoSchema = new Schema({
+const EstadoTurnoSchema = new mongoose.Schema({
   estado: {
     type: String,
     enum: Object.values(Estado),
@@ -25,7 +25,7 @@ const EstadoTurnoSchema = new Schema({
   versionKey: false
 });
 
-const TurnoSchema = new Schema({
+const TurnoSchema = new mongoose.Schema({
   fechaHora: {
     type: Date,
     required: true
@@ -37,18 +37,16 @@ const TurnoSchema = new Schema({
   },
   paciente: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Paciente',
-    required: true
+    ref: 'Paciente'
   },
-  sede: [{
+  sede: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Sede',
     required: true
-  }],
+  },
   servicio: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Servicio',
-    required: true
+    ref: 'Servicio'
   },
   estadosTurno: {
     type: [EstadoTurnoSchema],
@@ -60,4 +58,4 @@ const TurnoSchema = new Schema({
 
 TurnoSchema.loadClass(Turno);
 
-export const TurnoModel = model('Turno', TurnoSchema);
+export const TurnoModel = mongoose.model('Turno', TurnoSchema);
