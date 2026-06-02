@@ -65,7 +65,7 @@ export class TurnoService{
 
         // Guardamos todos los turnos generados en el repositorio general
         for (const turno of todosLosTurnosNuevos) {
-            this.turnoRepository.agregarTurno(turno)
+            await this.turnoRepository.agregarTurno(turno)
         }
 
         return todosLosTurnosNuevos.length
