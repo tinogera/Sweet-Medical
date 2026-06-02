@@ -5,7 +5,7 @@ import { NotFoundError } from "../errors/AppErrors.js";
 
 export class GestionServiciosService {
 	constructor({
-		medicoRepository = MedicoRepository,
+		medicoRepository = new MedicoRepository(),
 		servicioRepository = new ServicioRepository(),
 	} = {}) {
 		this.medicoRepository = medicoRepository;
@@ -13,7 +13,7 @@ export class GestionServiciosService {
 	}
 
 	async obtenerServiciosDeMedico(medicoId) {
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
+		const medico = await this.medicoRepository.findById(medicoId);
 
 		if (!medico) {
                 throw new NotFoundError("No se encontró el médico.");
@@ -26,7 +26,7 @@ export class GestionServiciosService {
 		medicoId,
 		{ tipoServicio, nombre, precio, duracion },
 	) {
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
+		const medico = await this.medicoRepository.findById(medicoId);
 
 		if (!medico) {
                 throw new NotFoundError("No se encontró el médico.");
@@ -39,13 +39,14 @@ export class GestionServiciosService {
     }
 
 	medico.agregarServicio(nuevoServicio);
+	await this.medicoRepository.update(medicoId, medico);
 
 	return nuevoServicio;
 	}
 
 	async eliminarServicioDeMedico(medicoId, nombreServicio) {
 	
-	const medico = this.medicoRepository.obtenerPorId(medicoId);
+	const medico = await this.medicoRepository.findById(medicoId);
 
 	if (!medico) {
                 throw new NotFoundError("No se encontró el médico.");
@@ -62,6 +63,7 @@ export class GestionServiciosService {
 	}
 
 	medico.dejarDeOfrecer(servicio)
+	await this.medicoRepository.update(medicoId, medico);
 	}
 
 
@@ -70,14 +72,14 @@ export class GestionServiciosService {
 		nombreServicio,
 		datosNuevos,
 	) {
-		const medico = this.medicoRepository.obtenerPorId(medicoId);
+		const medico = await this.medicoRepository.findById(medicoId);
 
 		if (!medico) {
 			throw new NotFoundError("No se encontró el médico.");
 		}
 
 			const servicioPropio = medico.actualizarServicio(nombreServicio, datosNuevos);
-			this.medicoRepository.guardarMedico(medicoId, medico);
+			await this.medicoRepository.update(medicoId, medico);
 			return servicioPropio;
 		}
 }

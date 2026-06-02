@@ -11,9 +11,10 @@ export class BusquedaTurnoController {
             const paginacion = this.extraerPaginacion(req.query)
             const filtros = this.extraerFiltros(req.query)
             const ordenamiento = this.extraerOrdenamiento(req.query)
-            const idPaciente = String(req.query.idPaciente)
-            if (!idPaciente || idPaciente.trim() === "") {
-                throw new BadRequestError("El ID del paciente debe ser válido")
+            
+            const idPaciente = req.query.idPaciente
+            if (!idPaciente || String(idPaciente).trim() === "") {
+                throw new BadRequestError("El parámetro idPaciente es requerido")
             }
 
             const resultado = await this.busquedaTurnoService.buscarTurnos({ idPaciente, ...paginacion, filtros, ...ordenamiento } )

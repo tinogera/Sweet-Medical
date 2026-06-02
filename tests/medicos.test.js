@@ -17,17 +17,15 @@ describe("Medicos Endpoints", () => {
 
   beforeEach(() => {
     MedicoRepository.prototype.findById = jest.fn();
-    MedicoRepository.prototype.obtenerPorId = jest.fn();
+    MedicoRepository.prototype.update = jest.fn();
     MedicoRepository.prototype.save = jest.fn();
     MedicoRepository.prototype.guardarMedico = jest.fn();
 
     findByIdSpy = jest.spyOn(MedicoRepository.prototype, "findById");
-    obtenerPorIdSpy = jest.spyOn(MedicoRepository.prototype, "obtenerPorId");
     saveSpy = jest.spyOn(MedicoRepository.prototype, "save");
-    guardarMedicoSpy = jest.spyOn(MedicoRepository.prototype, "guardarMedico");
+    guardarMedicoSpy = jest.spyOn(MedicoRepository.prototype, "update");
 
     obtenerSedeSpy = jest.spyOn(SedeRepository.prototype, "obtenerPorNombre");
-    obtenerServicioSpy = jest.spyOn(ServicioRepository.prototype, "obtenerPorNombre");
     findByNameSpy = jest.spyOn(ServicioRepository.prototype, "findByName");
   });
 
@@ -56,7 +54,7 @@ describe("Medicos Endpoints", () => {
 
       findByIdSpy.mockResolvedValue(mockMedico);
       obtenerSedeSpy.mockResolvedValue({ nombre: "Sede Palermo" });
-      obtenerServicioSpy.mockResolvedValue({ nombre: "Cardiología" });
+      findByNameSpy.mockResolvedValue({ nombre: "Cardiología" });
 
       const res = await request(app)
         .post("/medicos/medico-123/disponibilidad")
@@ -158,7 +156,7 @@ describe("Medicos Endpoints", () => {
           },
         ],
       };
-      obtenerPorIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockReturnValue(mockMedico);
 
       const res = await request(app).get("/medicos/123/servicios");
       expect(res.status).toBe(200);
@@ -170,7 +168,7 @@ describe("Medicos Endpoints", () => {
       const mockMedico = {
         agregarServicio: jest.fn(),
       };
-      obtenerPorIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockReturnValue(mockMedico);
       findByNameSpy.mockResolvedValue({
         tipoServicio: "ESPECIALIDAD",
         nombre: "Pediatría",
@@ -193,7 +191,7 @@ describe("Medicos Endpoints", () => {
     });
 
     it("debería retornar 404 al agregar servicio si el médico no existe (escenario de error)", async () => {
-      obtenerPorIdSpy.mockReturnValue(null);
+      findByIdSpy.mockReturnValue(null);
 
       const res = await request(app)
         .post("/medicos/999/servicios")
@@ -212,7 +210,7 @@ describe("Medicos Endpoints", () => {
         ofrece: () => true,
         dejarDeOfrecer: jest.fn(),
       };
-      obtenerPorIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockReturnValue(mockMedico);
       findByNameSpy.mockResolvedValue({ nombre: "Cardiología" });
 
       const res = await request(app).delete("/medicos/123/servicios/Cardiología");
@@ -229,7 +227,7 @@ describe("Medicos Endpoints", () => {
           duracion: 20,
         }),
       };
-      obtenerPorIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockReturnValue(mockMedico);
 
       const res = await request(app)
         .patch("/medicos/123/servicios/Cardiología")

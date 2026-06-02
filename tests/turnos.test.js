@@ -63,7 +63,7 @@ describe("Turnos Endpoints", () => {
     it("debería retornar 400 si falta el parámetro idPaciente (escenario de error)", async () => {
       const res = await request(app).get("/turnos");
       expect(res.status).toBe(400);
-      expect(res.body.message).toContain("El parámetro idPaciente debe ser un entero positivo");
+      expect(res.body.message).toContain("El parámetro idPaciente es requerido");
     });
   });
 

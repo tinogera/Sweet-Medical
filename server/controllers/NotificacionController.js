@@ -14,12 +14,12 @@ class NotificacionController {
     }
   }
 
-  verNotificacion(req, res, next) {
+  async verNotificacion(req, res, next) {
     const idNotificacion = Number(req.params.idNotificacion)
     const idUser = req.params.idUser
 
     try {
-      notificacionService.verNotificacion(idUser, idNotificacion)
+      await notificacionService.verNotificacion(idUser, idNotificacion)
       res.status(204).json()
     } catch (e) {
       next(e)

@@ -17,7 +17,6 @@ export class MedicoRepository {
   }
 
   async save(medico) {
-    // 1. Crear el usuario para el médico si no existe
     if (medico.usuario && !medico.usuario.id) {
       const usuarioDoc = await UsuarioModel.create({
         nombre: `${medico.nombre} ${medico.apellido}`,
@@ -26,11 +25,9 @@ export class MedicoRepository {
       medico.usuario.id = usuarioDoc._id.toString();
     }
 
-    // 2. Mapear y guardar
     const medicoNuevo = new this.model(medicoToDocument(medico))
     const savedDoc = await medicoNuevo.save()
     
-    // Devolvemos el _id al objeto de dominio por si se necesita
     medico._id = savedDoc._id
     return savedDoc
   }
