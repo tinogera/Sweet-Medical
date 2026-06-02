@@ -163,4 +163,99 @@ class TurnoRepositoryImpl {
     return await this.save(turnoActualizado);
   }
 
+
+
+  async obtenerSiguienteId() {
+    const ultimo = await this.model.findOne().sort({ _id: -1 });
+    return (ultimo?._id || 0) + 1;
+  }
+
+
+  async borrarDisponiblesFuturos(medicoId, bloqueHorario) {
+    const turnos = await this.findAll();
+    const now = new Date();
+
+    const aEliminar = turnos.filter(t =>
+      (t.medico?.id === medicoId || t.medico === medicoId) &&
+      t.sede.nombre === bloqueHorario.sede.nombre &&
+      t.servicio.nombre === bloqueHorario.servicio.nombre &&
+      t.fechaHora >= now &&
+      t.fechaHora >= bloqueHorario.horaInicio &&
+      t.fechaHora < bloqueHorario.horaFin &&
+      t.estadoActual().estado === Estado.DISPONIBLE
+    );
+
+    for (const t of aEliminar) {
+      await this.delete(t._id);
+    }
+  }
+
+  async obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
+    let turnos = await this.findAll();
+
+    turnos = turnos.filter(t => t.estadoActual().estado === Estado.DISPONIBLE);
+
+    if (filtros.profesional) {
+      turnos = turnos.filter(t => t.medico?.id === filtros.profesional || t.medico === filtros.profesional);
+    }
+
+    if (filtros.especialidad) {
+      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.ESPECIALIDAD && t.servicio.nombre.toLowerCase().includes(filtros.especialidad.toLowerCase()));
+    }
+
+    if (filtros.practica) {
+      turnos = turnos.filter(t => t.servicio.tipoServicio === TipoServicio.PRACTICA && t.servicio.nombre.toLowerCase().includes(filtros.practica.toLowerCase()));
+    }
+
+    if (filtros.sede) {
+      turnos = turnos.filter(t => t.sede.nombre.toLowerCase().includes(filtros.sede.toLowerCase()));
+    }
+
+    if (filtros.fechaDesde) {
+      turnos = turnos.filter(t => t.fechaHora.getTime() >= filtros.fechaDesde.getTime());
+    }
+
+    if (filtros.fechaHasta) {
+      turnos = turnos.filter(t => t.fechaHora.getTime() <= filtros.fechaHasta.getTime());
+    }
+
+    // Ordenamiento
+    turnos.sort((a, b) => {
+      let valorA, valorB;
+
+      if (ordenarPor === 'fecha') {
+        valorA = a.fechaHora.getTime();
+        valorB = b.fechaHora.getTime();
+      } else if (ordenarPor === 'costo') {
+        valorA = paciente.plan.precioDe(a.servicio);
+        valorB = paciente.plan.precioDe(b.servicio);
+      }
+
+      return direccion === 'asc' ? valorA - valorB : valorB - valorA;
+    });
+
+    const inicio = (numeroPagina - 1) * limitePorPagina;
+    const fin = inicio + limitePorPagina;
+
+    return {
+      turnos: turnos.slice(inicio, fin),
+      totalTurnos: turnos.length
+    };
+  }
+
+  async obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
+    const turnos = await this.findAll();
+    const turnosDelPaciente = turnos.filter(t => t.paciente && (t.paciente.id === pacienteId || t.paciente === pacienteId));
+
+    const inicio = (numeroPagina - 1) * limitePorPagina;
+    const fin = inicio + limitePorPagina;
+
+    return {
+      turnos: turnosDelPaciente.slice(inicio, fin),
+      totalTurnos: turnosDelPaciente.length
+    };
+  }
+
+
+  
 }
