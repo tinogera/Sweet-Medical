@@ -21,7 +21,7 @@ export class SeederService {
     const servicioRepository = new ServicioRepository()
 
     // 0. Limpiar repositorios para evitar duplicados si se llama varias veces
-    PacienteRepository.pacientes = []
+    await pacienteRepository.limpiar()
     await TurnoModel.deleteMany({})
     MedicoRepository.medicos = []
     await servicioRepository.deleteAll()

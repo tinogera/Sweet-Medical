@@ -1,33 +1,32 @@
-import { Schema, model } from 'mongoose'
-import { Servicio, TipoServicio } from '../domain/servicios/servicio.js'
+import mongoose from "mongoose"
+import { Servicio, TipoServicio } from "../domain/servicios/servicio.js"
 
-export const servicioSchema = new Schema({
+const servicioSchema = new mongoose.Schema({
     tipoServicio: {
         type: String,
-        enum: Object.values(TipoServicio), 
         required: true,
+        enum: Object.values(TipoServicio),
         default: TipoServicio.ESPECIALIDAD
     },
-    nombre:{
+    nombre: {
         type: String,
-        required : true,
-        unique : true,
-        trim : true
+        required: true,
+        trim: true
     },
-    duracion:{
-        type: Number,
-        required : true
+    descripcion: {
+        type: String
     },
-    precio:{
+    precio: {
         type: Number,
-        required : true,
+        required: true,
         min: 0
     },
-}, {
-    versionKey: false
+    duracion: {
+        type: Number,
+        required: true,
+        min: 1
+    }
 })
 
-
 servicioSchema.loadClass(Servicio)
-
-export const ServicioModel = model('Servicio', servicioSchema)
+export const ServicioModel = mongoose.model('Servicio', servicioSchema)

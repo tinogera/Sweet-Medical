@@ -8,16 +8,17 @@ import { Turno } from '../turnos/turno.js';
 export class Medico {
   generarTurnos(bloqueHorario) {
     const turnos = [];
-    const { horaInicio, horaFin, sede, servicio } = bloqueHorario;
+    const { horaInicio, horaFin, sede } = bloqueHorario;
 
-    const duracionEnMs = servicio.duracion * 60 * 1000;
+    // Por defecto 30 min, setear el valor cuando verdaderamente se elija el servicio
+    const duracionEnMs = 30 * 60 * 1000;
     let horaInicioActual = new Date(horaInicio.getTime());
     const horaFinLimite = horaFin.getTime();
 
     while (horaInicioActual.getTime() + duracionEnMs <= horaFinLimite) {
       const fechaHoraTurno = new Date(horaInicioActual.getTime());
       // Se pasa 'this' ya que el médico actual es el responsable de generar sus turnos
-      const nuevoTurno = new Turno(fechaHoraTurno, this, servicio, sede);
+      const nuevoTurno = new Turno(fechaHoraTurno, this, sede);
       turnos.push(nuevoTurno);
       horaInicioActual = new Date(horaInicioActual.getTime() + duracionEnMs);
     }
@@ -80,15 +81,17 @@ export class Medico {
     }
 
     const nuevoBloqueHorario = new BloqueHorario(fechaHoraInicio, fechaHoraFin, sede, servicio);
-    nuevoBloqueHorario.id = Math.floor(Math.random() * 10);
     this.agenda.push(nuevoBloqueHorario);
 
     return nuevoBloqueHorario;
   }
 
-  eliminarBloque(bloqueId) {
-    const index = this.agenda.findIndex(b => b.id === bloqueId);
-    if (index === -1) throw new BloqueHorarioInexistente(bloqueId);
+  eliminarBloque(idBloqueAEliminar) {
+    const index = this.agenda.findIndex(b => 
+        (b._id && b._id.toString() === idBloqueAEliminar.toString()) || 
+        (b.id && b.id.toString() === idBloqueAEliminar.toString())
+    );
+    if (index === -1) throw new BloqueHorarioInexistente();
     this.agenda.splice(index, 1);
   }
 

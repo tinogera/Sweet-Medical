@@ -1,17 +1,15 @@
-import mongoose from "mongoose";
-import { Ubicacion } from "../domain/sedes/ubicacion.js";
+import mongoose from "mongoose"
+import { Ubicacion } from "../domain/sedes/ubicacion.js"
 
-const ubicacionSchema = new mongoose.Schema({
-  latitud: {
-    type: Number,
-    required: true,
-  },
-  longitud: {
-    type: Number,
-    required: true,
-  },
-});
+export const ubicacionSchema = new mongoose.Schema({
+    latitud: {
+        type: String,
+        required: true
+    },
+    longitud: {
+        type: String,
+        required: true
+    }
+}, { _id: false})
 
-ubicacionSchema.loadClass(Ubicacion);
-
-export const UbicacionModel = mongoose.model("Ubicacion", ubicacionSchema);
+ubicacionSchema.loadClass(Ubicacion)
