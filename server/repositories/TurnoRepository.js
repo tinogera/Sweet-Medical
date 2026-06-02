@@ -127,16 +127,7 @@ class TurnoRepositoryImpl {
     this.model = TurnoModel;
   }
 
-  async encontrarTodos() {
-    return await this.model.find();
-  }
-
-  async encontrarPorId(id) {
-    return await this.model.findById(id);
-  }
-
   async agregarTurno(turno) {
-    
     const nuevoDoc = new this.model(turno);
     return await nuevoDoc.save();
   }
@@ -145,34 +136,35 @@ class TurnoRepositoryImpl {
     return await this.model.findByIdAndUpdate(id, turnoModificado, { new: true });
   }
 
+  async reservarAtomicamente(id, paciente, nuevoEstado) {
+    return await this.model.findOneAndUpdate(
+      { _id: id, paciente: null },
+      { 
+        $set: { paciente: paciente },
+        $push: { estadosTurno: nuevoEstado }
+      },
+      { new: true }
+    );
+  }
+
   async borrar(id) {
     return await this.model.findByIdAndDelete(id);
   }
 
-
   async listar() {
-    return await this.findAll();
-  }
+    return await this.model.find();  }
 
   async obtenerPorId(id) {
-    const turno = await this.findById(id);
-    return turno;
+    return await this.model.findById(id);
   }
-
-  async guardarturno(id, turnoActualizado) {
-    return await this.save(turnoActualizado);
-  }
-
-
 
   async obtenerSiguienteId() {
     const ultimo = await this.model.findOne().sort({ _id: -1 });
     return (ultimo?._id || 0) + 1;
   }
 
-
   async borrarDisponiblesFuturos(medicoId, bloqueHorario) {
-    const turnos = await this.findAll();
+    const turnos = await this.encontrarTodos();
     const now = new Date();
 
     const aEliminar = turnos.filter(t =>
@@ -186,12 +178,12 @@ class TurnoRepositoryImpl {
     );
 
     for (const t of aEliminar) {
-      await this.delete(t._id);
+      await this.borrar(t._id);
     }
   }
 
   async obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
-    let turnos = await this.findAll();
+    let turnos = await this.encontrarTodos();
 
     turnos = turnos.filter(t => t.estadoActual().estado === Estado.DISPONIBLE);
 
@@ -244,7 +236,7 @@ class TurnoRepositoryImpl {
   }
 
   async obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
-    const turnos = await this.findAll();
+    const turnos = await this.encontrarTodos();
     const turnosDelPaciente = turnos.filter(t => t.paciente && (t.paciente.id === pacienteId || t.paciente === pacienteId));
 
     const inicio = (numeroPagina - 1) * limitePorPagina;
@@ -255,7 +247,6 @@ class TurnoRepositoryImpl {
       totalTurnos: turnosDelPaciente.length
     };
   }
-
-
-  
 }
+
+export const TurnoRepository = new TurnoRepositoryImpl();

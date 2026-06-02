@@ -1,4 +1,6 @@
 import { model, Schema } from "mongoose";
+import { Paciente } from "../domain/personas/paciente.js";
+import { Plan } from "../domain/obrasSociales/plan.js";
 
 const ServicioEmbeddedSchema = new Schema(
   {
@@ -49,5 +51,10 @@ const PacienteSchema = new Schema(
 PacienteSchema.query.conUsuario = function conUsuario() {
   return this.populate("usuarioId");
 };
+
+
+
+PacienteSchema.loadClass(Paciente);
+PlanSchema.loadClass(Plan);
 
 export const PacienteModel = model("Paciente", PacienteSchema);

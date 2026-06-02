@@ -1,8 +1,9 @@
 import { TurnoRepository } from "../repositories/TurnoRepository.js"
 import { PacienteRepository } from "../repositories/PacienteRepository.js"
 import { MedicoRepository } from "../repositories/MedicoRepository.js"
-import { BadRequestError } from "../errors/AppErrors.js"
+import { ConflictError, NotFoundError } from "../errors/AppErrors.js"
 import { Notificacion } from "../domain/notificaciones/notificacion.js"
+import { Estado } from "../domain/turnos/estadoTurno.js"
 
 export class TurnoService{
     constructor({ turnoRepository = TurnoRepository, pacienteRepository = PacienteRepository, medicoRepository = MedicoRepository} = {}) {
@@ -12,14 +13,34 @@ export class TurnoService{
     }
 
     async reservar(id, responsableId) {
-        const turno = await this.turnoRepository.obtenerPorId(id) 
-        const paciente = await this.pacienteRepository.obtenerPorId(responsableId) 
-        turno.reservar(paciente)
+        const turno = await this.turnoRepository.obtenerPorId(id)
+        if (!turno) {
+            throw new NotFoundError(`El turno con id: ${id}, no existe`)
+        }
+        if (!turno.estaDisponible()) {
+            throw new ConflictError(`El turno [${id}] no está disponible para ser reservado`)
+        }
 
-        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
-        turno.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+        const paciente = await this.pacienteRepository.obtenerPorId(responsableId)
+        if (!paciente) {
+            throw new NotFoundError(`El paciente con id: ${responsableId}, no existe`)
+        }
 
-        return await this.turnoRepository.guardarturno(id, turno)
+        const nuevoEstadoDoc = {
+            estado: Estado.RESERVADO,
+            fechaHora: new Date(),
+            motivo: "Turno reservado por el paciente"
+        }
+
+        const turnoReservado = await this.turnoRepository.reservarAtomicamente(id, paciente, nuevoEstadoDoc)
+        if (!turnoReservado) {
+            throw new ConflictError("El turno ya ha sido reservado por otro paciente en este instante.")
+        }
+
+        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turnoReservado.servicio.nombre}.`
+        turnoReservado.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+
+        return turnoReservado
     }
 
     async cancelar(id, rol, motivo) {

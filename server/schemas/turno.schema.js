@@ -3,6 +3,8 @@ import { Estado } from "../domain/turnos/estadoTurno.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { MedicoModel } from "./medicoSchema.js";
 import { PacienteModel } from "./paciente.shema.js";
+import { Turno } from "../domain/turnos/turno.js";
+
 
 //esta creado este esquema en otro lado? revisar eso
 const UbicacionSchema = new Schema({
@@ -109,5 +111,7 @@ const TurnoSchema = new Schema({
 }, {
   versionKey: false
 });
+
+TurnoSchema.loadClass(Turno);
 
 export const TurnoModel = model('Turno', TurnoSchema);
