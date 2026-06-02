@@ -14,6 +14,6 @@ export const bloqueHorarioSchema = new mongoose.Schema({
         type: Date,
         required: true
     }
-}, {_id: false})
+})
 
 bloqueHorarioSchema.loadClass(BloqueHorario)

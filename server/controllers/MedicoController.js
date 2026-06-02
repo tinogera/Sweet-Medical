@@ -8,7 +8,7 @@ export class MedicoController {
 
   agregarDisponibilidad = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
+      const medicoId = req.params.id;
       const { fecha, horaInicio, horaFin, sedeName, servicioName } = req.body;
 
       if (!fecha || !horaInicio || !horaFin || !sedeName || !servicioName) {
@@ -20,7 +20,7 @@ export class MedicoController {
       });
 
       return res.status(201).json({
-        bloqueId: bloqueHorario.id,
+        bloqueId: bloqueHorario._id || bloqueHorario.id, // Support both during transition
         horaInicio: bloqueHorario.horaInicio,
         horaFin: bloqueHorario.horaFin,
         sede: bloqueHorario.sede.nombre,
@@ -34,15 +34,8 @@ export class MedicoController {
 
   eliminarDisponibilidad = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
-      const bloqueId = Number(req.params.bloqueId);
-
-      if (!Number.isInteger(medicoId) || medicoId <= 0) {
-        throw new BadRequestError("El id del médico debe ser un entero positivo");
-      }
-      if (!Number.isInteger(bloqueId) || bloqueId <= 0) {
-        throw new BadRequestError("El id del bloque debe ser un entero positivo");
-      }
+      const medicoId = req.params.id;
+      const bloqueId = req.params.bloqueId;
 
       await this.medicoService.eliminarDisponibilidad(medicoId, bloqueId);
 
@@ -54,16 +47,16 @@ export class MedicoController {
 
   obtenerDisponibilidad = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
+      const medicoId = req.params.id;
       const { especialidad, practica } = req.query;
 
       const { medico, agenda } = await this.medicoService.obtenerDisponibilidad(medicoId, { especialidad, practica });
 
       return res.status(200).json({
-        medicoId: medico.id,
+        medicoId: medico._id || medico.id,
         nombre: `${medico.nombre} ${medico.apellido}`,
         agenda: agenda.map(b => ({
-          id: b.id,
+          id: b._id || b.id,
           horaInicio: b.horaInicio,
           horaFin: b.horaFin,
           sede: b.sede.nombre,

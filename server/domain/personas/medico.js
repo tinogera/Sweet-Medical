@@ -86,11 +86,10 @@ export class Medico {
     return nuevoBloqueHorario;
   }
 
-  eliminarBloque(bloqueAEliminar) {
+  eliminarBloque(idBloqueAEliminar) {
     const index = this.agenda.findIndex(b => 
-        b.horaInicio.getTime() === bloqueAEliminar.horaInicio.getTime() &&
-        b.horaFin.getTime() === bloqueAEliminar.horaFin.getTime() &&
-        (b.sede.id || b.sede).toString() === (bloqueAEliminar.sede.id || bloqueAEliminar.sede).toString()
+        (b._id && b._id.toString() === idBloqueAEliminar.toString()) || 
+        (b.id && b.id.toString() === idBloqueAEliminar.toString())
     );
     if (index === -1) throw new BloqueHorarioInexistente();
     this.agenda.splice(index, 1);

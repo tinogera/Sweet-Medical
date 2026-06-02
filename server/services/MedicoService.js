@@ -7,21 +7,21 @@ import { ServicioRepository } from "../repositories/ServicioRepository.js";
 
 export class MedicoService {
   constructor({
-    medicoRepository = MedicoRepository,
+    medicoRepository = new MedicoRepository(),
     turnoRepository = TurnoRepository,
     sedeRepo = SedeRepository,
     servicioRepo = ServicioRepository
   } = {}) {
     this.medicoRepository = medicoRepository;
     this.turnoRepository = turnoRepository;
-    this.sedeReposotory = sedeRepo
+    this.sedeRepository = sedeRepo
     this.servicioRepository = servicioRepo
   }
 
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName, servicioName }) {
-    const medico = this.medicoRepository.obtenerPorId(medicoId);
-    const sede = this.sedeReposotory.obtenerPorNombre(sedeName)
-    const servicio = this.servicioRepository.obtenerPorNombre(servicioName)
+    const medico = await this.medicoRepository.findById(medicoId);
+    const sede = await this.sedeRepository.obtenerPorNombre(sedeName)
+    const servicio = await this.servicioRepository.obtenerPorNombre(servicioName)
 
     if (!medico.atiendeEn(sede)) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
     if (!medico.ofrece(servicio)) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);
@@ -36,31 +36,28 @@ export class MedicoService {
     console.log(fechaHoraFin)
 
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio);
-    bloqueHorario.id = this.medicoRepository.obtenerSiguienteIdBloque(); 
 
     const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
-      this.turnoRepository.agregarTurno(t);
+      await this.turnoRepository.agregarTurno(t);
     }
 
-    this.medicoRepository.guardarMedico(medico.id, medico);
+    await medico.save()
 
     return { bloqueHorario, turnosGenerados };
   }
 
   async eliminarDisponibilidad(medicoId, bloqueId) {
-    const medico = this.medicoRepository.obtenerPorId(medicoId);
+    const medico = await this.medicoRepository.findById(medicoId);
+    if (!medico) throw new NotFoundError(`No existe médico con id ${medicoId}`);
 
-    const bloqueHorario = medico.agenda.find(b => b.id === bloqueId);
-    if (!bloqueHorario) throw new NotFoundError(`No existe un bloque con id ${bloqueId} en la agenda del médico`);
-
-    this.turnoRepository.borrarDisponiblesFuturos(medico.id, bloqueHorario);
     medico.eliminarBloque(bloqueId);
-    this.medicoRepository.guardarMedico(medico.id, medico);
+    
+    await medico.save();
   }
 
   async obtenerDisponibilidad(medicoId, { especialidad, practica } = {}) {
-    const medico = this.medicoRepository.obtenerPorId(medicoId);
+    const medico = await this.medicoRepository.findById(medicoId);
 
     const agenda = medico.agenda
       .filter(b => !especialidad || (
