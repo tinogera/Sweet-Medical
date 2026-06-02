@@ -1,5 +1,7 @@
 import { remove } from "lodash-es"
+import { MedicoModel } from "../schemas/medicoSchema.js";
 
+/*
 export const MedicoRepository = {
   medicos: [],
   bloqueIdCounter: 0,
@@ -36,5 +38,37 @@ export const MedicoRepository = {
   obtenerSiguienteIdBloque() {
     this.bloqueIdCounter += 1;
     return this.bloqueIdCounter;
+  }
+}
+*/
+
+export class MedicoRepository {
+  constructor() {
+    this.model = MedicoModel
+  }
+
+  async findAll() {
+    return await this.model.find()
+  }
+
+  async findById(id) {
+    return await this.model.findById(id)
+  }
+
+  async save(medico) {
+    const medicoNuevo = new this.model(medico)
+    return await medicoNuevo.save()
+  }
+
+  async update(id, medicoModificado) {
+    return await this.model.findByIdAndUpdate(id, medicoModificado, {new: true})
+  }
+
+  async delete(id) {
+    return await this.model.findByIdAndDelete(id)
+  }
+
+  async count() {
+    return await this.model.countDocuments()
   }
 }

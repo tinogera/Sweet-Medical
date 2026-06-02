@@ -1,6 +1,8 @@
 import { model, Schema } from "mongoose";
 import { Estado } from "../domain/turnos/estadoTurno.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
+import { MedicoModel } from "./medicoSchema.js";
+import { PacienteModel } from "./paciente.shema.js";
 
 //esta creado este esquema en otro lado? revisar eso
 const UbicacionSchema = new Schema({
@@ -84,12 +86,12 @@ const TurnoSchema = new Schema({
     type: Date,
     required: true
   },
-  medicoId: {
-    type: Number,
+  medico: {
+    type: MedicoModel.schema,
     required: true
   },
-  pacienteId: {
-    type: Number,
+  paciente: {
+    type: PacienteModel.schema,
     default: null
   },
   sede: {

@@ -1,4 +1,4 @@
-import {remove} from "lodash-es"
+/*import {remove} from "lodash-es"
 import { BadRequestError } from "../errors/AppErrors.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
 import { Estado } from "../domain/turnos/estadoTurno.js"
@@ -119,4 +119,48 @@ export const TurnoRepository = {
   obtenerSiguienteId() {//TODO en una DB real no es necesario
     return (this.turnos[this.turnos.length - 1]?.id || 0) + 1;
   }
+}
+  */
+
+class TurnoRepositoryImpl {
+  constructor() {
+    this.model = TurnoModel;
+  }
+
+  async encontrarTodos() {
+    return await this.model.find();
+  }
+
+  async encontrarPorId(id) {
+    return await this.model.findById(id);
+  }
+
+  async agregarTurno(turno) {
+    
+    const nuevoDoc = new this.model(turno);
+    return await nuevoDoc.save();
+  }
+
+  async guardarturno(id, turnoModificado) {
+    return await this.model.findByIdAndUpdate(id, turnoModificado, { new: true });
+  }
+
+  async borrar(id) {
+    return await this.model.findByIdAndDelete(id);
+  }
+
+
+  async listar() {
+    return await this.findAll();
+  }
+
+  async obtenerPorId(id) {
+    const turno = await this.findById(id);
+    return turno;
+  }
+
+  async guardarturno(id, turnoActualizado) {
+    return await this.save(turnoActualizado);
+  }
+
 }
