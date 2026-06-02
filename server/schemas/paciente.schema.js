@@ -1,21 +1,14 @@
 import { model, Schema } from "mongoose";
 
-const ServicioEmbeddedSchema = new Schema(
-  {
-    tipoServicio: String,
-    nombre: String,
-    precio: Number,
-    duracion: Number,
-  },
-  { _id: false, versionKey: false },
-);
-
 const CoberturaSchema = new Schema(
   {
-    servicio: ServicioEmbeddedSchema,
+    servicio: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Servicio'
+    },
     porcentaje: Number,
   },
-  { _id: false, versionKey: false },
+  { versionKey: false },
 );
 
 const PlanSchema = new Schema(
@@ -35,7 +28,6 @@ const ObraSocialSchema = new Schema(
 
 const PacienteSchema = new Schema(
   {
-    id: { type: Number, required: true, unique: true },
     nombre: { type: String, required: true },
     apellido: { type: String, required: true },
     documento: { type: String, required: true, unique: true },

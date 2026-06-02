@@ -5,60 +5,6 @@ import { MedicoModel } from "./medicoSchema.js";
 import { PacienteModel } from "./paciente.shema.js";
 import { Turno } from "../domain/turnos/turno.js";
 
-
-//esta creado este esquema en otro lado? revisar eso
-const UbicacionSchema = new Schema({
-  latitud: {
-    type: Number,
-    required: true
-  },
-  longitud: {
-    type: Number,
-    required: true
-  }
-}, {
-  _id: false,
-  versionKey: false
-});
-
-const SedeEmbebidaSchema = new Schema({
-  nombre: {
-    type: String,
-    required: true
-  },
-  ubicacion: {
-    type: UbicacionSchema,
-    required: true
-  }
-}, {
-  _id: false,
-  versionKey: false
-});
-
-const ServicioEmbebidoSchema = new Schema({
-  tipoServicio: {
-    type: String,
-    enum: Object.values(TipoServicio),
-    required: true
-  },
-  nombre: {
-    type: String,
-    required: true
-  },
-  precio: {
-    type: Number,
-    required: true
-  },
-  duracion: {
-    type: Number,
-    required: true
-  }
-}, {
-  _id: false,
-  versionKey: false
-});
-
-
 const EstadoTurnoSchema = new Schema({
   estado: {
     type: String,
@@ -80,28 +26,28 @@ const EstadoTurnoSchema = new Schema({
 });
 
 const TurnoSchema = new Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
   fechaHora: {
     type: Date,
     required: true
   },
   medico: {
-    type: MedicoModel.schema,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Medico',
     required: true
   },
   paciente: {
-    type: PacienteModel.schema,
-    default: null
-  },
-  sede: {
-    type: SedeEmbebidaSchema,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Paciente',
     required: true
   },
+  sede: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Sede',
+    required: true
+  }],
   servicio: {
-    type: ServicioEmbebidoSchema,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Servicio',
     required: true
   },
   estadosTurno: {
