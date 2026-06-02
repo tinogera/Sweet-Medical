@@ -5,12 +5,14 @@ export const servicioSchema = new Schema({
     tipoServicio: {
         type: String,
         enum: Object.values(TipoServicio), 
-        required: true
+        required: true,
+        default: TipoServicio.ESPECIALIDAD
     },
     nombre:{
         type: String,
         required : true,
-        unique : true
+        unique : true,
+        trim : true
     },
     duracion:{
         type: Number,
@@ -18,7 +20,8 @@ export const servicioSchema = new Schema({
     },
     precio:{
         type: Number,
-        required : true
+        required : true,
+        min: 0
     },
 }, {
     versionKey: false

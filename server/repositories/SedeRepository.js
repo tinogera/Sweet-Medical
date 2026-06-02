@@ -1,36 +1,24 @@
-import { remove } from "lodash-es";
+import { SedeModel } from "../schemas/sedeSchema.js";
 
-export const SedeRepository = {
-	sedes: [],
+export class SedeRepository {
+	constructor() {
+		this.model = SedeModel
+	}
 
-	agregar(servicio) {
-		//miro que no haya repetido por poner nombre con minuscula y otro en mayud
-		//si encuentra alguno el find es true
-		if (
-			this.sedes.find(
-				(s) => s.nombre.toLowerCase() === servicio.nombre.toLowerCase(),
-			)
-		) {
-			throw new BadRequestError(`El servicio ${servicio.nombre} ya existe.`);
-		}
-		this.sedes.push(servicio);
-		return servicio;
-	},
 
-	listar() {
-		return this.sedes;
-	},
+	async agregar(sede) {
+		return await this.model.create(sede);
+	}
 
-	obtenerPorNombre(nombre) {
-		const servicio = this.sedes.find(
-			(s) => s.nombre.toLowerCase() === nombre.toLowerCase(),
-		);
+	async listar() {
+		return await this.model.find();
+	}
 
-		return servicio;
-	},
+	async obtenerPorNombre(nombre) {
+		return await this.model.findOne({ nombre });
+	}
 
-	borrar(nombre) {
-		//saca el servicio con ese nombre
-		remove(this.sedes, (s) => s.nombre.toLowerCase() === nombre.toLowerCase());
-	},
-};
+	async borrar(nombre) {
+		return await this.model.deleteOne({ nombre })
+	}
+}
