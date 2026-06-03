@@ -3,7 +3,7 @@ import { Usuario } from "../domain/notificaciones/usuario.js";
 import { Notificacion } from "../domain/notificaciones/notificacion.js";
 import { UsuarioNoEncontrado } from "../domain/notificaciones/excepcion.notificacion.js";
 
-class UsuarioRepository {
+export class UsuarioRepository {
   async getById(userId) {
     const userDoc = await UsuarioModel.findById(userId);
     if (!userDoc) throw new UsuarioNoEncontrado(userId);

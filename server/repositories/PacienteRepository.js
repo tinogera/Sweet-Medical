@@ -4,7 +4,7 @@ import { UsuarioModel } from "../schemas/usuario.schema.js";
 import { pacienteFromDocument, pacienteToDocument } from "./pacienteMapper.js";
 import { usuarioRepository } from "./UsuarioRepository.js";
 
-class PacienteRepository {
+export class PacienteRepository {
   async limpiar() {
     const pacientes = await PacienteModel.find({}, { usuarioId: 1 }).lean();
     const usuarioIds = pacientes

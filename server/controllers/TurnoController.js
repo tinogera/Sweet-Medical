@@ -1,9 +1,8 @@
-import { TurnoService } from "../services/TurnoService.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 import { BadRequestError } from "../errors/AppErrors.js"
 
 export class TurnoController{
-    constructor({turnoService = new TurnoService} = {}){
+    constructor({turnoService} = {}){
         this.turnoService = turnoService
     }
 

@@ -1,7 +1,5 @@
-import { SeederService } from "../services/SeederService.js"
-
 export class SeederController {
-    constructor({ seederService = new SeederService() } = {}) {
+    constructor({ seederService } = {}) {
         this.seederService = seederService
     }
 

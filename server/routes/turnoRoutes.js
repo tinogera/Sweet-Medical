@@ -1,9 +1,5 @@
 import express from "express"
-import { BusquedaTurnoController } from "../controllers/BusquedaTurnoController.js"
-import { TurnoController } from "../controllers/TurnoController.js"
-
-const turnoController = new TurnoController()
-const busquedaTurnoController = new BusquedaTurnoController()
+import { busquedaTurnoController, turnoController } from "../config/context.js"
 
 const router = express.Router()
 

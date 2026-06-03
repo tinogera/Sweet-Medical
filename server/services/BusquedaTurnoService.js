@@ -1,26 +1,22 @@
-import { TurnoRepository } from "../repositories/TurnoRepository.js"
-import { pacienteRepository } from "../repositories/PacienteRepository.js"
 import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
 
 export class BusquedaTurnoService {
 
-    /* Cuando tengamos la implementacion real descomentar esto
-    constructor({ turnoRepository = new TurnoRepository(), pacienteRepository = new PacienteRepository() } = {} ) {
+    constructor({ turnoRepository, pacienteRepository } = {} ) {
         this.turnoRepository = turnoRepository
         this.pacienteRepository = pacienteRepository
     }
-    */
 
     async buscarTurnos({ idPaciente, numeroPagina = 1, limitePorPagina = 10, filtros = {}, ordenarPor = 'fecha', direccion = 'asc' } = {}) {
         const ahora = new Date()
         this.validarPaginacion(numeroPagina, limitePorPagina)
         this.ajustarYValidarFiltros(filtros, ahora)
 
-        const paciente = await pacienteRepository.obtenerPorId(idPaciente)
+        const paciente = await this.pacienteRepository.obtenerPorId(idPaciente)
 
-        const { turnos } = await TurnoRepository.obtenerDisponiblesPaginados(
+        const { turnos } = await this.turnoRepository.obtenerDisponiblesPaginados(
             numeroPagina,
             limitePorPagina,
             filtros,

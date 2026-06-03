@@ -1,9 +1,10 @@
+import { BadRequestError } from "../errors/AppErrors.js";
 import { TurnoModel } from "../schemas/turno.schema.js";
 import { turnoToDocument } from "./turnoMapper.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { Estado } from "../domain/turnos/estadoTurno.js";
 
-class TurnoRepositoryImpl {
+export class TurnoRepositoryImpl {
   constructor() {
     this.model = TurnoModel;
   }

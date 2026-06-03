@@ -1,13 +1,15 @@
-import { notificacionService } from '../services/NotificacionService.js'
-
 class NotificacionController {
+  constructor({ notificacionService } = {}) {
+    this.notificacionService = notificacionService;
+  }
+
   async getUserNotificaciones(req, res, next) {
     // TODO: validar y parsear correctamente los parametros
     const idUser = req.params.idUser
     const vistas = req.query.leidas
 
     try {
-      const notificaciones = await notificacionService.getUserNotificaciones(idUser, vistas)
+      const notificaciones = await this.notificacionService.getUserNotificaciones(idUser, vistas)
       res.json(notificaciones.map(notificacionDTO))
     } catch (e) {
       next(e)
@@ -19,7 +21,7 @@ class NotificacionController {
     const idUser = req.params.idUser
 
     try {
-      await notificacionService.verNotificacion(idUser, idNotificacion)
+      await this.notificacionService.verNotificacion(idUser, idNotificacion)
       res.status(204).json()
     } catch (e) {
       next(e)
@@ -36,4 +38,4 @@ function notificacionDTO(notificacion) {
   }
 }
 
-export const notificacionController = new NotificacionController()
+export { NotificacionController };

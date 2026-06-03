@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { notificacionController } from '../controllers/NotificacionController.js'
+import { notificacionController } from "../config/context.js"
 
-// TODO: refactor como inyeccion de deps
 const notificacionRouter = Router()
 
 notificacionRouter.get('/:idUser', notificacionController.getUserNotificaciones)

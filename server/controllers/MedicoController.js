@@ -1,8 +1,7 @@
-import { MedicoService } from "../services/MedicoService.js";
 import { BadRequestError } from "../errors/AppErrors.js";
 
 export class MedicoController {
-  constructor({ medicoService = new MedicoService() } = {}) {
+  constructor({ medicoService } = {}) {
     this.medicoService = medicoService;
   }
 

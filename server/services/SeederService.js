@@ -9,22 +9,31 @@ import { Cobertura } from "../domain/obrasSociales/cobertura.js"
 import { Ubicacion } from "../domain/sedes/ubicacion.js"
 import { Notificacion } from "../domain/notificaciones/notificacion.js"
 
-import { pacienteRepository } from "../repositories/PacienteRepository.js"
-import { TurnoRepository } from "../repositories/TurnoRepository.js"
-import { medicoRepository } from "../repositories/MedicoRepository.js"
-import { servicioRepository } from "../repositories/ServicioRepository.js"
-import { sedeRepository } from "../repositories/SedeRepository.js"
 import { TurnoModel } from "../schemas/turno.schema.js"
 import { SedeModel } from "../schemas/sedeSchema.js"
 import { UsuarioModel } from "../schemas/usuario.schema.js"
 
 export class SeederService {
+  constructor({
+    pacienteRepository,
+    turnoRepository,
+    medicoRepository,
+    servicioRepository,
+    sedeRepository,
+  } = {}) {
+    this.pacienteRepository = pacienteRepository;
+    this.turnoRepository = turnoRepository;
+    this.medicoRepository = medicoRepository;
+    this.servicioRepository = servicioRepository;
+    this.sedeRepository = sedeRepository;
+  }
+
   async seed() {
     // 0. Limpiar base de datos para evitar duplicados
-    await pacienteRepository.limpiar()
+    await this.pacienteRepository.limpiar()
     await TurnoModel.deleteMany({})
-    await medicoRepository.deleteAll()
-    await servicioRepository.deleteAll()
+    await this.medicoRepository.deleteAll()
+    await this.servicioRepository.deleteAll()
     await SedeModel.deleteMany({})
     await UsuarioModel.deleteMany({})
 
@@ -35,8 +44,8 @@ export class SeederService {
     const ubicacionBelgrano = new Ubicacion("-34.5621", "-58.4564")
     const sedeBelgrano = new Sede("Sede Belgrano", ubicacionBelgrano)
 
-    const sp = await sedeRepository.agregar(sedePalermo)
-    const sb = await sedeRepository.agregar(sedeBelgrano)
+    const sp = await this.sedeRepository.agregar(sedePalermo)
+    const sb = await this.sedeRepository.agregar(sedeBelgrano)
 
     // 2. Crear Servicios (Especialidades y Prácticas)
     const cardiologia = new Servicio(TipoServicio.ESPECIALIDAD, "Cardiología", 2500, 20)
@@ -44,10 +53,10 @@ export class SeederService {
     const radiografia = new Servicio(TipoServicio.PRACTICA, "Radiografía de Tórax", 5000, 15)
     const ecografia = new Servicio(TipoServicio.PRACTICA, "Ecografía Abdominal", 7000, 30)
     
-    cardiologia._id = (await servicioRepository.save(cardiologia))._id
-    pediatria._id = (await servicioRepository.save(pediatria))._id
-    radiografia._id = (await servicioRepository.save(radiografia))._id
-    ecografia._id = (await servicioRepository.save(ecografia))._id
+    cardiologia._id = (await this.servicioRepository.save(cardiologia))._id
+    pediatria._id = (await this.servicioRepository.save(pediatria))._id
+    radiografia._id = (await this.servicioRepository.save(radiografia))._id
+    ecografia._id = (await this.servicioRepository.save(ecografia))._id
 
     // 3. Crear Obra Social y Planes
     const osde = new ObraSocial("OSDE")
@@ -65,8 +74,8 @@ export class SeederService {
     const pacienteJuan = new Paciente("Juan", "Perez", "12345678", osde, plan210)
     const pacienteAna = new Paciente("Ana", "Gomez", "87654321", osde, plan410)
 
-    await pacienteRepository.agregarPaciente(pacienteJuan)
-    await pacienteRepository.agregarPaciente(pacienteAna)
+    await this.pacienteRepository.agregarPaciente(pacienteJuan)
+    await this.pacienteRepository.agregarPaciente(pacienteAna)
 
     // 5. Crear Médicos
     const medicoGomez = new Medico("Carlos", "Gomez", "12344444")
@@ -81,7 +90,7 @@ export class SeederService {
       sp
     )
 
-    await medicoRepository.save(medicoGomez)
+    await this.medicoRepository.save(medicoGomez)
 
     const medicoLopez = new Medico("Laura", "Lopez", "55555555")
     medicoLopez.agregarSede(sb)
@@ -89,29 +98,29 @@ export class SeederService {
     medicoLopez.agregarServicio(ecografia)
     medicoLopez.agregarServicio(cardiologia)
 
-    await medicoRepository.save(medicoLopez)
+    await this.medicoRepository.save(medicoLopez)
 
     // 6. Generar Turnos desde la agenda de los médicos
-    const medicos = await medicoRepository.findAll()
+    const medicos = await this.medicoRepository.findAll()
     for (const medico of medicos) {
       for (const bloque of medico.agenda) {
         const turnos = medico.generarTurnos(bloque)
         for (const t of turnos) {
-          await TurnoRepository.agregarTurno(t)
+          await this.turnoRepository.agregarTurno(t)
         }
       }
     }
 
     // 7. Reservar algunos turnos para pruebas
-    const todosLosTurnos = await TurnoRepository.listar()
+    const todosLosTurnos = await this.turnoRepository.listar()
     if (todosLosTurnos.length >= 3) {
       // Reservamos el primero para Ana con Cardiologia
       await todosLosTurnos[0].reservar(pacienteAna, cardiologia)
-      await TurnoRepository.guardarturno(todosLosTurnos[0]._id, todosLosTurnos[0])
+      await this.turnoRepository.guardarturno(todosLosTurnos[0]._id, todosLosTurnos[0])
 
       // Reservamos el segundo para Juan con Cardiologia
       await todosLosTurnos[1].reservar(pacienteJuan, cardiologia)
-      await TurnoRepository.guardarturno(todosLosTurnos[1]._id, todosLosTurnos[1])
+      await this.turnoRepository.guardarturno(todosLosTurnos[1]._id, todosLosTurnos[1])
     }
     
     console.log("Seeding completado exitosamente en MongoDB.")

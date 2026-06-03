@@ -1,12 +1,10 @@
-import { MedicoRepository } from "../repositories/MedicoRepository.js";
-import { ServicioRepository } from "../repositories/ServicioRepository.js";
 import { Servicio } from "../domain/servicios/servicio.js";
 import { NotFoundError } from "../errors/AppErrors.js";
 
 export class GestionServiciosService {
 	constructor({
-		medicoRepository = new MedicoRepository(),
-		servicioRepository = new ServicioRepository(),
+		medicoRepository,
+		servicioRepository,
 	} = {}) {
 		this.medicoRepository = medicoRepository;
 		this.servicioRepository = servicioRepository;

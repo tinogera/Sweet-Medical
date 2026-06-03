@@ -1,7 +1,7 @@
-import { usuarioRepository } from '../repositories/UsuarioRepository.js'
-
 class NotificacionService {
-  repositoryUsuario = usuarioRepository;
+  constructor({ usuarioRepository } = {}) {
+    this.repositoryUsuario = usuarioRepository;
+  }
 
   async getUserNotificaciones(userId, vistas) {
     const user = await this.repositoryUsuario.getById(userId);
@@ -20,4 +20,4 @@ class NotificacionService {
 
 }
 
-export const notificacionService = new NotificacionService()
+export { NotificacionService };

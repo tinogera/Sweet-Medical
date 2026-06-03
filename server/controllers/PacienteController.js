@@ -1,10 +1,9 @@
-import { PacienteService } from "../services/PacienteService.js"
 import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
 
 export class PacienteController{
-    constructor({pacienteService = new PacienteService} = {}){
+    constructor({pacienteService} = {}){
         this.pacienteService = pacienteService
     }
 

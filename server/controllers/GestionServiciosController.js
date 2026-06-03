@@ -1,10 +1,8 @@
-import { GestionServiciosService } from "../services/GestionServiciosService.js";
 import { ServicioOutputDTO } from "../dtos/servicioOutputDTO.js";
 import { BadRequestError } from "../errors/AppErrors.js";
 
 export class GestionServiciosController {
-  constructor({ gestionServiciosService = new GestionServiciosService() } =
-    {}) {
+  constructor({ gestionServiciosService } = {}) {
     this.service = gestionServiciosService;
   }
 

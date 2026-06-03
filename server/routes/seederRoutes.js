@@ -1,7 +1,6 @@
 import express from "express"
-import { SeederController } from "../controllers/SeederController.js"
+import { seederController } from "../config/context.js"
 
-const seederController = new SeederController()
 const router = express.Router()
 
 router.route('/')

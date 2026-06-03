@@ -1,9 +1,5 @@
-import { pacienteRepository as defaultPacienteRepository } from "../repositories/PacienteRepository.js"
-import { TurnoRepository } from "../repositories/TurnoRepository.js"
-
-
 export class PacienteService{
-    constructor(pacienteRepository = defaultPacienteRepository, turnoRepository = TurnoRepository){
+    constructor(pacienteRepository, turnoRepository){
         this.pacienteRepository = pacienteRepository
         this.turnoRepository = turnoRepository
     

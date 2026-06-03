@@ -1,21 +1,17 @@
-import { MedicoRepository } from "../repositories/MedicoRepository.js";
-import { TurnoRepository } from "../repositories/TurnoRepository.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
-import { SedeRepository } from "../repositories/SedeRepository.js";
-import { ServicioRepository } from "../repositories/ServicioRepository.js";
 
 export class MedicoService {
   constructor({
-    medicoRepository = new MedicoRepository(),
-    turnoRepository = TurnoRepository,
-    sedeRepo = new SedeRepository(),
-    servicioRepo = new ServicioRepository()
+    medicoRepository,
+    turnoRepository,
+    sedeRepository,
+    servicioRepository,
   } = {}) {
     this.medicoRepository = medicoRepository;
     this.turnoRepository = turnoRepository;
-    this.sedeRepository = sedeRepo
-    this.servicioRepository = servicioRepo
+    this.sedeRepository = sedeRepository;
+    this.servicioRepository = servicioRepository;
   }
 
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName, servicioName }) {

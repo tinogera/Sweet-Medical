@@ -1,8 +1,8 @@
-import {BusquedaTurnoService} from "../services/BusquedaTurnoService.js"
 import { BadRequestError } from "../errors/AppErrors.js"
 
+
 export class BusquedaTurnoController {
-    constructor({ busquedaTurnoService = new BusquedaTurnoService() } = {}) {
+    constructor({ busquedaTurnoService } = {}) {
         this.busquedaTurnoService = busquedaTurnoService
     }
 

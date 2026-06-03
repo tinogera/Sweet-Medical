@@ -1,12 +1,9 @@
-import { TurnoRepository } from "../repositories/TurnoRepository.js"
-import { pacienteRepository as defaultPacienteRepository } from "../repositories/PacienteRepository.js"
-import { MedicoRepository } from "../repositories/MedicoRepository.js"
 import { ConflictError, NotFoundError } from "../errors/AppErrors.js"
 import { Notificacion } from "../domain/notificaciones/notificacion.js"
 import { Estado } from "../domain/turnos/estadoTurno.js"
 
 export class TurnoService{
-    constructor({ turnoRepository = TurnoRepository, pacienteRepository = defaultPacienteRepository, medicoRepository = MedicoRepository} = {}) {
+    constructor({ turnoRepository, pacienteRepository, medicoRepository } = {}) {
         this.turnoRepository = turnoRepository
         this.pacienteRepository = pacienteRepository
         this.medicoRepository = medicoRepository

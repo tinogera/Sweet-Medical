@@ -1,7 +1,5 @@
 import express from "express"
-import { MedicoController } from "../controllers/MedicoController.js"
-
-const medicoController = new MedicoController()
+import { medicoController } from "../config/context.js"
 
 const router = express.Router()
 
