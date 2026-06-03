@@ -10,12 +10,12 @@ export class TurnoController{
 
     async actualizar(req, res, next){
         try{
-            const turnoId = Number(req.params.id)
-            const actualizacionesTurno = req.body
+            const turnoId = req.params.id
 
-            if (!Number.isInteger(turnoId) || turnoId <= 0) {
-                throw new BadRequestError("El id del turno debe ser un entero positivo")
+            if (!turnoId) {
+                throw new BadRequestError("El id del turno es requerido")
             }
+            const actualizacionesTurno = req.body
             if (!actualizacionesTurno?.estado) {
                 throw new BadRequestError("Se requiere proveer un 'estado' para actualizar el turno")
             }

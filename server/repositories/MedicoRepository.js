@@ -1,4 +1,5 @@
 import { remove } from "lodash-es"
+import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
 import { MedicoModel } from "../schemas/medicoSchema.js";
 import { medicoToDocument } from "./medicoMapper.js";
 import { UsuarioModel } from "../schemas/usuario.schema.js";
@@ -13,7 +14,18 @@ export class MedicoRepository {
   }
 
   async findById(id) {
-    return await this.model.findById(id).populate('servicios sedes usuario agenda.sede')
+    try {
+      const doc = await this.model.findById(id).populate('servicios sedes usuario agenda.sede');
+      if (!doc) {
+        throw new NotFoundError(`El médico con id: ${id}, no existe`);
+      }
+      return doc;
+    } catch (err) {
+      if (err.name === 'CastError') {
+        throw new BadRequestError(`El id proporcionado no es válido: ${id}`);
+      }
+      throw err;
+    }
   }
 
   async save(medico) {

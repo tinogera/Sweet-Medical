@@ -1,5 +1,6 @@
 import { GestionServiciosService } from "../services/GestionServiciosService.js";
 import { ServicioOutputDTO } from "../dtos/servicioOutputDTO.js";
+import { BadRequestError } from "../errors/AppErrors.js";
 
 export class GestionServiciosController {
   constructor({ gestionServiciosService = new GestionServiciosService() } =
@@ -7,9 +8,14 @@ export class GestionServiciosController {
     this.service = gestionServiciosService;
   }
 
+  _validarId(id) {
+    if (!id) throw new BadRequestError("El id proporcionado es requerido");
+    return id;
+  }
+
   listarPorMedico = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
+      const medicoId = this._validarId(req.params.id);
       const servicios = await this.service.obtenerServiciosDeMedico(medicoId);
 
       //Envía datos y finaliza.
@@ -22,7 +28,7 @@ export class GestionServiciosController {
 
   agregarAMedico = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
+      const medicoId = this._validarId(req.params.id);
       const { tipoServicio, nombre, precio, duracion } = req.body;
       const nuevoServicio = await
         this.service.agregarServicioAMedico(medicoId, {
@@ -37,7 +43,7 @@ export class GestionServiciosController {
 
   eliminarDeMedico = async (req, res, next) => {
     try {
-      const medicoId = Number(req.params.id);
+      const medicoId = this._validarId(req.params.id);
       const nombre = req.params.nombre;
       await this.service.eliminarServicioDeMedico(medicoId, nombre);
       //No envía datos y finaliza.
@@ -50,7 +56,7 @@ export class GestionServiciosController {
   actualizarEnMedico = async (req, res, next) => {
     try {
       //obtengo el id
-      const medicoId = Number(req.params.id);
+      const medicoId = this._validarId(req.params.id);
       const nombre = req.params.nombre;
       const servicioEditado = await this.service.actualizarServicioDeMedico(medicoId, nombre, req.body);
 

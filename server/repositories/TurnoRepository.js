@@ -166,12 +166,19 @@ class TurnoRepositoryImpl {
   }
 
   async obtenerPorId(id) {
-    return await this.model.findById(id)
-      .populate({
-        path: 'medico',
-        populate: { path: 'servicios' }
-      })
-      .populate('sede servicio');
+    try {
+      return await this.model.findById(id)
+        .populate({
+          path: 'medico',
+          populate: { path: 'servicios' }
+        })
+        .populate('sede servicio');
+    } catch (err) {
+      if (err.name === 'CastError') {
+        throw new BadRequestError(`El id proporcionado no es válido: ${id}`);
+      }
+      throw err;
+    }
   }
 
   async borrarDisponiblesFuturos(medicoId, bloqueHorario) {
