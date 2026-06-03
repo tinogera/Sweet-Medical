@@ -2,7 +2,6 @@ import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
 import { PacienteModel } from "../schemas/paciente.schema.js";
 import { UsuarioModel } from "../schemas/usuario.schema.js";
 import { pacienteFromDocument, pacienteToDocument } from "./pacienteMapper.js";
-import { usuarioRepository } from "./UsuarioRepository.js";
 
 export class PacienteRepository {
   async limpiar() {
@@ -73,11 +72,6 @@ export class PacienteRepository {
     if (doc?.usuarioId) {
       await UsuarioModel.findByIdAndDelete(doc.usuarioId);
     }
-  }
-
-  async guardarUsuario(paciente) {
-    if (!paciente.usuario?.id) return;
-    await usuarioRepository.save(paciente.usuario);
   }
 }
 

@@ -5,7 +5,6 @@ import { Cobertura } from "../domain/obrasSociales/cobertura.js";
 import { Servicio } from "../domain/servicios/servicio.js";
 import { Usuario } from "../domain/notificaciones/usuario.js";
 import { Notificacion } from "../domain/notificaciones/notificacion.js";
-import { ServicioRepository } from "./ServicioRepository.js";
 
 export function pacienteToDocument(paciente) {
   return {
@@ -30,7 +29,7 @@ export async function pacienteFromDocument(doc) {
   const obraSocial = new ObraSocial(obj.obraSocial.nombre);
   // El mismo Plan se usa en la obra social y en el Paciente: el constructor de
   // Paciente valida obraSocial.ofrece(plan) por identidad (===).
-  const plan = await planFromEmbedded(obj.plan);
+  const plan = planFromEmbedded(obj.plan);
   obraSocial.agregarPlan(plan);
 
   const usuario = usuarioFromRef(obj.usuarioId);
@@ -48,21 +47,12 @@ export async function pacienteFromDocument(doc) {
   return paciente;
 }
 
-async function planFromEmbedded(planDoc) {
-  const servicioRepository = new ServicioRepository();
+function planFromEmbedded(planDoc) {
   const plan = new Plan(planDoc.tipo);
   for (const coberturaDoc of planDoc.coberturaPorServicio ?? []) {
-    // Re-vincula el Servicio al que vive persistido en Mongo (vía
-    // ServicioRepository) por nombre. Si no existe, crea uno nuevo desde los
-    // datos embebidos (fallback).
-    const servicio =
-      (await servicioRepository.findByName(coberturaDoc.servicio.nombre)) ??
-      new Servicio(
-        coberturaDoc.servicio.tipoServicio,
-        coberturaDoc.servicio.nombre,
-        coberturaDoc.servicio.precio,
-        coberturaDoc.servicio.duracion,
-      );
+    const svc = coberturaDoc.servicio;
+    const servicio = new Servicio(svc.tipoServicio, svc.nombre, svc.precio, svc.duracion);
+    if (svc._id) servicio._id = svc._id;
     plan.agregarCobertura(new Cobertura(servicio, coberturaDoc.porcentaje));
   }
   return plan;

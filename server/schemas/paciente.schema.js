@@ -39,7 +39,7 @@ const PacienteSchema = new mongoose.Schema(
 );
 
 PacienteSchema.query.conUsuario = function conUsuario() {
-  return this.populate("usuarioId");
+  return this.populate("usuarioId").populate("plan.coberturaPorServicio.servicio");
 };
 
 export const PacienteModel = mongoose.model("Paciente", PacienteSchema);
