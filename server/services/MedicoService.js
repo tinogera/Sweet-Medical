@@ -1,5 +1,4 @@
-import { TipoServicio } from "../domain/servicios/servicio.js";
-import { BadRequestError, NotFoundError } from "../errors/AppErrors.js";
+import { NotFoundError } from "../errors/AppErrors.js";
 
 export class MedicoService {
   constructor({
@@ -14,13 +13,9 @@ export class MedicoService {
     this.servicioRepository = servicioRepository;
   }
 
-  async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName, servicioName }) {
+  async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName }) {
     const medico = await this.medicoRepository.findById(medicoId);
     const sede = await this.sedeRepository.obtenerPorNombre(sedeName)
-    const servicio = await this.servicioRepository.findByName(servicioName)
-
-    if (!medico.atiendeEn(sede)) throw new BadRequestError(`El médico no atiende en la sede '${sedeName}'`);
-    if (!medico.ofrece(servicio)) throw new BadRequestError(`El médico no ofrece el servicio '${servicioName}'`);
 
     const fechaBase = new Date(fecha);
     const fechaHoraInicio = new Date(fechaBase);
@@ -28,10 +23,8 @@ export class MedicoService {
 
     const fechaHoraFin = new Date(fechaBase);
     fechaHoraFin.setHours(horaFin.hora, horaFin.minutos, 0, 0);
-    console.log(fechaHoraInicio)
-    console.log(fechaHoraFin)
 
-    const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede, servicio);
+    const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede);
 
     const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
@@ -52,18 +45,14 @@ export class MedicoService {
     await medico.save();
   }
 
-  async obtenerDisponibilidad(medicoId, { especialidad, practica } = {}) {
+  async obtenerDisponibilidad(medicoId, { sede } = {}) {
     const medico = await this.medicoRepository.findById(medicoId);
 
+    // TODO: remplazo temporal, es logica de dominio filtrada!
     const agenda = medico.agenda
-      .filter(b => !especialidad || (
-        b.servicio.tipoServicio === TipoServicio.ESPECIALIDAD &&
-        b.servicio.nombre.toLowerCase().includes(especialidad.toLowerCase())
+      .filter(b => !sede || (
+        b.sede.nombre === sede
       ))
-      .filter(b => !practica || (
-        b.servicio.tipoServicio === TipoServicio.PRACTICA &&
-        b.servicio.nombre.toLowerCase().includes(practica.toLowerCase())
-      ));
 
     return { medico, agenda };
   }

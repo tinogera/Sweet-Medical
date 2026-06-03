@@ -8,10 +8,10 @@ export class MedicoController {
   agregarDisponibilidad = async (req, res, next) => {
     try {
       const medicoId = req.params.id;
-      const { fecha, horaInicio, horaFin, sedeName, servicioName } = req.body;
+      const { fecha, horaInicio, horaFin, sedeName } = req.body;
 
-      if (!fecha || !horaInicio || !horaFin || !sedeName || !servicioName) {
-        throw new BadRequestError("Debe proveer: fecha, horaInicio, horaFin, sedeName y servicioName");
+      if (!fecha || !horaInicio || !horaFin || !sedeName) {
+        throw new BadRequestError("Debe proveer: fecha, horaInicio, horaFin, sedeName");
       }
 
       const { bloqueHorario, turnosGenerados } = await this.medicoService.agregarDisponibilidad(medicoId, {
@@ -23,7 +23,6 @@ export class MedicoController {
         horaInicio: bloqueHorario.horaInicio,
         horaFin: bloqueHorario.horaFin,
         sede: bloqueHorario.sede.nombre,
-        servicio: bloqueHorario.servicio.nombre,
         turnosGenerados: turnosGenerados.length
       });
     } catch (error) {
@@ -47,9 +46,9 @@ export class MedicoController {
   obtenerDisponibilidad = async (req, res, next) => {
     try {
       const medicoId = req.params.id;
-      const { especialidad, practica } = req.query;
+      const { sede } = req.query;
 
-      const { medico, agenda } = await this.medicoService.obtenerDisponibilidad(medicoId, { especialidad, practica });
+      const { medico, agenda } = await this.medicoService.obtenerDisponibilidad(medicoId, { sede: sede});
 
       return res.status(200).json({
         medicoId: medico._id || medico.id,
@@ -59,7 +58,6 @@ export class MedicoController {
           horaInicio: b.horaInicio,
           horaFin: b.horaFin,
           sede: b.sede.nombre,
-          servicio: b.servicio.nombre
         }))
       });
     } catch (error) {
