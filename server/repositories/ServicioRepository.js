@@ -34,5 +34,3 @@ export class ServicioRepository {
 		return await this.model.findByIdAndUpdate(id, servicioModificado, {new: true})
 	}
 }
-
-export const servicioRepository = new ServicioRepository()

@@ -137,5 +137,3 @@ return {
     };
   }
 }
-
-export const TurnoRepository = new TurnoRepositoryImpl();

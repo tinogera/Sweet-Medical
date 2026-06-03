@@ -27,5 +27,3 @@ export class UsuarioRepository {
   }
 
 }
-
-export const usuarioRepository = new UsuarioRepository();

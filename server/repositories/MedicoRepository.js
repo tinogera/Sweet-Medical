@@ -60,5 +60,3 @@ export class MedicoRepository {
     return await this.model.deleteMany({})
   }
 }
-
-export const medicoRepository = new MedicoRepository()

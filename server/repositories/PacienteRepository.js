@@ -74,5 +74,3 @@ export class PacienteRepository {
     }
   }
 }
-
-export const pacienteRepository = new PacienteRepository();
