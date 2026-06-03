@@ -3,7 +3,7 @@ class NotificacionController {
     this.notificacionService = notificacionService;
   }
 
-  async getUserNotificaciones(req, res, next) {
+  getUserNotificaciones = async (req, res, next) => {
     // TODO: validar y parsear correctamente los parametros
     const idUser = req.params.idUser
     const vistas = req.query.leidas
@@ -16,7 +16,7 @@ class NotificacionController {
     }
   }
 
-  async verNotificacion(req, res, next) {
+  verNotificacion = async (req, res, next) => {
     const idNotificacion = req.params.idNotificacion
     const idUser = req.params.idUser
 
