@@ -69,7 +69,7 @@ export class Medico {
   }
 
   agregarServicio(servicio) {
-    if (!this.servicios.includes(servicio)) {
+    if (!this.ofrece(servicio)) {
       this.servicios.push(servicio);
     }
   }
@@ -106,6 +106,7 @@ export class Medico {
       throw new ServicioInexistente("El médico no ofrece el servicio especificado.");
     }
     const servicioPropio = this.servicios[index].clonarCon(datosNuevos);
+    // le actualizo el servicio al medico
     this.servicios[index] = servicioPropio;
     return servicioPropio;
   }

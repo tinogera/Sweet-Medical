@@ -32,7 +32,7 @@ export class GestionServiciosService {
 		let nuevoServicio = await this.servicioRepository.findByName(nombre);
 
     if (!nuevoServicio){
-      nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
+          nuevoServicio = new Servicio(tipoServicio, nombre, precio, duracion);
 	    nuevoServicio = await this.servicioRepository.save(nuevoServicio);
     }
 
@@ -77,6 +77,8 @@ export class GestionServiciosService {
 		}
 
 			const servicioPropio = medico.actualizarServicio(nombreServicio, datosNuevos);
+			//revisar
+			//await this.servicioRepository.update(servicioPropio._id || servicioPropio.id, servicioPropio);
 			await this.medicoRepository.update(medicoId, medico);
 			return servicioPropio;
 		}
