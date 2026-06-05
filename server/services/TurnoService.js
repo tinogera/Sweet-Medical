@@ -11,14 +11,20 @@ export class TurnoService{
 
     async reservar(id, responsableId) {
         const turno = await this.turnoRepository.obtenerPorId(id)
+
+        // este error lo deberia tirar el repository
         if (!turno) {
             throw new NotFoundError(`El turno con id: ${id}, no existe`)
         }
+
+        // este error lo deberia tirar el dominio cuando turno.reservar(...)
         if (!turno.estaDisponible()) {
             throw new ConflictError(`El turno [${id}] no está disponible para ser reservado`)
         }
 
         const paciente = await this.pacienteRepository.obtenerPorId(responsableId)
+
+        // este error lo deberia tirar el repository
         if (!paciente) {
             throw new NotFoundError(`El paciente con id: ${responsableId}, no existe`)
         }
@@ -30,12 +36,14 @@ export class TurnoService{
         }
 
         const turnoReservado = await this.turnoRepository.reservarTurnoDisponible(id, paciente, nuevoEstadoDoc)
+
+        // este error se tira por condicion de carrera, lo deberia tirar el repository despues de hacer turnoDoc.save()
         if (!turnoReservado) {
             throw new ConflictError("El turno ya ha sido reservado por otro paciente en este instante.")
         }
 
         const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turnoReservado.servicio.nombre}.`
-        turnoReservado.medico.recibirNotificacion(new Notificacion("sistema@clinica.com", mensaje))
+        turnoReservado.medico.recibirNotificacion(new Notificacion({ destinatario: "sistema@clinica.com", mensaje }))
 
         return turnoReservado
     }
@@ -43,24 +51,33 @@ export class TurnoService{
     async cancelar(id, rol, motivo) {
         const turno = await this.turnoRepository.obtenerPorId(id)
 
+        if (!turno) {
+            throw new NotFoundError(`El turno con id: ${id}, no existe`)
+        }
+
         const [responsable, contraparte] = (rol === "PACIENTE") 
             ? [turno.paciente, turno.medico] 
             : [turno.medico, turno.paciente];
         
         turno.cancelar(responsable, motivo)
         const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
-        contraparte.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeCancelacion))
+        contraparte.recibirNotificacion(new Notificacion({ destinatario: contraparte.email, mensaje: mensajeCancelacion }))
 
         return await this.turnoRepository.guardarturno(id, turno)
     }
 
     async confirmar(id) {
         const turno = await this.turnoRepository.obtenerPorId(id)
+
+        if (!turno) {
+            throw new NotFoundError(`El turno con id: ${id}, no existe`)
+        }
+
         turno.confirmar(turno.medico)
         
         if (turno.paciente) {
             const mensajeConfirmacion = `Tu turno para ${turno.servicio.nombre} ha sido confirmado por el médico.`
-            turno.paciente.recibirNotificacion(new Notificacion("sistema@clinica.com", mensajeConfirmacion))
+            turno.paciente.recibirNotificacion(new Notificacion({ destinatario: turno.paciente.email, mensaje: mensajeConfirmacion }))
         }
 
         return await this.turnoRepository.guardarturno(id, turno)
@@ -68,6 +85,11 @@ export class TurnoService{
 
     async marcarRealizado(id) {
         const turno = await this.turnoRepository.obtenerPorId(id)
+
+        if (!turno) {
+            throw new NotFoundError(`El turno con id: ${id}, no existe`)
+        }
+
         turno.marcarRealizado()
         return await this.turnoRepository.guardarturno(id, turno)
     }

@@ -15,7 +15,7 @@ export class MedicoController {
       }
 
       const { bloqueHorario, turnosGenerados } = await this.medicoService.agregarDisponibilidad(medicoId, {
-        fecha, horaInicio, horaFin, sedeName, servicioName
+        fecha, horaInicio, horaFin, sedeName
       });
 
       return res.status(201).json({
