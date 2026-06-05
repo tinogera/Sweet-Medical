@@ -27,6 +27,7 @@ describe("Medicos Endpoints", () => {
 
     obtenerSedeSpy = jest.spyOn(SedeRepository.prototype, "obtenerPorNombre");
     findByNameSpy = jest.spyOn(ServicioRepository.prototype, "findByName");
+    ServicioRepository.prototype.update = jest.fn();
   });
 
   afterEach(() => {

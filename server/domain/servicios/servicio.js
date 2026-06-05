@@ -17,7 +17,10 @@ export class Servicio {
   clonarCon(datosNuevos) {
     const precio = datosNuevos.precio !== undefined ? datosNuevos.precio : this.precio;
     const duracion = datosNuevos.duracion !== undefined ? datosNuevos.duracion : this.duracion;
-    return new Servicio(this.tipoServicio, this.nombre, precio, duracion);
+    const clonado = new Servicio(this.tipoServicio, this.nombre, precio, duracion);
+    if (this._id) clonado._id = this._id;
+    if (this.id) clonado.id = this.id;
+    return clonado;
   }
 }
 
