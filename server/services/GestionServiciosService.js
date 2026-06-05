@@ -77,8 +77,7 @@ export class GestionServiciosService {
 		}
 
 			const servicioPropio = medico.actualizarServicio(nombreServicio, datosNuevos);
-			//revisar
-			//await this.servicioRepository.update(servicioPropio._id || servicioPropio.id, servicioPropio);
+			await this.servicioRepository.update(servicioPropio._id || servicioPropio.id, servicioPropio);
 			await this.medicoRepository.update(medicoId, medico);
 			return servicioPropio;
 		}

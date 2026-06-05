@@ -18,9 +18,8 @@ export class Servicio {
     const precio = datosNuevos.precio !== undefined ? datosNuevos.precio : this.precio;
     const duracion = datosNuevos.duracion !== undefined ? datosNuevos.duracion : this.duracion;
     const clonado = new Servicio(this.tipoServicio, this.nombre, precio, duracion);
-    //revisar
-    //if (this._id) clonado._id = this._id;
-    //if (this.id) clonado.id = this.id;
+    if (this._id) clonado._id = this._id;
+    if (this.id) clonado.id = this.id;
     return clonado;
   }
 }
