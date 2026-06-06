@@ -1,9 +1,11 @@
 import express from "express"
 import { pacienteController } from "../config/context.js"
+import { validate } from "../middlewares/validate.js"
+import { listarTurnosSchema } from "../validators/paciente.validator.js"
 
 const router = express.Router()
 
 router.route('/:id/turnos')
-    .get((req, res, next) => pacienteController.listarTurnos(req, res, next))
+    .get(validate(listarTurnosSchema), (req, res, next) => pacienteController.listarTurnos(req, res, next))
 
 export default router
