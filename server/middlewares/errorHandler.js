@@ -6,11 +6,13 @@ export function errorHandler(err, _req, res, next) {
     }
 
     if (err instanceof AppError) {
-        return res.status(err.statusCode).json({
+        const body = {
             status: err.status,
             message: err.message,
             timestamp: err.timestamp,
-        })
+        }
+        if (err.details) body.details = err.details
+        return res.status(err.statusCode).json(body)
     }
 
     if (process.env.ENV === "dev") 				{

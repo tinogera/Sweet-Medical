@@ -31,3 +31,13 @@ export class UnprocessableEntityError extends AppError {
         super(message, 422)
     }
 }
+
+export class ValidationError extends AppError {
+    constructor(issues) {
+        super("Validation Error", 400)
+        this.details = issues.map(i => ({
+            path: i.path.join("."),
+            message: i.message,
+        }))
+    }
+}
