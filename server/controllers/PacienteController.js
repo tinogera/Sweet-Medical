@@ -7,7 +7,7 @@ export class PacienteController{
     }
 
 
-    async listarTurnos(req, res, next){
+    listarTurnos = async (req, res, next) => {
         try{
             const pacienteId = req.params.id
             const { pagina: numeroDePagina, limite } = req.validatedQuery

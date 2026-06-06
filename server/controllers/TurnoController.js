@@ -7,7 +7,7 @@ export class TurnoController{
     }
 
 
-    async actualizar(req, res, next){
+    actualizar = async (req, res, next) => {
         try{
             const turnoId = req.params.id
             const actualizacionesTurno = req.body
@@ -31,8 +31,6 @@ export class TurnoController{
                 default:
                     throw new BadRequestError(`Estado inválido. Ingrese uno de: RESERVADO, CONFIRMADO, CANCELADO, REALIZADO`);
             }
-
-            console.log(turnoActualizado)
 
             res.status(200).json(
                 new TurnoOutputDTO(
