@@ -5,6 +5,7 @@ export function turnoToDocument(turno) {
     paciente: turno.paciente?._id || turno.paciente?.id || turno.paciente,
     sede: turno.sede?._id || turno.sede?.id || turno.sede,
     servicio: turno.servicio?._id || turno.servicio?.id || turno.servicio,
+    version: turno.version,
     estadosTurno: (turno.estadosTurno || []).map(e => ({
       estado: e.estado,
       fechaHora: e.fechaHora,

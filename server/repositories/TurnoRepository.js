@@ -1,4 +1,8 @@
-import { BadRequestError } from "../errors/AppErrors.js";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from "../errors/AppErrors.js";
 import { TurnoModel } from "../schemas/turno.schema.js";
 import { turnoToDocument } from "./turnoMapper.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
@@ -14,14 +18,30 @@ export class TurnoRepositoryImpl {
     return await nuevoDoc.save();
   }
 
-  async guardarturno(id, turnoModificado) {
-    return await this.model.findByIdAndUpdate(id, turnoToDocument(turnoModificado), { new: true });
+  async guardarTurno(turnoModificado) {
+    const currentVersion = turnoModificado.version;
+    const doc = turnoToDocument(turnoModificado);
+    doc.version = currentVersion + 1;
+
+    const result = await this.model.findOneAndUpdate(
+      { _id: turnoModificado.id, version: currentVersion },
+      doc,
+      { new: true },
+    );
+
+    if (!result) {
+      throw new ConflictError(
+        `El turno ${turnoModificado.id} fue modificado por otro proceso. Recargue los datos y reintente.`,
+      );
+    }
+
+    return result;
   }
 
   async reservarTurnoDisponible(id, paciente, nuevoEstado) {
     return await this.model.findOneAndUpdate(
       { _id: id, paciente: null },
-      { 
+      {
         $set: { paciente: paciente },
         $push: { estadosTurno: nuevoEstado }
       },
@@ -62,14 +82,14 @@ export class TurnoRepositoryImpl {
     const now = new Date();
     // Buscamos directamente en la DB los candidatos a borrar
     const turnos = await this.model.find({
-      medico: medicoId,
+        medico: medicoId,
       fechaHora: { $gte: now }
     }).populate('sede');
 
     const aEliminar = turnos.filter(t =>
-      t.sede.nombre === bloqueHorario.sede.nombre &&
-      t.fechaHora >= bloqueHorario.horaInicio &&
-      t.fechaHora < bloqueHorario.horaFin &&
+        t.sede.nombre === bloqueHorario.sede.nombre &&
+        t.fechaHora >= bloqueHorario.horaInicio &&
+        t.fechaHora < bloqueHorario.horaFin &&
       t.estadoActual().estado === Estado.DISPONIBLE
     );
 
@@ -79,7 +99,7 @@ export class TurnoRepositoryImpl {
   }
 
   async obtenerDisponiblesPaginados(numeroPagina, limitePorPagina, filtros, ordenarPor = 'fecha', direccion = 'asc', paciente) {
-    let query = { 
+    let query = {
       paciente: { $eq: null } // Asegura que no tenga paciente asignado
     };
 
@@ -102,7 +122,7 @@ export class TurnoRepositoryImpl {
     if (filtros.especialidad) {
       turnos = turnos.filter(t => 
         t.medico?.servicios?.some(s => 
-          s.tipoServicio === TipoServicio.ESPECIALIDAD && 
+            s.tipoServicio === TipoServicio.ESPECIALIDAD &&
           s.nombre.toLowerCase().includes(filtros.especialidad.toLowerCase())
         )
       );
@@ -111,25 +131,25 @@ export class TurnoRepositoryImpl {
     if (filtros.practica) {
       turnos = turnos.filter(t => 
         t.medico?.servicios?.some(s => 
-          s.tipoServicio === TipoServicio.PRACTICA && 
+            s.tipoServicio === TipoServicio.PRACTICA &&
           s.nombre.toLowerCase().includes(filtros.practica.toLowerCase())
         )
       );
     }
-if (filtros.sede) {
+    if (filtros.sede) {
   turnos = turnos.filter(t => t.sede.nombre.toLowerCase().includes(filtros.sede.toLowerCase()));
-}
+    }
 
-return {
-  turnos, // Devolvemos todos para que el service los expanda y pagine
+    return {
+      turnos, // Devolvemos todos para que el service los expanda y pagine
   totalTurnos: turnos.length
-};
-}
+    };
+  }
 
 
   async obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
     const turnos = await this.model.find({ paciente: pacienteId }).populate('medico sede servicio');
-    
+
     const inicio = (numeroPagina - 1) * limitePorPagina;
     return {
       turnos: turnos.slice(inicio, inicio + limitePorPagina),

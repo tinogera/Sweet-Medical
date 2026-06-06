@@ -55,7 +55,7 @@ const TurnoSchema = new mongoose.Schema({
     default: []
   }
 }, {
-  versionKey: false
+  versionKey: 'version'
 });
 
 TurnoSchema.loadClass(Turno);

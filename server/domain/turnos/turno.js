@@ -16,6 +16,7 @@ export class Turno {
     this.medico = medico;
     this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, 'Turno disponible')];
     this.sede = sede;
+    this.version = 0;
   }
 
   costoEstimado() {
