@@ -1,4 +1,22 @@
+import express from "express"
 import { ValidationError } from "../errors/AppErrors.js"
+
+// Express 5 define req.query como getter-only. Este parche lo hace writable
+// para que el middleware pueda asignar los datos validados/coercionados.
+const descriptor = Object.getOwnPropertyDescriptor(express.request, 'query');
+if (descriptor) {
+    Object.defineProperty(express.request, 'query', {
+        get() {
+            if (Object.hasOwn(this, '_query')) return this._query;
+            return descriptor.get?.call(this);
+        },
+        set(query) {
+            this._query = query;
+        },
+        configurable: true,
+        enumerable: true
+    });
+}
 
 export function validate(schemas) {
     return (req, _res, next) => {
