@@ -1,4 +1,3 @@
-import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 
 
@@ -11,10 +10,9 @@ export class PacienteController{
     async listarTurnos(req, res, next){
         try{
             const pacienteId = req.params.id
-            if (!pacienteId) throw new BadRequestError("El id del paciente es requerido")
-            const paginacion = this.extraerPaginacion(req.query)
+            const { page: numeroDePagina, limit: limite } = req.query
 
-            const resultado = await this.pacienteService.listarTurnos(pacienteId, paginacion)
+            const resultado = await this.pacienteService.listarTurnos(pacienteId, { numeroDePagina, limite })
 
             const turnosDTO = resultado.turnos.map(t => new TurnoOutputDTO(
                 t.id,
@@ -38,26 +36,6 @@ export class PacienteController{
 
         }catch(error){
             next(error)
-        }
-    }
-
-
-    extraerPaginacion(query){
-        const numeroDePagina = query?.page === undefined ? 1 : Number(query.page)
-        const limite = query?.limit === undefined ? 10 : Number(query.limit)
-
-        this.validarEnteroPositivo(numeroDePagina)
-        this.validarEnteroPositivo(limite)
-
-        return {
-            numeroDePagina,
-            limite
-        }
-    }
-
-    validarEnteroPositivo(valor) {
-        if(!Number.isInteger(valor) || valor <= 0){
-            throw new BadRequestError("El parámetro debe ser un entero positivo")
         }
     }
 }

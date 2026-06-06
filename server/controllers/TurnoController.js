@@ -10,14 +10,7 @@ export class TurnoController{
     async actualizar(req, res, next){
         try{
             const turnoId = req.params.id
-
-            if (!turnoId) {
-                throw new BadRequestError("El id del turno es requerido")
-            }
             const actualizacionesTurno = req.body
-            if (!actualizacionesTurno?.estado) {
-                throw new BadRequestError("Se requiere proveer un 'estado' para actualizar el turno")
-            }
 
             let turnoActualizado;
             const estado = actualizacionesTurno.estado;
@@ -26,14 +19,9 @@ export class TurnoController{
                 case 'RESERVADO':
                     turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno.responsableId);
                     break;
-                case 'CANCELADO': {
-                    const rol = actualizacionesTurno.rol;
-                    const motivo = actualizacionesTurno.motivo;
-                    this.validarRol(rol);
-                    this.validarMotivo(motivo);
-                    turnoActualizado = await this.turnoService.cancelar(turnoId, rol, motivo);
+                case 'CANCELADO':
+                    turnoActualizado = await this.turnoService.cancelar(turnoId, actualizacionesTurno.rol, actualizacionesTurno.motivo);
                     break;
-                }
                 case 'CONFIRMADO':
                     turnoActualizado = await this.turnoService.confirmar(turnoId);
                     break;
@@ -75,19 +63,6 @@ export class TurnoController{
             })
         } catch (error) {
             next(error)
-        }
-    }
-
-    validarRol(rol) {
-        const ROLES = ['PACIENTE', 'MEDICO'];
-        if (!ROLES.includes(rol)) {
-            throw new BadRequestError("Rol inválido. ingrese PACIENTE o MEDICO");
-        }
-    }
-
-    validarMotivo(motivo) {
-        if (typeof motivo !== 'string' || motivo.trim() === '') {
-            throw new BadRequestError("El motivo debe ser un texto válido");
         }
     }
 }

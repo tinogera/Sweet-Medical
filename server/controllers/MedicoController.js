@@ -1,5 +1,3 @@
-import { BadRequestError } from "../errors/AppErrors.js";
-
 export class MedicoController {
   constructor({ medicoService } = {}) {
     this.medicoService = medicoService;
@@ -9,10 +7,6 @@ export class MedicoController {
     try {
       const medicoId = req.params.id;
       const { fecha, horaInicio, horaFin, sedeName } = req.body;
-
-      if (!fecha || !horaInicio || !horaFin || !sedeName) {
-        throw new BadRequestError("Debe proveer: fecha, horaInicio, horaFin, sedeName");
-      }
 
       const { bloqueHorario, turnosGenerados } = await this.medicoService.agregarDisponibilidad(medicoId, {
         fecha, horaInicio, horaFin, sedeName

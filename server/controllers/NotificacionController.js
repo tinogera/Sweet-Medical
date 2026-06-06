@@ -4,9 +4,7 @@ class NotificacionController {
   }
 
   getUserNotificaciones = async (req, res, next) => {
-    // TODO: validar y parsear correctamente los parametros
     const idUser = req.params.idUser
-    //por que viene como string y lo convierto a booleano
     const vistas = req.query.leidas !== undefined ? req.query.leidas === "true" : undefined
 
     try {
@@ -18,8 +16,7 @@ class NotificacionController {
   }
 
   verNotificacion = async (req, res, next) => {
-    //por que llega como string
-    const idNotificacion = Number(req.params.idNotificacion)
+    const idNotificacion = req.params.idNotificacion
     const idUser = req.params.idUser
 
     try {
