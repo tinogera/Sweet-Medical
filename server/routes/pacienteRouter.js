@@ -6,6 +6,6 @@ import { listarTurnosSchema } from "../validators/paciente.validator.js"
 const router = express.Router()
 
 router.route('/:id/turnos')
-    .get(validate(listarTurnosSchema), (req, res, next) => pacienteController.listarTurnos(req, res, next))
+    .get(validate(listarTurnosSchema), pacienteController.listarTurnos)
 
 export default router

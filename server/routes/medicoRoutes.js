@@ -6,9 +6,9 @@ import { agregarDisponibilidadSchema, obtenerDisponibilidadSchema, eliminarDispo
 const router = express.Router()
 
 router.route('/:id/disponibilidad')
-  .post(validate(agregarDisponibilidadSchema), (req, res, next) => medicoController.agregarDisponibilidad(req, res, next))
-  .get(validate(obtenerDisponibilidadSchema), (req, res, next) => medicoController.obtenerDisponibilidad(req, res, next))
+  .post(validate(agregarDisponibilidadSchema), medicoController.agregarDisponibilidad)
+  .get(validate(obtenerDisponibilidadSchema), medicoController.obtenerDisponibilidad)
 router.route('/:id/disponibilidad/:bloqueId')
-  .delete(validate(eliminarDisponibilidadSchema), (req, res, next) => medicoController.eliminarDisponibilidad(req, res, next))
+  .delete(validate(eliminarDisponibilidadSchema), medicoController.eliminarDisponibilidad)
    
 export default router

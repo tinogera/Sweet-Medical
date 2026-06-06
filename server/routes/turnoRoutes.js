@@ -7,10 +7,10 @@ import { buscarTurnosSchema } from "../validators/busqueda.validator.js"
 const router = express.Router()
 
 router.route('/')
-    .get(validate(buscarTurnosSchema), (req, res, next) => busquedaTurnoController.buscarTodos(req, res, next))
+    .get(validate(buscarTurnosSchema), busquedaTurnoController.buscarTodos)
 router.route('/generar')
-    .post(validate(generarTurnosSchema), (req, res, next) => turnoController.generarTurnos(req, res, next))
+    .post(validate(generarTurnosSchema), turnoController.generarTurnos)
 router.route('/:id')
-    .patch(validate(actualizarTurnoSchema), (req, res, next) => turnoController.actualizar(req, res, next))
+    .patch(validate(actualizarTurnoSchema), turnoController.actualizar)
 
 export default router
