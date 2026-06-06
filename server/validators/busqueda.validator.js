@@ -1,10 +1,10 @@
 import { z } from "zod"
+import { paginationQuery } from "./shared.js"
 
 export const buscarTurnosSchema = {
     query: z.object({
         idPaciente: z.string().min(1),
-        pagina: z.coerce.number().int().positive().default(1),
-        limite: z.coerce.number().int().positive().default(10),
+        ...paginationQuery,
         ordenarPor: z.enum(["fecha", "costo"]).default("fecha"),
         direccion: z.enum(["asc", "desc"]).default("asc"),
         profesional: z.string().optional(),
