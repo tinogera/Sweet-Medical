@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo
+    image: docker.io/library/mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -12,7 +12,7 @@ services:
       - ./:/docker-entrypoint-initdb.d
 
   mongo-express:
-    image: mongo-express
+    image: docker.io/library/mongo-express
     restart: always
     ports:
       - 8081:8081
