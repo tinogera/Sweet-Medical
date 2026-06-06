@@ -32,6 +32,9 @@ export class PacienteRepository {
     } catch (err) {
       if (err.name === 'CastError') {
         throw new BadRequestError(`El id proporcionado no es válido: ${id}`);
+      } 
+      if (err.name === 'DocumentNotFoundError') {
+        throw new NotFoundError (`No se encontro un turno con id : ${id}`)
       }
       throw err;
     }
