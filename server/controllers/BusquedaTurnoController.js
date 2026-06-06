@@ -5,7 +5,7 @@ export class BusquedaTurnoController {
 
     buscarTodos = async (req, res, next) => {
         try {
-            const { pagina: numeroPagina, limite: limitePorPagina, ordenarPor, direccion, idPaciente, ...rest } = req.query
+            const { pagina: numeroPagina, limite: limitePorPagina, ordenarPor, direccion, idPaciente, ...rest } = req.validatedQuery
 
             const filtros = {}
             if (rest.profesional) filtros.profesional = rest.profesional

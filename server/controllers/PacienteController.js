@@ -10,7 +10,7 @@ export class PacienteController{
     async listarTurnos(req, res, next){
         try{
             const pacienteId = req.params.id
-            const { page: numeroDePagina, limit: limite } = req.query
+            const { page: numeroDePagina, limit: limite } = req.validatedQuery
 
             const resultado = await this.pacienteService.listarTurnos(pacienteId, { numeroDePagina, limite })
 

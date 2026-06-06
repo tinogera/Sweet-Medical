@@ -40,7 +40,7 @@ export class MedicoController {
   obtenerDisponibilidad = async (req, res, next) => {
     try {
       const medicoId = req.params.id;
-      const { sede } = req.query;
+      const { sede } = req.validatedQuery;
 
       const { medico, agenda } = await this.medicoService.obtenerDisponibilidad(medicoId, { sede: sede});
 

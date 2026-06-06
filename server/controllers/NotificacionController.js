@@ -5,7 +5,7 @@ class NotificacionController {
 
   getUserNotificaciones = async (req, res, next) => {
     const idUser = req.params.idUser
-    const vistas = req.query.leidas !== undefined ? req.query.leidas === "true" : undefined
+    const vistas = req.validatedQuery.leidas
 
     try {
       const notificaciones = await this.notificacionService.getUserNotificaciones(idUser, vistas)
