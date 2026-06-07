@@ -1,4 +1,3 @@
-import { BadRequestError } from "../errors/AppErrors.js"
 import { TurnoOutputDTO } from "../dtos/turnoOutputDTO.js"
 import { TipoServicio } from "../domain/servicios/servicio.js"
 
@@ -39,12 +38,10 @@ export class BusquedaTurnoService {
                 )];
             }
 
-            // Si está disponible, mostramos los servicios del médico que coincidan con el filtro
-            const especialidadBuscada = filtros.especialidad?.toLowerCase();
-            const practicaBuscada = filtros.practica?.toLowerCase();
-
+			const especialidadBuscada = filtros.especialidad;
+			const practicaBuscada = filtros.practica;
+			// FIX: que el filtro lo haga la base de datos
             let serviciosAMostrar = t.medico.servicios;
-
             if (especialidadBuscada) {
                 serviciosAMostrar = serviciosAMostrar.filter(s => s.tipoServicio === TipoServicio.ESPECIALIDAD && s.nombre.toLowerCase().includes(especialidadBuscada));
             } else if (practicaBuscada) {
@@ -58,10 +55,12 @@ export class BusquedaTurnoService {
                 t.fechaHora,
                 t.sede?.nombre || "Sede",
                 t.estadoActual().estado,
-                paciente.plan.precioDe(s)
-            ));
-            })
-
+						paciente.plan.precioDe(s),
+					),
+			);
+		});
+		
+		// FIX: Que el sort lo haga la base de datos
             todasLasOpciones.sort((a, b) => {
             let valorA, valorB;
             if (ordenarPor === 'fecha') {
@@ -74,8 +73,8 @@ export class BusquedaTurnoService {
             return direccion === 'asc' ? valorA - valorB : valorB - valorA;
             });
 
+		// FIX: idem. Que lo haga la db para eso le pagan
             const totalTurnos = todasLasOpciones.length;
-
         const inicio = (numeroPagina - 1) * limitePorPagina;
         const turnosDTO = todasLasOpciones.slice(inicio, inicio + limitePorPagina);
 
@@ -86,36 +85,7 @@ export class BusquedaTurnoService {
             numeroPagina,
             limitePorPagina,
             totalPaginas,
-            totalTurnos
-        }
-    }
-
-    validarPaginacion(numeroPagina, limitePorPagina) {
-        this.validarEnteroPositivo(numeroPagina, "Numero de página")
-        this.validarEnteroPositivo(limitePorPagina, "Límite por página")
-    }
-
-    ajustarYValidarFiltros(filtros, ahora) {
-        if (filtros.fechaDesde) {
-            if (filtros.fechaDesde.toDateString() === ahora.toDateString()) {
-                filtros.fechaDesde = ahora
-            }
-
-            if (filtros.fechaDesde.getTime() < ahora.getTime()) {
-                throw new BadRequestError("La fecha de búsqueda no puede ser anterior a la actual")
-            }
-        }
-
-        if (filtros.fechaDesde && filtros.fechaHasta) {
-            if (filtros.fechaDesde.getTime() > filtros.fechaHasta.getTime()) {
-                throw new BadRequestError("fechaDesde no puede ser mayor que fechaHasta")
-            }
-        }
-    }
-
-    validarEnteroPositivo(numero, parametro) {
-        if (!Number.isInteger(numero) || numero <= 0) {
-            throw new BadRequestError(`${parametro} debe ser un entero positivo`)
-        }
-    }
+			totalTurnos,
+		};
+	}
 }

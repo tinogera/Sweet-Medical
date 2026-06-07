@@ -12,7 +12,3 @@ export const actualizarTurnoSchema = {
         motivo: z.string().min(1).optional(),
     }),
 }
-
-export const generarTurnosSchema = {
-    body: z.object({}).optional(),
-}

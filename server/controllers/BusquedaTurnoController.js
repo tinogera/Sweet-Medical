@@ -9,18 +9,25 @@ export class BusquedaTurnoController {
 
             const filtros = {}
             if (rest.profesional) filtros.profesional = rest.profesional
-            if (rest.especialidad) filtros.especialidad = rest.especialidad
-            if (rest.practica) filtros.practica = rest.practica
+            if (rest.especialidad) filtros.especialidad = rest.especialidad.toLowerCase()
+            if (rest.practica) filtros.practica = rest.practica.toLowerCase()
             if (rest.sede) filtros.sede = rest.sede
             if (rest.fechaDesde) filtros.fechaDesde = new Date(rest.fechaDesde)
             if (rest.fechaHasta) {
                 const [y, m, d] = rest.fechaHasta.split('-').map(Number)
+                // fechaHasta inclusive
                 filtros.fechaHasta = new Date(y, m - 1, d, 23, 59, 59, 999)
             }
 
-            const resultado = await this.busquedaTurnoService.buscarTurnos({
-                idPaciente, numeroPagina, limitePorPagina, filtros, ordenarPor, direccion
-            })
+            const resultado = await this.busquedaTurnoService
+                .buscarTurnos({
+                    idPaciente, 
+                    numeroPagina, 
+                    limitePorPagina, 
+                    filtros, 
+                    ordenarPor, 
+                    direccion
+                })
 
             return res.status(200).json({
                 turnos: resultado.turnosDTO,

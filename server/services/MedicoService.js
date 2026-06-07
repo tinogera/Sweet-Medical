@@ -1,4 +1,3 @@
-import { NotFoundError } from "../errors/AppErrors.js";
 
 export class MedicoService {
   constructor({
@@ -38,10 +37,7 @@ export class MedicoService {
 
   async eliminarDisponibilidad(medicoId, bloqueId) {
     const medico = await this.medicoRepository.findById(medicoId);
-    if (!medico) throw new NotFoundError(`No existe médico con id ${medicoId}`);
-
     medico.eliminarBloque(bloqueId);
-    
     await medico.save();
   }
 

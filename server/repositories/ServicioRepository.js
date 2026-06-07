@@ -1,4 +1,3 @@
-import { remove } from "lodash-es";
 import { ServicioModel } from "../schemas/servicioSchema.js";
 
 export class ServicioRepository {

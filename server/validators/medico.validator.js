@@ -6,9 +6,9 @@ export const agregarDisponibilidadSchema = {
         id: objectIdSchema,
     }),
     body: z.object({
-        fecha: z.string().min(1),
-        horaInicio: z.string().min(1),
-        horaFin: z.string().min(1),
+        fecha: z.iso.date(),
+        horaInicio: z.iso.time(),
+        horaFin: z.iso.time(),
         sedeName: z.string().min(1),
     }),
 }
