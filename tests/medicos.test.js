@@ -8,26 +8,43 @@ import { NotFoundError, BadRequestError } from "../server/errors/AppErrors.js";
 
 describe("Medicos Endpoints", () => {
   let findByIdSpy;
-  let obtenerPorIdSpy;
+  let updateSpy;
   let saveSpy;
   let obtenerSedeSpy;
-  let obtenerServicioSpy;
   let findByNameSpy;
-  let guardarMedicoSpy;
 
   beforeEach(() => {
-    MedicoRepository.prototype.findById = jest.fn();
-    MedicoRepository.prototype.update = jest.fn();
-    MedicoRepository.prototype.save = jest.fn();
-    MedicoRepository.prototype.guardarMedico = jest.fn();
+    // Establecer mocks a nivel de prototipo para no tocar la DB
+    findByIdSpy = jest.spyOn(MedicoRepository.prototype, "findById").mockResolvedValue({
+      _id: "medico-123",
+      nombre: "John",
+      apellido: "Doe",
+      agenda: [],
+      servicios: [],
+      sedes: [],
+      atiendeEn: () => true,
+      ofrece: () => true,
+      agregarDisponibilidad: () => ({
+        _id: "bloque-123",
+        horaInicio: new Date("2026-06-10T08:00:00Z"),
+        horaFin: new Date("2026-06-10T10:00:00Z"),
+        sede: { nombre: "Sede Palermo" },
+        servicio: { nombre: "Cardiología" },
+      }),
+      generarTurnos: () => [],
+      save: jest.fn().mockResolvedValue(true),
+    });
 
-    findByIdSpy = jest.spyOn(MedicoRepository.prototype, "findById");
-    saveSpy = jest.spyOn(MedicoRepository.prototype, "save");
-    guardarMedicoSpy = jest.spyOn(MedicoRepository.prototype, "update");
-
-    obtenerSedeSpy = jest.spyOn(SedeRepository.prototype, "obtenerPorNombre");
-    findByNameSpy = jest.spyOn(ServicioRepository.prototype, "findByName");
-    ServicioRepository.prototype.update = jest.fn();
+    updateSpy = jest.spyOn(MedicoRepository.prototype, "update").mockResolvedValue({});
+    saveSpy = jest.spyOn(MedicoRepository.prototype, "save").mockResolvedValue({});
+    obtenerSedeSpy = jest.spyOn(SedeRepository.prototype, "obtenerPorNombre").mockResolvedValue({ nombre: "Sede Palermo" });
+    findByNameSpy = jest.spyOn(ServicioRepository.prototype, "findByName").mockResolvedValue({
+      tipoServicio: "ESPECIALIDAD",
+      nombre: "Cardiología",
+      precio: 3000,
+      duracion: 20,
+    });
+    jest.spyOn(ServicioRepository.prototype, "update").mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -47,24 +64,20 @@ describe("Medicos Endpoints", () => {
           horaInicio: new Date("2026-06-10T08:00:00Z"),
           horaFin: new Date("2026-06-10T10:00:00Z"),
           sede: { nombre: "Sede Palermo" },
-          servicio: { nombre: "Cardiología" },
         }),
         generarTurnos: () => [],
         save: jest.fn().mockResolvedValue(true),
       };
 
       findByIdSpy.mockResolvedValue(mockMedico);
-      obtenerSedeSpy.mockResolvedValue({ nombre: "Sede Palermo" });
-      findByNameSpy.mockResolvedValue({ nombre: "Cardiología" });
 
       const res = await request(app)
         .post("/medicos/medico-123/disponibilidad")
         .send({
           fecha: "2026-06-10",
-          horaInicio: { hora: 8, minutos: 0 },
-          horaFin: { hora: 10, minutos: 0 },
+          horaInicio: "08:00:00",
+          horaFin: "10:00:00",
           sedeName: "Sede Palermo",
-          servicioName: "Cardiología",
         });
 
       expect(res.status).toBe(201);
@@ -73,7 +86,6 @@ describe("Medicos Endpoints", () => {
         horaInicio: expect.any(String),
         horaFin: expect.any(String),
         sede: "Sede Palermo",
-        servicio: "Cardiología",
         turnosGenerados: 0,
       });
     });
@@ -86,7 +98,7 @@ describe("Medicos Endpoints", () => {
         });
 
       expect(res.status).toBe(400);
-      expect(res.body.message).toContain("Debe proveer: fecha, horaInicio, horaFin, sedeName y servicioName");
+      expect(res.body.message).toBe("Validation Error");
     });
   });
 
@@ -102,7 +114,6 @@ describe("Medicos Endpoints", () => {
             horaInicio: new Date("2026-06-10T08:00:00Z"),
             horaFin: new Date("2026-06-10T10:00:00Z"),
             sede: { nombre: "Sede Palermo" },
-            servicio: { nombre: "Cardiología" },
           },
         ],
       };
@@ -157,7 +168,7 @@ describe("Medicos Endpoints", () => {
           },
         ],
       };
-      findByIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockResolvedValue(mockMedico);
 
       const res = await request(app).get("/medicos/123/servicios");
       expect(res.status).toBe(200);
@@ -169,7 +180,7 @@ describe("Medicos Endpoints", () => {
       const mockMedico = {
         agregarServicio: jest.fn(),
       };
-      findByIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockResolvedValue(mockMedico);
       findByNameSpy.mockResolvedValue({
         tipoServicio: "ESPECIALIDAD",
         nombre: "Pediatría",
@@ -192,7 +203,7 @@ describe("Medicos Endpoints", () => {
     });
 
     it("debería retornar 404 al agregar servicio si el médico no existe (escenario de error)", async () => {
-      findByIdSpy.mockReturnValue(null);
+      findByIdSpy.mockRejectedValue(new NotFoundError("Médico no encontrado"));
 
       const res = await request(app)
         .post("/medicos/999/servicios")
@@ -211,7 +222,7 @@ describe("Medicos Endpoints", () => {
         ofrece: () => true,
         dejarDeOfrecer: jest.fn(),
       };
-      findByIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockResolvedValue(mockMedico);
       findByNameSpy.mockResolvedValue({ nombre: "Cardiología" });
 
       const res = await request(app).delete("/medicos/123/servicios/Cardiología");
@@ -228,7 +239,7 @@ describe("Medicos Endpoints", () => {
           duracion: 20,
         }),
       };
-      findByIdSpy.mockReturnValue(mockMedico);
+      findByIdSpy.mockResolvedValue(mockMedico);
 
       const res = await request(app)
         .patch("/medicos/123/servicios/Cardiología")
