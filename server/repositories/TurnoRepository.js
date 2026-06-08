@@ -1,12 +1,12 @@
 import {
   BadRequestError,
   ConflictError,
-  NotFoundError,
 } from "../errors/AppErrors.js";
 import { TurnoModel } from "../schemas/turno.schema.js";
 import { turnoToDocument } from "./turnoMapper.js";
 import { TipoServicio } from "../domain/servicios/servicio.js";
 import { Estado } from "../domain/turnos/estadoTurno.js";
+import { documentToTurno } from "./turnoMapper.js";
 
 export class TurnoRepositoryImpl {
   constructor() {
@@ -26,7 +26,7 @@ export class TurnoRepositoryImpl {
     const result = await this.model.findOneAndUpdate(
       { _id: turnoModificado.id, version: currentVersion },
       doc,
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     if (!result) {
@@ -35,7 +35,10 @@ export class TurnoRepositoryImpl {
       );
     }
 
-    return result;
+    // Actualizar la versión en el objeto de dominio y devolverlo
+    // (findOneAndUpdate no popula, documentToTurno fallaría con ObjectIds crudos)
+    turnoModificado.version = result.version;
+    return turnoModificado;
   }
 
   async reservarTurnoDisponible(id, paciente, nuevoEstado) {
@@ -45,7 +48,7 @@ export class TurnoRepositoryImpl {
         $set: { paciente: paciente },
         $push: { estadosTurno: nuevoEstado }
       },
-      { new: true }
+      { returnDocument: true }
     );
   }
 
@@ -64,12 +67,17 @@ export class TurnoRepositoryImpl {
 
   async obtenerPorId(id) {
     try {
-      return await this.model.findById(id)
+      const turnoDoc = await this.model.findById(id)
         .populate({
           path: 'medico',
-          populate: { path: 'servicios' }
+          populate: { path: 'servicios sedes usuario' }
+        })
+        .populate({
+          path: 'paciente',
+          populate: { path: 'usuarioId' }
         })
         .populate('sede servicio');
+      return documentToTurno(turnoDoc)
     } catch (err) {
       if (err.name === 'CastError') {
         throw new BadRequestError(`El id proporcionado no es válido: ${id}`);
@@ -146,13 +154,22 @@ export class TurnoRepositoryImpl {
     };
   }
 
-
   async obtenerTurnosDePaciente(pacienteId, numeroPagina, limitePorPagina) {
-    const turnos = await this.model.find({ paciente: pacienteId }).populate('medico sede servicio');
-
+    const turnos = await this.model.find({ paciente: pacienteId })
+      .populate({
+        path: 'medico',
+        populate: { path: 'servicios sedes usuario' }
+      })
+      .populate({
+        path: 'paciente',
+        populate: { path: 'usuarioId' }
+      })
+      .populate('sede servicio');
+    const mapped = turnos.map(t => documentToTurno(t))
+    
     const inicio = (numeroPagina - 1) * limitePorPagina;
     return {
-      turnos: turnos.slice(inicio, inicio + limitePorPagina),
+      turnos: mapped.slice(inicio, inicio + limitePorPagina),
       totalTurnos: turnos.length
     };
   }

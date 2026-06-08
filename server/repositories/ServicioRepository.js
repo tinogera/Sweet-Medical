@@ -19,6 +19,9 @@ export class ServicioRepository {
 		return await this.model.deleteMany({})
 	}
 
+	async findById(id) {
+		return await this.model.findById(id)
+	}
 
 	async findByName(nombre){
 		return await this.model.findOne({ nombre})
