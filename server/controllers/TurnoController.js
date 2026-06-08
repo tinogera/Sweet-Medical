@@ -17,7 +17,7 @@ export class TurnoController{
 
             switch (estado) {
                 case 'RESERVADO':
-                    turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno.responsableId);
+                    turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno);
                     break;
                 case 'CANCELADO':
                     turnoActualizado = await this.turnoService.cancelar(turnoId, actualizacionesTurno.rol, actualizacionesTurno.motivo);

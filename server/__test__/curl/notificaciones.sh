@@ -15,4 +15,4 @@ run "GET /notificaciones/:idUser — filtrar no leídas" \
     -X GET "$BASE/notificaciones/$USER_ID?leidas=false"
 
 run "PATCH /notificaciones/:idUser/:idNotificacion — marcar como leída" \
-    -X PATCH "$BASE/notificaciones/$USER_ID/1"
+    -X PATCH "$BASE/notificaciones/$USER_ID/4"

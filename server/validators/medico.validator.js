@@ -25,6 +25,6 @@ export const obtenerDisponibilidadSchema = {
 export const eliminarDisponibilidadSchema = {
     params: z.object({
         id: objectIdSchema,
-        bloqueId: objectIdSchema,
+        bloqueId: z.coerce.number().int().nonnegative(),
     }),
 }

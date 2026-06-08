@@ -17,14 +17,22 @@ export class MedicoService {
     const sede = await this.sedeRepository.obtenerPorNombre(sedeName)
 
     const fechaBase = new Date(fecha);
+    //divide el string de la fecha
+    const partsInicio = horaInicio.split(':');
     const fechaHoraInicio = new Date(fechaBase);
-    fechaHoraInicio.setHours(horaInicio.hora, horaInicio.minutos, 0, 0);
+    //defino hora, minutos, segundos y milisegundos
+    fechaHoraInicio.setHours(parseInt(partsInicio[0]), parseInt(partsInicio[1]), 0, 0);
 
+    // Fin
+    //lo mismo que el inicio pero para el fin
+    const partsFin = horaFin.split(':');
     const fechaHoraFin = new Date(fechaBase);
-    fechaHoraFin.setHours(horaFin.hora, horaFin.minutos, 0, 0);
+    fechaHoraFin.setHours(parseInt(partsFin[0]), parseInt(partsFin[1]), 0, 0);
 
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede);
 
+    // TODO: esto re calcula los turnos cuando se agrega nueva disponibilidad,
+    // se agregan al repo, pero no reemplaza los existentes invalidados
     const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
       await this.turnoRepository.agregarTurno(t);
@@ -44,7 +52,7 @@ export class MedicoService {
   async obtenerDisponibilidad(medicoId, { sede } = {}) {
     const medico = await this.medicoRepository.findById(medicoId);
 
-    // TODO: remplazo temporal, es logica de dominio filtrada!
+    // FIX: remplazo temporal, es logica de dominio filtrada!
     const agenda = medico.agenda
       .filter(b => !sede || (
         b.sede.nombre === sede

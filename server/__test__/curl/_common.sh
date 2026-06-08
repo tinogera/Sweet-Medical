@@ -11,6 +11,7 @@ MEDICO_ID="<MEDICO_ID>"
 TURNO_ID="<TURNO_ID>"
 BLOQUE_ID="<BLOQUE_ID>"
 USER_ID="<USER_ID>"
+SERVICIO_ID="<SERVICIO_ID>"
 
 sep() { echo -e "\n\e[1;36m══════════════════════════════════════════════\e[0m"; }
 ok()  { echo -e "  \e[32m✓ $1\e[0m"; }

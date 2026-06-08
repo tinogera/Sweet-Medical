@@ -9,8 +9,8 @@ export class BusquedaTurnoController {
 
             const filtros = {}
             if (rest.profesional) filtros.profesional = rest.profesional
-            if (rest.especialidad) filtros.especialidad = rest.especialidad.toLowerCase()
-            if (rest.practica) filtros.practica = rest.practica.toLowerCase()
+            if (rest.especialidad) filtros.especialidad = rest.especialidad
+            if (rest.practica) filtros.practica = rest.practica
             if (rest.sede) filtros.sede = rest.sede
             if (rest.fechaDesde) filtros.fechaDesde = new Date(rest.fechaDesde)
             if (rest.fechaHasta) {

@@ -1,26 +1,27 @@
 import { Notificacion } from "../domain/notificaciones/notificacion.js"
 
 export class TurnoService{
-    constructor({ turnoRepository, pacienteRepository, medicoRepository } = {}) {
+    constructor({ turnoRepository, pacienteRepository, medicoRepository, servicioRepository } = {}) {
         this.turnoRepository = turnoRepository
         this.pacienteRepository = pacienteRepository
         this.medicoRepository = medicoRepository
+        this.servicioRepository = servicioRepository
     }
 
-    async reservar(id, responsableId) {
+    async reservar(id, { responsableId, servicioId }) {
         const turno = await this.turnoRepository.obtenerPorId(id)
         const paciente = await this.pacienteRepository.obtenerPorId(responsableId)
+        const servicio = await this.servicioRepository.findById(servicioId)
 
-        // cambia su estado interior
-        turno.reservar(paciente)
+        turno.reservar(paciente, servicio)
 
-        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turnoReservado.servicio.nombre}.`
-        turno.medico.recibirNotificacion(new Notificacion({ 
+        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
+        turno.medico.usuario.recibirNotificacion(new Notificacion({ 
             destinatario: "sistema@clinica.com", 
             mensaje: mensaje 
         }))
 
-        turnoReservado = await this.turnoRepository.guardarTurno(turno)
+        const turnoReservado = await this.turnoRepository.guardarTurno(turno)
 
         return turnoReservado
     }
@@ -34,13 +35,12 @@ export class TurnoService{
         
         turno.cancelar(responsable, motivo)
         const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
-        contraparte.recibirNotificacion(new Notificacion({
-            // FIX: paciente no tiene email
-            destinatario: contraparte.email, 
+        contraparte.usuario.recibirNotificacion(new Notificacion({
+            destinatario: contraparte.usuario.nombre, 
             mensaje: mensajeCancelacion 
         }))
 
-        return await this.turnoRepository.guardarTurno(id, turno)
+        return await this.turnoRepository.guardarTurno(turno)
     }
 
     async confirmar(id) {
@@ -52,7 +52,7 @@ export class TurnoService{
         if (turno.paciente) {
             const mensajeConfirmacion = `Tu turno para ${turno.servicio.nombre} ha sido confirmado por el médico.`
             turno.paciente.recibirNotificacion(new Notificacion({
-                destinatario: turno.paciente.email, 
+                destinatario: turno.paciente.usuario.nombre, 
                 mensaje: mensajeConfirmacion 
             }))
         }
@@ -68,11 +68,12 @@ export class TurnoService{
 
 
     async generarTodosLosTurnos() {
-        const medicos = await this.medicoRepository.obtenerTodos()
+        const medicos = await this.medicoRepository.findAll()
 
         // Recorremos los médicos y obtenemos una lista plana de todos los turnos generados
-        const todosLosTurnosNuevos = medicos.flatMap(medico => 
-            medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
+        const todosLosTurnosNuevos = medicos.flatMap(medico => {
+            return medico.agenda.flatMap(bloque => medico.generarTurnos(bloque))
+        }
         )
 
         // Guardamos todos los turnos generados en el repositorio general

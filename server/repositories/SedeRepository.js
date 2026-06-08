@@ -4,8 +4,7 @@ export class SedeRepository {
 	constructor() {
 		this.model = SedeModel
 	}
-
-
+	
 	async agregar(sede) {
 		return await this.model.create(sede);
 	}

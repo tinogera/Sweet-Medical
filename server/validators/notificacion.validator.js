@@ -6,7 +6,7 @@ export const getUserNotificacionesSchema = {
         idUser: objectIdSchema,
     }),
     query: z.object({
-        leidas: z.stringbool(),
+        leidas: z.stringbool().optional(),
     }),
 }
 
