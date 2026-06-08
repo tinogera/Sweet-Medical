@@ -1,7 +1,7 @@
 export class ObraSocial {
-  constructor(nombre) {
+  constructor({nombre, planes} = {}) {
     this.nombre = nombre;
-    this.planes = [];
+    this.planes = planes ?? [];
   }
 
   agregarPlan(plan) {

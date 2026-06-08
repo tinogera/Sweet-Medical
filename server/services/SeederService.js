@@ -78,7 +78,7 @@ export class SeederService {
     await this.pacienteRepository.agregarPaciente(pacienteAna)
 
     // 5. Crear Médicos
-    const medicoGomez = new Medico("Carlos", "Gomez", "12344444")
+    const medicoGomez = new Medico({nombre:"Carlos", apellido: "Gomez", documento: "12344444"})
     medicoGomez.agregarSede(sp)
     medicoGomez.agregarSede(sb)
     medicoGomez.agregarServicio(cardiologia)
@@ -92,7 +92,7 @@ export class SeederService {
 
     await this.medicoRepository.save(medicoGomez)
 
-    const medicoLopez = new Medico("Laura", "Lopez", "55555555")
+    const medicoLopez = new Medico({ nombre: "Laura", apellido: "Lopez", documento: "55555555" })
     medicoLopez.agregarSede(sb)
     medicoLopez.agregarServicio(pediatria)
     medicoLopez.agregarServicio(ecografia)
