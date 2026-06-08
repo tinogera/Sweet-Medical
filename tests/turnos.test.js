@@ -1,8 +1,8 @@
 import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../server/app.js";
-import { TurnoRepository } from "../server/repositories/TurnoRepository.js";
-import { pacienteRepository } from "../server/repositories/PacienteRepository.js";
+import { TurnoRepositoryImpl } from "../server/repositories/TurnoRepository.js";
+import { PacienteRepository } from "../server/repositories/PacienteRepository.js";
 import { MedicoRepository } from "../server/repositories/MedicoRepository.js";
 import { TurnoService } from "../server/services/TurnoService.js";
 import { BadRequestError, NotFoundError } from "../server/errors/AppErrors.js";
@@ -13,16 +13,41 @@ describe("Turnos Endpoints", () => {
   let obtenerTurnoPorIdSpy;
   let reservarTurnoSpy;
   let generarTodosLosTurnosSpy;
+  let guardarTurnoSpy;
 
   beforeEach(() => {
-    // Patch to prevent crashes
-    MedicoRepository.obtenerTodos = jest.fn();
+    // Evitar llamadas reales a la DB
+    jest.spyOn(MedicoRepository.prototype, "findAll").mockResolvedValue([]);
+    
+    obtenerPacienteSpy = jest.spyOn(PacienteRepository.prototype, "obtenerPorId").mockResolvedValue({
+      id: "1",
+      plan: {
+        precioDe: () => 1000,
+      },
+    });
 
-    obtenerPacienteSpy = jest.spyOn(pacienteRepository, "obtenerPorId");
-    obtenerDisponiblesPaginadosSpy = jest.spyOn(TurnoRepository, "obtenerDisponiblesPaginados");
-    obtenerTurnoPorIdSpy = jest.spyOn(TurnoRepository, "obtenerPorId");
-    reservarTurnoSpy = jest.spyOn(TurnoRepository, "reservarTurnoDisponible");
-    generarTodosLosTurnosSpy = jest.spyOn(TurnoService.prototype, "generarTodosLosTurnos");
+    obtenerDisponiblesPaginadosSpy = jest.spyOn(TurnoRepositoryImpl.prototype, "obtenerDisponiblesPaginados").mockResolvedValue({
+      turnos: [],
+      totalTurnos: 0,
+    });
+
+    obtenerTurnoPorIdSpy = jest.spyOn(TurnoRepositoryImpl.prototype, "obtenerPorId").mockResolvedValue({
+      id: "201",
+      medico: { nombre: "Dr. House" },
+      servicio: { nombre: "Diagnóstico" },
+      fechaHora: new Date("2026-06-15T09:00:00Z"),
+      sede: { nombre: "Sede Belgrano" },
+      estadoActual: () => ({ estado: "DISPONIBLE" }),
+    });
+
+    reservarTurnoSpy = jest.spyOn(TurnoRepositoryImpl.prototype, "reservarTurnoDisponible").mockResolvedValue({
+      id: "201",
+      estadoActual: () => ({ estado: "RESERVADO" }),
+    });
+
+    guardarTurnoSpy = jest.spyOn(TurnoRepositoryImpl.prototype, "guardarTurno").mockResolvedValue({});
+
+    generarTodosLosTurnosSpy = jest.spyOn(TurnoService.prototype, "generarTodosLosTurnos").mockResolvedValue(5);
   });
 
   afterEach(() => {
@@ -32,15 +57,15 @@ describe("Turnos Endpoints", () => {
   describe("GET /turnos", () => {
     it("debería retornar 200 y la lista de turnos en el escenario feliz", async () => {
       const mockPaciente = {
-        id: 1,
+        id: "1",
         plan: {
           precioDe: () => 1000,
         },
       };
 
       const mockTurno = {
-        id: 201,
-        medico: { nombre: "Dr. House" },
+        id: "201",
+        medico: { nombre: "Dr. House", apellido: "" },
         servicio: { nombre: "Diagnóstico" },
         fechaHora: new Date("2026-06-15T09:00:00Z"),
         sede: { nombre: "Sede Belgrano" },
@@ -63,7 +88,7 @@ describe("Turnos Endpoints", () => {
     it("debería retornar 400 si falta el parámetro idPaciente (escenario de error)", async () => {
       const res = await request(app).get("/turnos");
       expect(res.status).toBe(400);
-      expect(res.body.message).toContain("El parámetro idPaciente es requerido");
+      expect(res.body.message).toContain("Validation Error");
     });
   });
 
@@ -90,12 +115,16 @@ describe("Turnos Endpoints", () => {
 
   describe("PATCH /turnos/:id", () => {
     it("debería reservar un turno exitosamente y retornar 200 en el escenario feliz", async () => {
-      const mockPaciente = { id: 1, nombre: "Jane", apellido: "Doe" };
+      const mockPaciente = { id: "1", nombre: "Jane", apellido: "Doe" };
       const mockTurno = {
-        id: 201,
+        id: "201",
         estaDisponible: () => true,
         medico: {
           nombre: "Dr. House",
+          apellido: "",
+          usuario: {
+            id: "user-medico-id",
+          },
           recibirNotificacion: jest.fn(),
         },
         servicio: { nombre: "Diagnóstico" },
@@ -104,15 +133,17 @@ describe("Turnos Endpoints", () => {
         estadoActual: () => ({ estado: "RESERVADO" }),
         costoEstimado: () => 1200,
         paciente: mockPaciente,
+        reservar: jest.fn(),
       };
 
       obtenerTurnoPorIdSpy.mockResolvedValue(mockTurno);
       obtenerPacienteSpy.mockResolvedValue(mockPaciente);
       reservarTurnoSpy.mockResolvedValue(mockTurno);
+      guardarTurnoSpy.mockResolvedValue(mockTurno);
 
       const res = await request(app)
         .patch("/turnos/201")
-        .send({ estado: "RESERVADO", responsableId: 1 });
+        .send({ estado: "RESERVADO", responsableId: "1" });
 
       expect(res.status).toBe(200);
       expect(res.body.estadoTurno).toBe("RESERVADO");
@@ -125,7 +156,7 @@ describe("Turnos Endpoints", () => {
         .send({});
 
       expect(res.status).toBe(400);
-      expect(res.body.message).toContain("Se requiere proveer un 'estado'");
+      expect(res.body.message).toContain("Validation Error");
     });
 
     it("debería retornar 404 si el turno no existe al intentar reservar (escenario de error)", async () => {
@@ -133,7 +164,7 @@ describe("Turnos Endpoints", () => {
 
       const res = await request(app)
         .patch("/turnos/999")
-        .send({ estado: "RESERVADO", responsableId: 1 });
+        .send({ estado: "RESERVADO", responsableId: "1" });
 
       expect(res.status).toBe(404);
     });
