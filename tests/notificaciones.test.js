@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../server/app.js";
-import { usuarioRepository } from "../server/repositories/UsuarioRepository.js";
+import { UsuarioRepository } from "../server/repositories/UsuarioRepository.js";
 import { Usuario } from "../server/domain/notificaciones/usuario.js";
 import { Notificacion } from "../server/domain/notificaciones/notificacion.js";
 import { UsuarioNoEncontrado, NotificacionInexistente } from "../server/domain/notificaciones/excepcion.notificacion.js";
@@ -11,13 +11,16 @@ describe("Notificaciones Endpoints", () => {
   let saveSpy;
 
   beforeEach(() => {
-    getByIdSpy = jest.spyOn(usuarioRepository, "getById");
-    saveSpy = jest.spyOn(usuarioRepository, "save");
+    getByIdSpy = jest.spyOn(UsuarioRepository.prototype, "getById").mockResolvedValue(new Usuario({
+      id: "user-123",
+      nombre: "John Doe",
+      notificaciones: [],
+    }));
+    saveSpy = jest.spyOn(UsuarioRepository.prototype, "save").mockResolvedValue({});
   });
 
   afterEach(() => {
-    getByIdSpy.mockRestore();
-    saveSpy.mockRestore();
+    jest.restoreAllMocks();
   });
 
   describe("GET /notificaciones/:idUser", () => {
@@ -26,17 +29,17 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
-          new Notificacion({ id: "1", mensaje: "Noti 2", visto: true }),
+          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: 1, mensaje: "Noti 2", visto: true }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);
 
-      const res = await request(app).get("/notificaciones/user-123");
+      const res = await request(app).get("/notificaciones/user-123?leidas=false");
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
+      expect(res.body).toHaveLength(1);
       expect(res.body[0]).toEqual({
-        id: "0",
+        id: 0,
         mensaje: "Noti 1",
         fecha: expect.any(String),
         visto: false,
@@ -48,8 +51,8 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
-          new Notificacion({ id: "1", mensaje: "Noti 2", visto: true }),
+          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: 1, mensaje: "Noti 2", visto: true }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);
@@ -63,7 +66,7 @@ describe("Notificaciones Endpoints", () => {
     it("debería retornar 500 si el usuario no es encontrado (escenario de error)", async () => {
       getByIdSpy.mockRejectedValue(new UsuarioNoEncontrado("user-123"));
 
-      const res = await request(app).get("/notificaciones/user-123");
+      const res = await request(app).get("/notificaciones/user-123?leidas=false");
       expect(res.status).toBe(500);
       expect(res.body.status).toBe("error");
       expect(res.body.message).toBe("Error interno del servidor");
@@ -76,7 +79,7 @@ describe("Notificaciones Endpoints", () => {
         id: "user-123",
         nombre: "John Doe",
         notificaciones: [
-          new Notificacion({ id: "0", mensaje: "Noti 1", visto: false }),
+          new Notificacion({ id: 0, mensaje: "Noti 1", visto: false }),
         ],
       });
       getByIdSpy.mockResolvedValue(mockUser);

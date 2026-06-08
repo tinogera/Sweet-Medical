@@ -81,7 +81,7 @@ export class BusquedaTurnoService {
             numeroPagina,
             limitePorPagina,
             totalPaginas,
-			totalTurnos,
-		};
-	}
+            totalTurnos,
+        };
+    }
 }

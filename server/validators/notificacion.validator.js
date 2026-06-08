@@ -13,6 +13,6 @@ export const getUserNotificacionesSchema = {
 export const verNotificacionSchema = {
     params: z.object({
         idUser: objectIdSchema,
-        idNotificacion: z.coerce.number().int().positive(),
+        idNotificacion: z.coerce.number().int().nonnegative(),
     }),
 }
