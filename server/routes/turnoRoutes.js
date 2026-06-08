@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.route('/')
     .get(validate(buscarTurnosSchema), busquedaTurnoController.buscarTodos)
+// FIX: /generar no sigue la convencion rest
 router.route('/generar')
     .post(turnoController.generarTurnos)
 router.route('/:id')

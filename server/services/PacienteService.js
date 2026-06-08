@@ -6,7 +6,6 @@ export class PacienteService{
     }
 
     async listarTurnos(pacienteId, paginacion){
-        const _paciente = await this.pacienteRepository.obtenerPorId(pacienteId)
         
         const { turnos, totalTurnos } = await this.turnoRepository.obtenerTurnosDePaciente(
             pacienteId, 

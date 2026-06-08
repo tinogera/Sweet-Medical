@@ -124,7 +124,7 @@ const medicosConfig = [
   { nombre: "Sofía",    apellido: "Sánchez",   documento: "DNI-88888888", svcIdx: [7, 9],       sedeIdx: [0, 1, 2] },
 ];
 
-function generarAgenda(fechaBase) {
+function generarAgenda(fechaBase, sedesDelMedico) {
   const agenda = [];
   let hora = 8;
   for (let i = 0; i < 10 && hora < 16; i++) {
@@ -134,7 +134,7 @@ function generarAgenda(fechaBase) {
     if (hora > 16) break;
     const fin = fechaISO(fechaBase.getFullYear(), fechaBase.getMonth() + 1, fechaBase.getDate(), hora, 0);
     agenda.push({
-      sede: randomPick(sedeIds),
+      sede: randomPick(sedesDelMedico),
       horaInicio: inicio,
       horaFin: fin,
     });
@@ -152,7 +152,7 @@ const medicosData = medicosConfig.map((m, i) => ({
   documento: m.documento,
   servicios: m.svcIdx.map(ix => svcIds[ix]),
   sedes: m.sedeIdx.map(ix => sedeIds[ix]),
-  agenda: generarAgenda(fechaBase),
+  agenda: generarAgenda(fechaBase, m.sedeIdx.map(ix => sedeIds[ix])),
 }));
 
 db.medicos.insertMany(medicosData);
@@ -205,15 +205,18 @@ function crearEstadoTurno(estado, fecha, motivo) {
   };
 }
 
-// Turnos DISPONIBLE (sin paciente — para que puedan reservarse)
+// Turnos DISPONIBLE (sin paciente ni servicio — se asignan al reservar)
 const turnosDisponibles = [];
 for (let d = 1; d <= 5; d++) {
   const fechaTurno = fechaISO(2026, 6, 2 + d, randomInt(8, 15), 0);
+  const medIdx = randomInt(0, medicosConfig.length - 1);
+  const medConfig = medicosConfig[medIdx];
+  // El médico debe atender en la sede del turno
+  const sedeIdx = randomPick(medConfig.sedeIdx);
   turnosDisponibles.push({
     fechaHora: fechaTurno,
-    medico: randomPick(medicoIds),
-    sede: randomPick(sedeIds),
-    servicio: randomPick(svcIds),
+    medico: medicoIds[medIdx],
+    sede: sedeIds[sedeIdx],
     estadosTurno: [crearEstadoTurno("DISPONIBLE", fechaISO(2026, 5, 28), "Turno generado")],
   });
 }
@@ -221,12 +224,17 @@ for (let d = 1; d <= 5; d++) {
 // Turnos RESERVADO (pendientes de confirmación)
 const turnosReservados = [];
 for (let i = 0; i < 4; i++) {
+  const medIdx = randomInt(0, medicosConfig.length - 1);
+  const medConfig = medicosConfig[medIdx];
+  const sedeIdx = randomPick(medConfig.sedeIdx);
+  // El servicio debe ser uno que el médico ofrezca
+  const svcIdx = randomPick(medConfig.svcIdx);
   turnosReservados.push({
     fechaHora: fechaISO(2026, 6, 3 + i, randomInt(9, 14), randomPick([0, 30])),
-    medico: randomPick(medicoIds),
+    medico: medicoIds[medIdx],
     paciente: pacienteIds[i],
-    sede: randomPick(sedeIds),
-    servicio: randomPick(svcIds),
+    sede: sedeIds[sedeIdx],
+    servicio: svcIds[svcIdx],
     estadosTurno: [
       crearEstadoTurno("DISPONIBLE", fechaISO(2026, 6, 1), "Generado automáticamente"),
       crearEstadoTurno("RESERVADO",  fechaISO(2026, 6, 1, 10, 30), "Reservado por el paciente"),
@@ -237,12 +245,16 @@ for (let i = 0; i < 4; i++) {
 // Turnos CONFIRMADO
 const turnosConfirmados = [];
 for (let i = 0; i < 3; i++) {
+  const medIdx = randomInt(0, medicosConfig.length - 1);
+  const medConfig = medicosConfig[medIdx];
+  const sedeIdx = randomPick(medConfig.sedeIdx);
+  const svcIdx = randomPick(medConfig.svcIdx);
   turnosConfirmados.push({
     fechaHora: fechaISO(2026, 6, 5 + i, randomInt(8, 16), randomPick([0, 30])),
-    medico: randomPick(medicoIds),
+    medico: medicoIds[medIdx],
     paciente: pacienteIds[4 + i],
-    sede: randomPick(sedeIds),
-    servicio: randomPick(svcIds),
+    sede: sedeIds[sedeIdx],
+    servicio: svcIds[svcIdx],
     estadosTurno: [
       crearEstadoTurno("DISPONIBLE",  fechaISO(2026, 6, 1), "Generado automáticamente"),
       crearEstadoTurno("RESERVADO",   fechaISO(2026, 6, 1, 14, 0), "Reservado por el paciente"),
@@ -254,13 +266,17 @@ for (let i = 0; i < 3; i++) {
 // Turnos REALIZADO (histórico)
 const turnosRealizados = [];
 for (let i = 0; i < 5; i++) {
+  const medIdx = randomInt(0, medicosConfig.length - 1);
+  const medConfig = medicosConfig[medIdx];
+  const sedeIdx = randomPick(medConfig.sedeIdx);
+  const svcIdx = randomPick(medConfig.svcIdx);
   const fechaRealizado = randomDate(fechaISO(2026, 5, 1), fechaISO(2026, 5, 30));
   turnosRealizados.push({
     fechaHora: fechaRealizado,
-    medico: randomPick(medicoIds),
+    medico: medicoIds[medIdx],
     paciente: randomPick(pacienteIds),
-    sede: randomPick(sedeIds),
-    servicio: randomPick(svcIds),
+    sede: sedeIds[sedeIdx],
+    servicio: svcIds[svcIdx],
     estadosTurno: [
       crearEstadoTurno("DISPONIBLE",  new Date(fechaRealizado.getTime() - 7 * 86400000), "Generado automáticamente"),
       crearEstadoTurno("RESERVADO",   new Date(fechaRealizado.getTime() - 5 * 86400000), "Reservado por el paciente"),

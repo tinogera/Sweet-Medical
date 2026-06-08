@@ -57,6 +57,7 @@ const turnoService = new TurnoService({
   turnoRepository: turnoRepo,
   pacienteRepository: pacienteRepo,
   medicoRepository: medicoRepo,
+  servicioRepository: servicioRepo
 });
 
 // ── Controllers ──

@@ -42,7 +42,7 @@ export async function pacienteFromDocument(doc) {
     plan,
     usuario,
   );
-  paciente.id = obj.id;
+  paciente.id = obj._id.toString();
 
   return paciente;
 }

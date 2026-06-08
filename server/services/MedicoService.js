@@ -17,9 +17,6 @@ export class MedicoService {
     const sede = await this.sedeRepository.obtenerPorNombre(sedeName)
 
     const fechaBase = new Date(fecha);
-
-    // Inicio
-
     //divide el string de la fecha
     const partsInicio = horaInicio.split(':');
     const fechaHoraInicio = new Date(fechaBase);
@@ -32,9 +29,10 @@ export class MedicoService {
     const fechaHoraFin = new Date(fechaBase);
     fechaHoraFin.setHours(parseInt(partsFin[0]), parseInt(partsFin[1]), 0, 0);
 
-
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede);
 
+    // TODO: esto re calcula los turnos cuando se agrega nueva disponibilidad,
+    // se agregan al repo, pero no reemplaza los existentes invalidados
     const turnosGenerados = medico.generarTurnos(bloqueHorario);
     for (const t of turnosGenerados) {
       await this.turnoRepository.agregarTurno(t);
@@ -54,7 +52,7 @@ export class MedicoService {
   async obtenerDisponibilidad(medicoId, { sede } = {}) {
     const medico = await this.medicoRepository.findById(medicoId);
 
-    // TODO: remplazo temporal, es logica de dominio filtrada!
+    // FIX: remplazo temporal, es logica de dominio filtrada!
     const agenda = medico.agenda
       .filter(b => !sede || (
         b.sede.nombre === sede

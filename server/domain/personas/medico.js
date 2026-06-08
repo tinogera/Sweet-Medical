@@ -18,7 +18,12 @@ export class Medico {
     while (horaInicioActual.getTime() + duracionEnMs <= horaFinLimite) {
       const fechaHoraTurno = new Date(horaInicioActual.getTime());
       // Se pasa 'this' ya que el médico actual es el responsable de generar sus turnos
-      const nuevoTurno = new Turno(fechaHoraTurno, this, sede);
+      const nuevoTurno = new Turno({
+        fechaHora: fechaHoraTurno, 
+        medico: this, 
+        sede: sede
+      });
+
       turnos.push(nuevoTurno);
       horaInicioActual = new Date(horaInicioActual.getTime() + duracionEnMs);
     }
@@ -26,7 +31,7 @@ export class Medico {
     return turnos;
   }
 
-  constructor(nombre, apellido, documento, servicios, sedes) {
+  constructor({ nombre, apellido, documento, servicios, sedes, usuario } = {}) {
     this.nombre = nombre;
     this.apellido = apellido;
     this.documento = documento;
@@ -35,7 +40,7 @@ export class Medico {
     this.agenda = [];
     this.sedes = sedes || [];
 
-    this.usuario = new Usuario();
+    this.usuario = usuario ?? new Usuario({nombre: this.nombre+this.apellido});
   }
 
   atiendeEn(sede) {
@@ -92,12 +97,9 @@ export class Medico {
   }
 
   eliminarBloque(idBloqueAEliminar) {
-    const index = this.agenda.findIndex(b => 
-        (b._id && b._id.toString() === idBloqueAEliminar.toString()) || 
-        (b.id && b.id.toString() === idBloqueAEliminar.toString())
-    );
-    if (index === -1) throw new BloqueHorarioInexistente();
-    this.agenda.splice(index, 1);
+    // WARNING: Voy a considerar borrarlos por su posicion en el array. Solucion medio clunky, refactor 🙏🏼
+    if (idBloqueAEliminar >= this.agenda.length) throw new BloqueHorarioInexistente()
+    this.agenda.splice(idBloqueAEliminar, 1);
   }
 
   actualizarServicio(nombreServicio, datosNuevos) {
