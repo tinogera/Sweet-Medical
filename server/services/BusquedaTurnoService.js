@@ -9,10 +9,6 @@ export class BusquedaTurnoService {
     }
 
     async buscarTurnos({ idPaciente, numeroPagina = 1, limitePorPagina = 10, filtros = {}, ordenarPor = 'fecha', direccion = 'asc' } = {}) {
-        const ahora = new Date()
-        this.validarPaginacion(numeroPagina, limitePorPagina)
-        this.ajustarYValidarFiltros(filtros, ahora)
-
         const paciente = await this.pacienteRepository.obtenerPorId(idPaciente)
 
         const { turnos } = await this.turnoRepository.obtenerDisponiblesPaginados(
@@ -85,7 +81,7 @@ export class BusquedaTurnoService {
             numeroPagina,
             limitePorPagina,
             totalPaginas,
-			totalTurnos,
-		};
-	}
+            totalTurnos,
+        };
+    }
 }

@@ -17,11 +17,21 @@ export class MedicoService {
     const sede = await this.sedeRepository.obtenerPorNombre(sedeName)
 
     const fechaBase = new Date(fecha);
-    const fechaHoraInicio = new Date(fechaBase);
-    fechaHoraInicio.setHours(horaInicio.hora, horaInicio.minutos, 0, 0);
 
+    // Inicio
+
+    //divide el string de la fecha
+    const partsInicio = horaInicio.split(':');
+    const fechaHoraInicio = new Date(fechaBase);
+    //defino hora, minutos, segundos y milisegundos
+    fechaHoraInicio.setHours(parseInt(partsInicio[0]), parseInt(partsInicio[1]), 0, 0);
+
+    // Fin
+    //lo mismo que el inicio pero para el fin
+    const partsFin = horaFin.split(':');
     const fechaHoraFin = new Date(fechaBase);
-    fechaHoraFin.setHours(horaFin.hora, horaFin.minutos, 0, 0);
+    fechaHoraFin.setHours(parseInt(partsFin[0]), parseInt(partsFin[1]), 0, 0);
+
 
     const bloqueHorario = medico.agregarDisponibilidad(fechaHoraInicio, fechaHoraFin, sede);
 

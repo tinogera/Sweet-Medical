@@ -14,13 +14,13 @@ export class TurnoService{
         // cambia su estado interior
         turno.reservar(paciente)
 
-        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turnoReservado.servicio.nombre}.`
+        const mensaje = `El paciente ${paciente.nombre} ${paciente.apellido} ha reservado un turno para: ${turno.servicio.nombre}.`
         turno.medico.recibirNotificacion(new Notificacion({ 
             destinatario: "sistema@clinica.com", 
             mensaje: mensaje 
         }))
 
-        turnoReservado = await this.turnoRepository.guardarTurno(turno)
+        const turnoReservado = await this.turnoRepository.guardarTurno(turno)
 
         return turnoReservado
     }
