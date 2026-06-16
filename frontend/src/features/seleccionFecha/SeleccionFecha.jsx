@@ -1,4 +1,5 @@
 import React from 'react';
+import PiePagina from '../../components/piePagina/PiePagina';
 
 export default function SeleccionFecha() {
   return (
@@ -131,20 +132,7 @@ export default function SeleccionFecha() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-bg-dark dark:bg-black mt-auto">
-        <div className="w-full py-section-padding px-gutter flex flex-col md:flex-row justify-between items-start gap-8 max-w-container-max mx-auto">
-          <div>
-            <div className="font-h3-subtitle text-h3-subtitle text-white mb-4">SWISS MEDICAL</div>
-            <p className="font-body-sm text-body-sm text-text-dark-mode">© 2024 Swiss Medical Group. Todos los derechos reservados.</p>
-          </div>
-          <div className="flex flex-wrap gap-6 md:justify-end">
-            <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Términos y Condiciones</a>
-            <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Privacidad</a>
-            <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Defensa del Consumidor</a>
-            <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Ética y Cumplimiento</a>
-          </div>
-        </div>
-      </footer>
+      <PiePagina></PiePagina>
     </div>
   );
 }
