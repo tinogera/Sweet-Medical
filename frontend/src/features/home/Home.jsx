@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/headers/Header';
+import BusquedasEspecificas from '../../components/busquedasEspecificas/BusquedasEspecificas';
 
 
 export default function Home() {
@@ -18,25 +19,19 @@ export default function Home() {
         <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
           {/* Option 1: Por Nombre */}
           <Link to="/medicos" className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform">
-              <span className="material-symbols-outlined text-primary-container text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>person_search</span>
-            </div>
-            <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-3">Buscar por Profesional</h2>
-            <p className="font-body-sm text-body-sm text-text-secondary mb-6">Si ya conocés el nombre o apellido del médico que buscás.</p>
-            <div className="mt-auto px-8 py-3 rounded-full border border-secondary text-secondary font-cta-label text-cta-label group-hover:bg-primary-container group-hover:text-white group-hover:border-primary-container transition-colors w-full md:w-auto">
-              Buscar por nombre
-            </div>
+            <BusquedasEspecificas
+              icon="person_search"
+              title="Buscar por Profesional"
+              description="Si ya conocés el nombre o apellido del médico que buscás."
+            />
           </Link>
           {/* Option 2: Por Especialidad */}
           <Link to="/servicios" className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform">
-              <span className="material-symbols-outlined text-primary-container text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>medical_services</span>
-            </div>
-            <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-3">Buscar por Especialidad</h2>
-            <p className="font-body-sm text-body-sm text-text-secondary mb-6">Buscá por servicio médico, clínica o centro de atención.</p>
-            <div className="mt-auto px-8 py-3 rounded-full border border-secondary text-secondary font-cta-label text-cta-label group-hover:bg-primary-container group-hover:text-white group-hover:border-primary-container transition-colors w-full md:w-auto">
-              Buscar servicio
-            </div>
+            <BusquedasEspecificas
+              icon="medical_services"
+              title="Buscar por Especialidad"
+              description="Buscá por servicio médico, clínica o centro de atención."
+            />
           </Link>
         </div>
         {/* Quick Access / Recent */}
