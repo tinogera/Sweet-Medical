@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/headers/Header';
 import BusquedasEspecificas from '../../components/busquedasEspecificas/BusquedasEspecificas';
+import PiePagina from '../../components/piePagina/PiePagina';
 
 
 export default function Home() {
@@ -55,18 +56,7 @@ export default function Home() {
         </div>
       </main>
       {/* Footer */}
-      <footer className="bg-bg-dark dark:bg-black w-full py-section-padding px-margin-mobile md:px-gutter flex flex-col md:flex-row justify-between items-start gap-8">
-        <div>
-          <div className="font-h3-subtitle text-h3-subtitle text-white mb-4">SWISS MEDICAL</div>
-          <p className="font-body-sm text-body-sm text-text-dark-mode">© 2024 Swiss Medical Group. Todos los derechos reservados.</p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-          <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Términos y Condiciones</a>
-          <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Privacidad</a>
-          <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Defensa del Consumidor</a>
-          <a className="font-body-sm text-body-sm text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Ética y Cumplimiento</a>
-        </div>
-      </footer>
+      <PiePagina></PiePagina>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../../components/headers/Header';
+import PiePagina from '../../components/piePagina/PiePagina';
 
 
 export default function BusquedaServicio() {
@@ -108,25 +109,7 @@ export default function BusquedaServicio() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-bg-dark dark:bg-black text-on-primary font-body-sm text-body-sm full-width flat no shadows w-full py-section-padding px-gutter flex flex-col md:flex-row justify-between items-start gap-8 mt-auto">
-        <div className="flex flex-col gap-6 w-full md:w-1/3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-container shrink-0 rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-            <span className="font-h3-subtitle text-h3-subtitle text-white tracking-tight">SWISS MEDICAL</span>
-          </div>
-          <p className="text-text-dark-mode">© 2024 Swiss Medical Group. Todos los derechos reservados.</p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 w-full md:w-auto">
-          <div className="flex flex-col gap-4">
-            <a className="text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Términos y Condiciones</a>
-            <a className="text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Privacidad</a>
-          </div>
-          <div className="flex flex-col gap-4">
-            <a className="text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Defensa del Consumidor</a>
-            <a className="text-text-dark-mode hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Ética y Cumplimiento</a>
-          </div>
-        </div>
-      </footer>
+      <PiePagina></PiePagina>
     </div>
   );
 }
