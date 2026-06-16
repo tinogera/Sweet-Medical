@@ -1,33 +1,12 @@
 import React from 'react';
+import Header from '../../components/headers/Header';
+
 
 export default function BusquedaMedico() {
   return (
     <div className="bg-surface-container-lowest font-body-main text-on-surface min-h-screen flex flex-col">
       {/* TopNavBar (Shared Component) */}
-      <header className="bg-surface dark:bg-bg-dark text-primary dark:text-primary-fixed-dim font-cta-label text-cta-label fixed top-0 w-full z-50 border-b border-secondary-fixed dark:border-on-secondary-fixed-variant flat no shadows flex justify-between items-center h-20 px-gutter max-w-container-max mx-auto">
-        <div className="font-h1-hero text-h3-subtitle font-black text-primary dark:text-primary-fixed-dim tracking-tighter">
-          SWISS MEDICAL
-        </div>
-        <nav className="hidden md:flex gap-8 h-full items-center">
-          <a className="text-primary dark:text-primary-fixed-dim border-b-2 border-primary font-bold pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 Active: opacity-80 transition-all h-full flex items-center" href="#">Turnos</a>
-          <a className="text-secondary dark:text-text-dark-mode font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 h-full flex items-center" href="#">Cartilla</a>
-          <a className="text-secondary dark:text-text-dark-mode font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 h-full flex items-center" href="#">Planes</a>
-          <a className="text-secondary dark:text-text-dark-mode font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 h-full flex items-center" href="#">Sucursales</a>
-        </nav>
-        <div className="flex items-center gap-6">
-          <div className="hidden md:flex gap-4">
-            <button className="text-secondary hover:text-primary transition-colors">
-              <span className="material-symbols-outlined" data-icon="notifications">notifications</span>
-            </button>
-            <button className="text-secondary hover:text-primary transition-colors">
-              <span className="material-symbols-outlined" data-icon="help">help</span>
-            </button>
-          </div>
-          <button className="hidden md:block font-cta-label text-cta-label bg-primary-container text-on-primary px-6 py-3 rounded-full hover:bg-surface-tint transition-colors">
-            Mi Cuenta
-          </button>
-        </div>
-      </header>
+      <Header></Header>
 
       {/* Main Content Canvas */}
       <main className="flex-grow pt-[120px] pb-section-padding px-gutter max-w-container-max mx-auto w-full">
