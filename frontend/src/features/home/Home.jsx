@@ -1,30 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Header from '../../components/headers/Header';
+
 
 export default function Home() {
   return (
     <div className="bg-surface-container-lowest text-on-surface antialiased font-body-main selection:bg-primary-container selection:text-white min-h-screen">
-      {/* TopNavBar */}
-      <header className="docked full-width top-0 sticky bg-surface dark:bg-bg-dark border-b border-outline-variant dark:border-secondary z-50 transition-all duration-200 ease-in-out">
-        <div className="flex justify-between items-center h-20 px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
-          <div className="flex items-center gap-2">
-            {/* Red square isotype */}
-            <div className="w-8 h-8 bg-primary-container rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-            <a className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight" href="#">SWISS MEDICAL</a>
-          </div>
-          {/* Mobile Menu Toggle */}
-          <button className="md:hidden text-primary p-2">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>menu</span>
-          </button>
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <a className="font-body-main text-body-main text-primary dark:text-primary-container font-bold border-b-2 border-primary pb-1 hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Turnos</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Cartilla</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Planes</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Sucursales</a>
-            <a className="bg-primary-container text-white px-6 py-3 rounded-full font-cta-label text-cta-label hover:bg-primary transition-colors ml-4" href="#">Mi Portal</a>
-          </nav>
-        </div>
-      </header>
+      <Header usuario="Franco" />
       {/* Main Content */}
       <main className="min-h-screen px-margin-mobile py-8 md:py-section-padding max-w-container-max mx-auto">
         {/* Header Section */}
@@ -35,7 +17,7 @@ export default function Home() {
         {/* Search Options Cards */}
         <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
           {/* Option 1: Por Nombre */}
-          <a className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant" href="#">
+          <Link to="/medicos" className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-primary-container text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>person_search</span>
             </div>
@@ -44,9 +26,9 @@ export default function Home() {
             <div className="mt-auto px-8 py-3 rounded-full border border-secondary text-secondary font-cta-label text-cta-label group-hover:bg-primary-container group-hover:text-white group-hover:border-primary-container transition-colors w-full md:w-auto">
               Buscar por nombre
             </div>
-          </a>
+          </Link>
           {/* Option 2: Por Especialidad */}
-          <a className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant" href="#">
+          <Link to="/servicios" className="block bg-bg-alternate rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-200 hover:bg-surface-container hover:shadow-sm group border border-transparent hover:border-outline-variant">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-primary-container text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>medical_services</span>
             </div>
@@ -55,7 +37,7 @@ export default function Home() {
             <div className="mt-auto px-8 py-3 rounded-full border border-secondary text-secondary font-cta-label text-cta-label group-hover:bg-primary-container group-hover:text-white group-hover:border-primary-container transition-colors w-full md:w-auto">
               Buscar servicio
             </div>
-          </a>
+          </Link>
         </div>
         {/* Quick Access / Recent */}
         <div className="mt-12">

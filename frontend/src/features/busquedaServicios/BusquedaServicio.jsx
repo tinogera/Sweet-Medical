@@ -1,29 +1,12 @@
 import React from 'react';
+import Header from '../../components/headers/Header';
+
 
 export default function BusquedaServicio() {
   return (
     <div className="bg-surface text-on-surface font-body-main antialiased selection:bg-primary-container selection:text-white min-h-screen flex flex-col">
       {/* TopNavBar */}
-      <header className="bg-surface dark:bg-bg-dark text-primary dark:text-primary-container font-body-main text-body-main docked full-width top-0 sticky border-b border-outline-variant dark:border-secondary flat no shadows transition-all duration-200 ease-in-out z-50">
-        <div className="flex justify-between items-center h-20 px-gutter max-w-container-max mx-auto w-full">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-container shrink-0 rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-            <span className="font-h2-section text-h2-section text-primary dark:text-primary-container tracking-tight">SWISS MEDICAL</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <a className="text-primary dark:text-primary-container font-bold border-b-2 border-primary pb-1" href="#">Turnos</a>
-            <a className="text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors pb-1" href="#">Cartilla</a>
-            <a className="text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors pb-1" href="#">Planes</a>
-            <a className="text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors pb-1" href="#">Sucursales</a>
-          </nav>
-          <a className="hidden md:inline-flex items-center justify-center px-6 py-3 bg-primary-container text-white font-cta-label text-cta-label rounded-full hover:bg-primary transition-colors" href="#">
-            Mi Portal
-          </a>
-          <button className="md:hidden text-primary">
-            <span className="material-symbols-outlined text-3xl">menu</span>
-          </button>
-        </div>
-      </header>
+      <Header></Header>
 
       {/* Main Content Canvas */}
       <main className="flex-grow flex flex-col items-center py-section-padding px-margin-mobile md:px-gutter w-full">
