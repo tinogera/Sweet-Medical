@@ -1,0 +1,23 @@
+services:
+  mongo:
+    image: docker.io/library/mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: sweetmedical
+    ports:
+      - 27017:27017
+    volumes:
+      - ./:/docker-entrypoint-initdb.d
+
+  mongo-express:
+    image: docker.io/library/mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root

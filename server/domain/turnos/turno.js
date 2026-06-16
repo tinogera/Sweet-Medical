@@ -1,37 +1,46 @@
 import { EstadoTurno, Estado } from '../turnos/estadoTurno.js'
+import { TurnoInvalido, TurnoNoPuedeCambiarEstado } from './excepcion.turno.js';
 
 export class Turno {
-  constructor(fechaHora, medico, servicio, sede) {
+  constructor({fechaHora, medico, sede, estados, paciente, version} = {}) {
     // Aunque los turnos los generan en base a la agenda propuesta por el medico.
     // validar si un medico:
     //  - ofrece el servicio
     //  - atiende en esa sede
     //  TODO: - tiene bloqueHorario disponible en fechaHora
-    if (!medico.atiendeEn(sede) || !medico.ofrece(servicio)) {
-      throw new Error(`El médico ${medico.nombre} NO atiende en ${sede.nombre} o NO ofrece ${servicio.nombre} como servicio.`)
+    if (!medico.atiendeEn(sede)) {
+      throw new TurnoInvalido(`El médico ${medico.nombre} NO atiende en ${sede.nombre}.`)
     }
 
     this.fechaHora = fechaHora;
     this.medico = medico;
-    this.estadosTurno = [new EstadoTurno(Estado.DISPONIBLE, medico, 'Turno disponible')];
+    this.estadosTurno = estados ?? [new EstadoTurno(Estado.DISPONIBLE, medico, 'Turno disponible')];
     this.sede = sede;
-    this.servicio = servicio;
+    this.version = version ?? 0
+    this.paciente = paciente ?? null
   }
 
-  // Consultar!!
-  costoEstimado() { }
+  costoEstimado() {
+    return this.paciente.plan.precioDe(this.servicio)
+  }
 
-  reservar(paciente) {
+  reservar(paciente, servicio) {
     if (!this.estaDisponible()) {
-      throw new Error('El turno no está disponible');
+      throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no está disponible para ser reservado`);
     }
+
+    if (!this.medico.ofrece(servicio)) {
+      throw new TurnoInvalido(`El médico ${this.medico.nombre} NO ofrece el servicio de ${servicio.nombre}.`)
+    }
+
     this.paciente = paciente;
+    this.servicio = servicio;
     this.cambiarEstado(Estado.RESERVADO, paciente, "Turno reservado por el paciente");
   }
 
   cancelar(responsable, motivo) {
     if (!this.puedeCancelarse()) {
-      throw new Error('Solo se pueden cancelar turnos disponibles o reservados');
+      throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no se puede cancelar, solo turnos disponibles o reservados pueden ser cancelado`);
     }
     this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
   }
@@ -45,11 +54,8 @@ export class Turno {
     // +  esta disponible o reservado
     // +  falta más de 1 hora
     const UNA_HORA_EN_MS = 60 * 60 * 1000;
-    const fechaHoraActual = new Date.now()
-    return (
-      this.estaDisponible() || this.estaReservado()) &&
-      ((fechaHoraActual - this.fechaHora.getTime()) > UNA_HORA_EN_MS
-      );
+    const fechaHoraActual = Date.now()
+    return (this.estaDisponible() || this.estaReservado()) && ((this.fechaHora.getTime() - fechaHoraActual) > UNA_HORA_EN_MS);
   }
 
   puedeModificarse() {
@@ -65,16 +71,17 @@ export class Turno {
   }
 
   estaDisponible() {
-    return this.estadoActual().estaDisponible();
+    const actual = this.estadoActual();
+    return actual.estaDisponible ? actual.estaDisponible() : actual.estado === Estado.DISPONIBLE;
   }
 
   estadoActual() {
-    const LAST = -1
-    return this.estadosTurno.at(LAST);
+    return this.estadosTurno.at(-1);
   }
 
   estaReservado() {
-    return this.estadoActual().estaReservado();
+    const actual = this.estadoActual();
+    return actual.estaReservado ? actual.estaReservado() : actual.estado === Estado.RESERVADO;
   }
 
   marcarRealizado() {
