@@ -24,7 +24,114 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Búsqueda de Turnos - Inicio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "secondary": "#5f5e5e",
+              "secondary-fixed-dim": "#c8c6c6",
+              "on-secondary-fixed": "#1b1c1c",
+              "error": "#ba1a1a",
+              "surface-tint": "#c00014",
+              "on-tertiary-fixed": "#001c37",
+              "background": "#fff8f7",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#ffe9e6",
+              "outline-variant": "#e8bcb7",
+              "outline": "#936e6a",
+              "surface-container-highest": "#fedad6",
+              "on-secondary": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#fff3f1",
+              "surface": "#fff8f7",
+              "tertiary": "#005a9b",
+              "tertiary-fixed-dim": "#a0c9ff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#d2e4ff",
+              "inverse-surface": "#412b29",
+              "surface-dim": "#f5d2ce",
+              "surface-variant": "#fedad6",
+              "tertiary-container": "#0073c4",
+              "on-primary-fixed-variant": "#93000d",
+              "on-surface": "#2a1614",
+              "surface-container-high": "#ffe2de",
+              "on-primary-fixed": "#410002",
+              "on-background": "#2a1614",
+              "inverse-primary": "#ffb4ab",
+              "primary-container": "#e2001a",
+              "on-tertiary-container": "#f2f5ff",
+              "text-dark-mode": "#CCCCCC",
+              "inverse-on-surface": "#ffedea",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#fff0ee",
+              "primary": "#b40012",
+              "on-tertiary-fixed-variant": "#00497f",
+              "bg-dark": "#2B2B2B",
+              "surface-bright": "#fff8f7",
+              "primary-fixed-dim": "#ffb4ab",
+              "on-surface-variant": "#5e3f3b",
+              "on-error": "#ffffff",
+              "primary-fixed": "#ffdad6",
+              "on-secondary-fixed-variant": "#474747",
+              "bg-alternate": "#F2F2F2",
+              "on-error-container": "#93000a",
+              "on-secondary-container": "#656464",
+              "text-secondary": "#58595B",
+              "secondary-container": "#e4e2e1",
+              "secondary-fixed": "#e4e2e1"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "margin-mobile": "16px",
+              "container-max": "1200px",
+              "gutter": "24px",
+              "section-padding": "80px"
+            },
+            "fontFamily": {
+              "cta-label": ["Inter"],
+              "h3-subtitle": ["Inter"],
+              "h1-hero-mobile": ["Inter"],
+              "body-main": ["Inter"],
+              "body-sm": ["Inter"],
+              "h2-section-mobile": ["Inter"],
+              "h2-section": ["Inter"],
+              "h1-hero": ["Inter"]
+            },
+            "fontSize": {
+              "cta-label": ["16px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "700"}],
+              "h3-subtitle": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+              "h1-hero-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "800"}],
+              "body-main": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+              "body-sm": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+              "h2-section-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+              "h2-section": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+              "h1-hero": ["56px", {"lineHeight": "1.1", "fontWeight": "800"}]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .hide-scrollbar::-webkit-scrollbar { display: none; }
+      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
