@@ -1,13 +1,29 @@
-import React from 'react';
+import { useState, useEffect } from "react";
 import Header from '../../components/headers/Header';
 import PiePagina from '../../components/piePagina/PiePagina';
-import Medicos from '../../components/medicos/Medicos';
+import MedicosCarousel from '../../components/medicos/MedicosCarousel';
 import SiguientePaso from '../../components/siguientePaso/SiguientePaso';
-
-
-
+import { getMedicos } from '../../service/busquedaMedicoService';
 
 export default function BusquedaMedico() {
+  const [medicos, setMedicos] = useState([])
+  const [_medicosFiltrados, setMedicosFiltrados] = useState([])
+
+  useEffect(() => {
+    const cargarMedicos = async () => {
+      const data = await getMedicos()
+      if (data) {
+        setMedicos(data)
+        setMedicosFiltrados(data)
+      }
+    }
+    cargarMedicos()
+  }, [])
+
+  const _obtenerMedicosFiltrados = () => {
+
+  }
+
   return (
     <div className="bg-surface-container-lowest font-body-main text-on-surface min-h-screen flex flex-col">
       {/* TopNavBar (Shared Component) */}
@@ -43,12 +59,12 @@ export default function BusquedaMedico() {
 
         {/* Results Section */}
         <div className="max-w-4xl mx-auto">
-          <h2 class="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Resultados Sugeridos</h2>
+          <h2 class="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Resultados</h2>
           <div className="flex flex-col gap-4">
             {/* Doctor Card 1 */}
-            <Medicos></Medicos>
+            <MedicosCarousel medicosCargados={medicos} imagen="https://lh3.googleusercontent.com/aida-public/AB6AXuB_-v2wu91ECb4amGT2H4EqL-IltoQWBuu-GizvRlhDy3iNCFrP9Yh6eKto1LIrUhNI9aVlD9laSdWxFH43PQn76uA__Kg3LKHgQZp79cfzHvhnFSoR54EXhq-NjYLogMEttodddpCrbS7INZZS9O_lxHwfnQURmoA_foPcSPejh2ANJsfuVMXQnSvmICJV2ChawzORwrV3fKChGUp0qAb8nvxyQEIz5oH8ptN9YykjN57yPYh5H7KgvtOm0ljPpmJv8VY4sJ4V_WlK" nombre="Dr. Martín Rossi" servicio="Cardiología Clínica" ubicacion="Centro Médico Barrio Norte"></MedicosCarousel>
             {/* Doctor Card 2 */}
-            <button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
+            {/*<button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
               <img alt="Doctor profile" className="w-16 h-16 rounded-full object-cover shadow-sm" data-alt="A professional portrait of a female doctor wearing a stethoscope over a light blue scrubs and a white coat, situated in a pristine, well-lit medical facility. The lighting is soft and diffused, creating a welcoming yet authoritative atmosphere. The visual style relies on flat, modern aesthetics with stark whites and subtle gray tonal shifts, reflecting a premium healthcare environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaz3y11AZfGJuzvnhzwa-ExoYW_zAssD93o4MBEcAfXxmt5OyFkKlvgJroXD-QdLM5nADkpvMC7S4qwbuG4jTTkkK27MhW1xcxfqb6ALpapkAM_YMfJI1Te8mqwa6Ff4Zu92s2Ieg4KhW8f6jWP6tDXD0QLKjOwoiVM0xIr_tWjUr9dH_dYvgrxn2NQEYbeB88FQmWfNMYyEmuG_B73a76TCwXtX-slNNRuHM8CJO8NjBuPXndDR2GBaYePsEPQoC3PxD4jQYc4Mof"/>
               <div className="flex-grow">
                 <h3 className="font-cta-label text-cta-label text-on-surface mb-1">Dra. Laura Gómez</h3>
@@ -60,9 +76,9 @@ export default function BusquedaMedico() {
               </div>
               <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
             </button>
-
+*/}
             {/* Doctor Card 3 */}
-            <button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
+           {/* <button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
               <img alt="Doctor profile" className="w-16 h-16 rounded-full object-cover shadow-sm" data-alt="A confident young male medical specialist in a clean, minimalist setting, wearing modern dark blue scrubs. The environment is bathed in bright, neutral daylight, emphasizing a sterile yet approachable modern corporate style. The image avoids heavy shadows, focusing on clarity and high contrast typical of a top-tier medical brand's visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhn-Zyy-Ig_u2csot7eLrIao9MVVpbtkq6n1HVf9s_olmT1YLKl21ax8fyEU_Vv16jS0KIm9eHTIL7umrKQSlNJb8BwFgoXnCKbi6FYieP0pcc52tnGrOcRI9a8YskqrrxH1WaWgYEqJctOwueNcOQYB87zJEgFjc6h9Ku0XIHGMh7VaaH406M3uqY-kg23LXqGtC44iZL1pCa9OxpP9tKfS1hVsP3hBrjbJ2_PhbTJ6GKzQGAUIQjcfVjTt7e_MUGQ8oPtfV9c6jd"/>
               <div className="flex-grow">
                 <h3 className="font-cta-label text-cta-label text-on-surface mb-1">Dr. Alejandro Silva</h3>
@@ -73,7 +89,7 @@ export default function BusquedaMedico() {
                 </p>
               </div>
               <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
-            </button>
+            </button>*/}
           </div>
 
           {/* Bottom Action */}
