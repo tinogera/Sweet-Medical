@@ -10,5 +10,7 @@ router.route('/:id/disponibilidad')
   .get(validate(obtenerDisponibilidadSchema), medicoController.obtenerDisponibilidad)
 router.route('/:id/disponibilidad/:bloqueId')
   .delete(validate(eliminarDisponibilidadSchema), medicoController.eliminarDisponibilidad)
-   
+router.route('/')
+  .get(medicoController.obtenerMedicos)
+  
 export default router
