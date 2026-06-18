@@ -4,25 +4,31 @@ import PiePagina from '../../components/piePagina/PiePagina';
 import MedicosCarousel from '../../components/medicos/MedicosCarousel';
 import SiguientePaso from '../../components/siguientePaso/SiguientePaso';
 import { getMedicos } from '../../service/busquedaMedicoService';
+import MedicosSearchBar from '../../components/medicosSearchBar/MedicosSearchBar';
+
 
 export default function BusquedaMedico() {
   const [medicos, setMedicos] = useState([])
-  const [_medicosFiltrados, setMedicosFiltrados] = useState([])
+  const [medicosFiltrados, setMedicosFiltrados] = useState([])
 
   useEffect(() => {
     const cargarMedicos = async () => {
       const data = await getMedicos()
       if (data) {
         setMedicos(data)
-        setMedicosFiltrados(data)
+        //setMedicosFiltrados(data)
       }
     }
     cargarMedicos()
   }, [])
 
-  const _obtenerMedicosFiltrados = () => {
-
-  }
+  const filtrarMedicos = (searchText) => {
+      const texto = searchText.toLowerCase();
+      const filtered = medicos.filter(medico =>
+        medico.nombre.toLowerCase().includes(texto)
+      );
+      setMedicosFiltrados(filtered);
+  };
 
   return (
     <div className="bg-surface-container-lowest font-body-main text-on-surface min-h-screen flex flex-col">
@@ -46,50 +52,17 @@ export default function BusquedaMedico() {
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="font-h2-section text-h2-section text-on-surface mb-4">¿A quién estás buscando?</h1>
-          <p className="font-body-main text-body-main text-text-secondary">Ingresá el nombre o apellido del profesional para ver su disponibilidad.</p>
+          <p className="font-body-main text-body-main text-text-secondary">Ingresá el nombre del profesional para ver su disponibilidad.</p>
         </div>
 
         {/* Search Bar */}
-        <div className="max-w-2xl mx-auto mb-16 relative">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <span className="material-symbols-outlined text-secondary" data-icon="search">search</span>
-          </div>
-          <input className="w-full pl-12 pr-4 py-4 rounded-xl border border-secondary-fixed bg-surface-container-lowest text-on-surface font-body-main focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors shadow-sm" placeholder="Ej. Dr. Pérez, Especialidad..." type="text"/>
-        </div>
+        <MedicosSearchBar filtrarMedicos = {filtrarMedicos}></MedicosSearchBar>
 
         {/* Results Section */}
         <div className="max-w-4xl mx-auto">
-          <h2 class="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Resultados</h2>
+          <h2 class="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Todos los medicos</h2>
           <div className="flex flex-col gap-4">
-            {/* Doctor Card 1 */}
-            <MedicosCarousel medicosCargados={medicos} imagen="https://lh3.googleusercontent.com/aida-public/AB6AXuB_-v2wu91ECb4amGT2H4EqL-IltoQWBuu-GizvRlhDy3iNCFrP9Yh6eKto1LIrUhNI9aVlD9laSdWxFH43PQn76uA__Kg3LKHgQZp79cfzHvhnFSoR54EXhq-NjYLogMEttodddpCrbS7INZZS9O_lxHwfnQURmoA_foPcSPejh2ANJsfuVMXQnSvmICJV2ChawzORwrV3fKChGUp0qAb8nvxyQEIz5oH8ptN9YykjN57yPYh5H7KgvtOm0ljPpmJv8VY4sJ4V_WlK" nombre="Dr. Martín Rossi" servicio="Cardiología Clínica" ubicacion="Centro Médico Barrio Norte"></MedicosCarousel>
-            {/* Doctor Card 2 */}
-            {/*<button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
-              <img alt="Doctor profile" className="w-16 h-16 rounded-full object-cover shadow-sm" data-alt="A professional portrait of a female doctor wearing a stethoscope over a light blue scrubs and a white coat, situated in a pristine, well-lit medical facility. The lighting is soft and diffused, creating a welcoming yet authoritative atmosphere. The visual style relies on flat, modern aesthetics with stark whites and subtle gray tonal shifts, reflecting a premium healthcare environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaz3y11AZfGJuzvnhzwa-ExoYW_zAssD93o4MBEcAfXxmt5OyFkKlvgJroXD-QdLM5nADkpvMC7S4qwbuG4jTTkkK27MhW1xcxfqb6ALpapkAM_YMfJI1Te8mqwa6Ff4Zu92s2Ieg4KhW8f6jWP6tDXD0QLKjOwoiVM0xIr_tWjUr9dH_dYvgrxn2NQEYbeB88FQmWfNMYyEmuG_B73a76TCwXtX-slNNRuHM8CJO8NjBuPXndDR2GBaYePsEPQoC3PxD4jQYc4Mof"/>
-              <div className="flex-grow">
-                <h3 className="font-cta-label text-cta-label text-on-surface mb-1">Dra. Laura Gómez</h3>
-                <p className="font-body-sm text-body-sm text-tertiary-container mb-1">Pediatría General</p>
-                <p className="font-body-sm text-body-sm text-text-secondary flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
-                  Clínica y Maternidad Suizo Argentina
-                </p>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
-            </button>
-*/}
-            {/* Doctor Card 3 */}
-           {/* <button className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container">
-              <img alt="Doctor profile" className="w-16 h-16 rounded-full object-cover shadow-sm" data-alt="A confident young male medical specialist in a clean, minimalist setting, wearing modern dark blue scrubs. The environment is bathed in bright, neutral daylight, emphasizing a sterile yet approachable modern corporate style. The image avoids heavy shadows, focusing on clarity and high contrast typical of a top-tier medical brand's visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhn-Zyy-Ig_u2csot7eLrIao9MVVpbtkq6n1HVf9s_olmT1YLKl21ax8fyEU_Vv16jS0KIm9eHTIL7umrKQSlNJb8BwFgoXnCKbi6FYieP0pcc52tnGrOcRI9a8YskqrrxH1WaWgYEqJctOwueNcOQYB87zJEgFjc6h9Ku0XIHGMh7VaaH406M3uqY-kg23LXqGtC44iZL1pCa9OxpP9tKfS1hVsP3hBrjbJ2_PhbTJ6GKzQGAUIQjcfVjTt7e_MUGQ8oPtfV9c6jd"/>
-              <div className="flex-grow">
-                <h3 className="font-cta-label text-cta-label text-on-surface mb-1">Dr. Alejandro Silva</h3>
-                <p className="font-body-sm text-body-sm text-tertiary-container mb-1">Traumatología</p>
-                <p className="font-body-sm text-body-sm text-text-secondary flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
-                  Centro Médico Olivos
-                </p>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors" data-icon="chevron_right">chevron_right</span>
-            </button>*/}
+            <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
           </div>
 
           {/* Bottom Action */}
