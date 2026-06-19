@@ -215,6 +215,6 @@ export default function SeleccionFecha() {
           <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
         </button>
       </div>
-    </main>
+    </div>
   );
 }

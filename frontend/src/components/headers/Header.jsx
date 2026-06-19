@@ -1,31 +1,67 @@
-import { Link } from 'react-router-dom';
+import { Button } from "@heroui/react";
+import { Link, useNavigate } from "react-router-dom";
+import Logo from "../logo/Logo";
 
+const Header = ({ _usuario }) => {
+	const navigate = useNavigate()
 
-const Header = ({ usuario }) => {
-  return (
+	return (
+		//{/* TopNavBar */}
+		<header className="full-width top-0 sticky bg-surface border-b shadow-xs border-border z-50 transition duration-200 ease-in-out">
+			<div className="grid grid-cols-3 items-center h-20 px-4 md:px-6 max-w-300 mx-auto w-full">
+				{/* Logo - izquierda */}
+				<div className="flex items-center">
+					<Link to="/" aria-label="Sweet Medical - Inicio">
+						<Logo className="size-10" />
+					</Link>
+				</div>
 
-    //{/* TopNavBar */}
-      <header className="docked full-width top-0 sticky bg-surface dark:bg-bg-dark border-b border-outline-variant dark:border-secondary z-50 transition-all duration-200 ease-in-out">
-        <div className="flex justify-between items-center h-20 px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
-          <div className="flex items-center gap-2">
-            {/* Red square isotype */}
-            <div className="w-8 h-8 bg-primary-container rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-            <Link to="/" className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight" href="#">SWEET MEDICAL</Link>
-          </div>
-          {/* Mobile Menu Toggle */}
-          <button type='button' className="md:hidden text-primary p-2">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>menu</span>
-          </button>
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <a className="font-body-main text-body-main text-primary dark:text-primary-container font-bold border-b-2 border-primary pb-1 hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Turnos</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Cartilla</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Planes</a>
-            <a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Sucursales</a>
-          </nav>
-        </div>
-      </header>
-  );
+				{/* TODO: Mobile Menu Toggle - derecha (en mobile) */}
+				<Button
+					type="button"
+					isIconOnly
+					variant="ghost"
+					className="md:hidden justify-self-end text-accent"
+				>
+					<span
+						className="material-symbols-outlined"
+						style={{ fontVariationSettings: "'FILL' 0" }}
+					>
+						menu
+					</span>
+				</Button>
+
+				{/* Desktop Nav - centro */}
+				<nav className="hidden md:flex col-start-2 justify-center items-center">
+					<ul className="flex items-center gap-6">
+						<NavItem href="/turnos">Turnos</NavItem>
+						<NavItem href="/cartilla">Cartilla</NavItem>
+						<NavItem href="/planes">Planes</NavItem>
+					</ul>
+				</nav>
+
+				{/* Botón - derecha (en desktop) */}
+				<div className="hidden md:flex col-start-3 justify-end">
+					<Button onPress={() => {navigate("/mis-turnos")}}>
+						Mis Turnos
+					</Button>
+				</div>
+			</div>
+		</header>
+	);
+};
+
+const NavItem = ({ href, children }) => {
+	return (
+		<li>
+			<Link
+				className="link font-sans text-lg text-muted hover:text-accent transition-colors"
+				to={href}
+			>
+				{children}
+			</Link>
+		</li>
+	);
 };
 
 export default Header;

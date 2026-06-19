@@ -1,64 +1,52 @@
 import BusquedasEspecificas from "../../components/busquedasEspecificas/BusquedasEspecificas";
+import TurnoReciente from "../../components/turnoReciente/TurnoReciente";
 
 export default function Home() {
 	return (
-		<main className="min-h-screen px-margin-mobile py-8 md:py-section-padding max-w-container-max mx-auto bg-surface">
+		<div className="py-4 md:py-20 flex flex-col gap-10 max-w-300 mx-auto">
 			{/* Header Section */}
-			<div className="mb-8 text-center md:text-left">
-				<h1 className="font-h1-hero-mobile md:font-h1-hero text-h1-hero-mobile md:text-h1-hero text-on-surface mb-2">
+			<div className="mb-10 text-center ">
+				<h1 className="font-sans text-4xl md:text-5xl font-extrabold text-surface-foreground mb-2">
 					Búsqueda de Turnos
 				</h1>
-				<p className="font-body-main text-body-main text-text-secondary">
+				<p className="font-sans text-lg text-muted">
 					Seleccioná cómo querés buscar tu próximo turno médico.
 				</p>
 			</div>
 
 			{/* Search Options Cards */}
-			<div className="flex flex-col gap-6 md:grid md:grid-cols-2">
+			<div className="flex flex-col gap-6 md:grid md:grid-cols-2 text-pretty">
 				<BusquedasEspecificas
 					icon="person_search"
-					title="Buscar por Profesional"
-					description="Si ya conocés el nombre o apellido del médico que buscás."
+					title="Búsqueda por Profesional"
+					description="Si ya conocés al profesional o especialista que estás buscando"
 					to="/medicos"
+					buttonName={"Buscar Profesional"}
 				/>
 				<BusquedasEspecificas
 					icon="medical_services"
-					title="Buscar por Especialidad"
-					description="Buscá por servicio médico, clínica o centro de atención."
+					title="Búsqueda por Servicio"
+					description="Buscá por especilidad médica, estudio o práctica específica."
 					to="/servicios"
+					buttonName={"Buscar Servicio"}
 				/>
 			</div>
 
-      {/* FIX: refactor en un componente */}
-			{/* Quick Access / Recent */}
-			<div className="mt-12">
-				<h3 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-4">
+      {/* Quick Access / Recent */}
+			<div className="flex flex-col gap-2">
+				<h3 className="font-sans text-2xl font-semibold text-surface-foreground mb-4">
 					Turnos Recientes
 				</h3>
-				<div className="bg-white border border-outline-variant rounded-lg p-4 flex items-center justify-between">
-					<div className="flex items-center gap-4">
-						<div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center">
-							<span className="material-symbols-outlined text-primary-container text-xl">
-								history
-							</span>
-						</div>
-						<div>
-							<p className="font-body-main text-body-main font-semibold text-on-surface">
-								Dr. Juan Pérez
-							</p>
-							<p className="font-body-sm text-body-sm text-text-secondary">
-								Cardiología - Clínica Suizo Argentina
-							</p>
-						</div>
-					</div>
-					<button type="button" className="text-primary-container font-cta-label text-cta-label hidden md:block hover:underline">
-						Repetir turno
-					</button>
-					<button type="button" className="md:hidden text-primary-container p-2">
-						<span className="material-symbols-outlined">arrow_forward</span>
-					</button>
-				</div>
+				<TurnoReciente
+					nombre="Dr. Juan Pérez"
+					especialidad="Cardiología - Clínica Suizo Argentina"
+				/>
+				<TurnoReciente
+					nombre="Dr. Juan Pérez"
+					especialidad="Cardiología - Clínica Suizo Argentina"
+				/>
+	
 			</div>
-		</main>
+		</div>
 	);
 }

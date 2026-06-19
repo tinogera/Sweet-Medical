@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Button } from '@heroui/react';
 import Home from './features/home/Home';
 import BusquedaServicio from './features/busquedaServicios/BusquedaServicio';
 import BusquedaMedico from './features/busquedaMedico/BusquedaMedico';
@@ -25,7 +24,6 @@ export function AppRoutes() {
 function App() {
   return (
     <Router>
-      <Button variant="primary">Smoke</Button>
       <AppRoutes />
     </Router>
   );

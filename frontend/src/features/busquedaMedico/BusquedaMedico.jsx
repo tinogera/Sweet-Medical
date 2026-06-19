@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import MedicosCarousel from '../../components/medicos/MedicosCarousel';
-import SiguientePaso from '../../components/siguientePaso/SiguientePaso';
-import { getMedicos } from '../../service/busquedaMedicoService';
-import MedicosSearchBar from '../../components/medicosSearchBar/MedicosSearchBar';
-
+import { useEffect, useState } from "react";
+import MedicosCarousel from "../../components/medicos/MedicosCarousel";
+import SearchBar from "../../components/searchBar/SearchBar";
+import SiguientePaso from "../../components/siguientePaso/SiguientePaso";
+import { getMedicos } from "../../service/busquedaMedicoService";
 
 export default function BusquedaMedico() {
+<<<<<<< HEAD
   const [medicos, setMedicos] = useState([])
   const [medicosFiltrados, setMedicosFiltrados] = useState([])
   const [busquedaRealizada, setBusquedaRealizada] = useState(false)
@@ -34,30 +34,60 @@ export default function BusquedaMedico() {
       setMedicosFiltrados(filtered);
       setBusquedaRealizada(true);
   };
+=======
+	const [medicos, setMedicos] = useState([]);
+	const [medicosFiltrados, setMedicosFiltrados] = useState([]);
 
-  return (
-    <main className="flex-grow pt-[120px] pb-section-padding px-gutter max-w-container-max mx-auto w-full">
-      {/* Progress Bar Section */}
-      <div className="w-full max-w-3xl mx-auto mb-12">
-        <div className="flex items-center justify-between mb-4">
-          <span className="font-cta-label text-cta-label text-secondary uppercase tracking-wider text-sm">PASO 1 DE 3 • Búsqueda de Profesional</span>
-        </div>
-        <div className="flex gap-2 w-full h-2">
-          <div className="flex-1 bg-primary-container rounded-full"></div>
-          <div className="flex-1 bg-secondary-fixed rounded-full"></div>
-          <div className="flex-1 bg-secondary-fixed rounded-full"></div>
-        </div>
-      </div>
+	useEffect(() => {
+		const cargarMedicos = async () => {
+			const data = await getMedicos();
+			if (data) {
+				setMedicos(data);
+				//setMedicosFiltrados(data)
+			}
+		};
+		cargarMedicos();
+	}, []);
 
-      {/* Header Section */}
-      <div className="text-center mb-12">
-        <h1 className="font-h2-section text-h2-section text-on-surface mb-4">¿A quién estás buscando?</h1>
-        <p className="font-body-main text-body-main text-text-secondary">Ingresá el nombre del profesional para ver su disponibilidad.</p>
-      </div>
+	const filtrarMedicos = (searchText) => {
+		const texto = searchText.toLowerCase();
+		const filtered = medicos.filter((medico) =>
+			medico.nombre.toLowerCase().includes(texto),
+		);
+		setMedicosFiltrados(filtered);
+	};
+>>>>>>> d967caf (refactor: migro home y busquedas especificas a heroui (card, button, link))
 
-      {/* Search Bar */}
-      <MedicosSearchBar filtrarMedicos = {filtrarMedicos}></MedicosSearchBar>
+	return (
+		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
+			{/* Header Section */}
+			<div className="text-center mb-12">
+				<h1 className="font-sans text-[40px] font-bold text-surface-foreground mb-4">
+					¿A quién estás buscando?
+				</h1>
+				<p className="font-sans text-lg text-muted">
+					Ingresá el nombre del profesional para ver su disponibilidad.
+				</p>
+			</div>
 
+			{/* Search Bar */}
+			<SearchBar
+				name="medico"
+				placeholder="Ej. Carlos Gardel"
+				onSearch={filtrarMedicos}
+				showButton={true}
+			/>
+
+			{/* Results Section */}
+			<div>
+				<h2 className="font-sans text-2xl font-semibold text-surface-foreground mb-6">
+					Todos los medicos
+				</h2>
+				<div className="flex flex-col gap-4">
+					<MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+				</div>
+
+<<<<<<< HEAD
       {/* Results Section */}
       <div className="max-w-4xl mx-auto">
         {cargando ? (
@@ -92,4 +122,13 @@ export default function BusquedaMedico() {
       </div>
     </main>
   );
+=======
+				{/* Bottom Action */}
+				<div className="mt-12 flex justify-end">
+					<SiguientePaso></SiguientePaso>
+				</div>
+			</div>
+		</div>
+	);
+>>>>>>> d967caf (refactor: migro home y busquedas especificas a heroui (card, button, link))
 }

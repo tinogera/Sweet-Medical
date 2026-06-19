@@ -1,36 +1,51 @@
-import { Outlet, useNavigate, Link } from 'react-router-dom';
-import PiePagina from '../components/piePagina/PiePagina';
+import { Button } from "@heroui/react";
+import { Outlet, useNavigate } from "react-router-dom";
+import Logo from "../components/logo/Logo";
+import PiePagina from "../components/piePagina/PiePagina";
+import ProgressIndicator from "../components/progressIndicator/ProgressIndicator";
 
 export default function TransactionalLayout() {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
+	return (
+		<>
+			{/* Header / TopNavBar (Simplified for transactional flow - Navigation suppressed as per rules) */}
+			<header className="full-width top-0 sticky bg-surface border-b shadow-xs border-border z-50 transition duration-200 ease-in-out">
+				<div className="grid grid-cols-2 items-center h-20 px-6 max-w-300 mx-auto ">
+					<nav className="flex items-center gap-4">
+						{/* Back Button for Transactional Flow */}
+						<Button
+							type="button"
+							isIconOnly
+							variant="ghost"
+							className="text-muted hover:text-accent hover:bg-surface-secondary"
+							onClick={() => {
+								navigate(-1);
+							}}
+						>
+							<span
+								className="material-symbols-outlined"
+								data-icon="arrow_back"
+							>
+								arrow_back
+							</span>
+						</Button>
+						<Logo className="size-10" />
+					</nav>
 
-  return (
-    <div className="bg-background text-on-surface min-h-screen flex flex-col">
-      <header className="bg-surface border-b border-outline-variant w-full sticky top-0 z-50">
-        <div className="flex justify-between items-center h-20 px-gutter max-w-container-max mx-auto w-full">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="text-secondary hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-bg-alternate">
-              <span className="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-container rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-              <Link to="/" className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary uppercase tracking-tight">SWEET MEDICAL</Link>
-            </div>
-          </div>
-          {/* Wizard Progress Indicator */}
-          <div className="flex items-center gap-2">
-            <span className="font-body-sm text-body-sm text-text-secondary">Paso 2 de 3</span>
-            <div className="flex gap-1">
-              <div className="w-8 h-2 rounded-full bg-primary"></div>
-              <div className="w-8 h-2 rounded-full bg-primary"></div>
-              <div className="w-8 h-2 rounded-full bg-outline-variant"></div>
-            </div>
-          </div>
-        </div>
-      </header>
+					{/* Wizard Progress Indicator */}
+					<ProgressIndicator
+						step={1}
+						totalSteps={3}
+						label="Búsqueda de Profesional"
+						className="mb-12"
+					/>
+				</div>
+			</header>
 
-      <Outlet />
-      <PiePagina />
-    </div>
-  );
+			<main className="grow">
+				<Outlet />
+			</main>
+			<PiePagina />
+		</>
+	);
 }
