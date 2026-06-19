@@ -10,11 +10,11 @@ export default function BusquedaServicio() {
       <Header></Header>
 
       {/* Main Content Canvas */}
-      <main className="flex-grow flex flex-col items-center py-section-padding px-margin-mobile md:px-gutter w-full">
+      <main className="flex-grow flex flex-col items-center pt-[140px] pb-section-padding px-margin-mobile md:px-gutter w-full">
         <div className="w-full max-w-[800px] flex flex-col gap-12">
           {/* Progress Header */}
           <div className="flex flex-col gap-4 text-center">
-            <div className="flex items-center justify-center gap-4 text-secondary font-cta-label text-body-sm">
+            <div className="flex items-center justify-center gap-4 text-secondary font-cta-label text-lg">
               <span className="text-primary-container font-bold">PASO 1 DE 3</span>
               <span className="w-1 h-1 bg-outline rounded-full"></span>
               <span>Búsqueda de Servicio</span>

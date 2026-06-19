@@ -3,8 +3,8 @@ import React from 'react';
 const BusquedasEspecificas = ({ icon, title, description }) => {
   return (
     <>
-      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform">
-        <span className="material-symbols-outlined text-primary-container text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+      <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-105 transition-transform" style={{ backgroundColor: '#FFE5E5' }}>
+        <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1", color: '#FF0A0A' }}>
           {icon}
         </span>
       </div>
