@@ -12,6 +12,10 @@ export class MedicoService {
     this.servicioRepository = servicioRepository;
   }
 
+  async obtenerMedicos() {
+    return await this.medicoRepository.findAll();
+  }
+
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName }) {
     const medico = await this.medicoRepository.findById(medicoId);
     const sede = await this.sedeRepository.obtenerPorNombre(sedeName)

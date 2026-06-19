@@ -3,6 +3,35 @@ export class MedicoController {
     this.medicoService = medicoService;
   }
 
+  obtenerMedicos = async (req, res, next) => {
+    try {
+      const medicos = await this.medicoService.obtenerMedicos();
+      
+      const response = medicos.map(m => ({
+        id: m.id || m._id,
+        nombre: m.nombre,
+        apellido: m.apellido,
+        documento: m.documento,
+        servicios: m.servicios.map(s => ({
+          tipoServicio: s.tipoServicio,
+          nombre: s.nombre,
+          descripcion: s.descripcion,
+          precio: s.precio,
+          duracion: s.duracion
+        })),
+        sedes: m.sedes.map(s => ({
+          nombre: s.nombre,
+          ubicacion: s.ubicacion
+        })),
+        usuario: m.usuario
+      }));
+
+      return res.status(200).json(response);
+    } catch (e) {
+      return next(e);
+    }
+  }
+
   agregarDisponibilidad = async (req, res, next) => {
     try {
       const medicoId = req.params.id;

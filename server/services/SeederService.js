@@ -84,9 +84,18 @@ export class SeederService {
     medicoGomez.agregarServicio(cardiologia)
     medicoGomez.agregarServicio(radiografia)
 
+    const mañana = new Date()
+    mañana.setDate(mañana.getDate() + 1)
+
+    const horaInicio = new Date(mañana)
+    horaInicio.setHours(14, 30, 0, 0)
+
+    const horaFin = new Date(mañana)
+    horaFin.setHours(21, 30, 0, 0)
+
     medicoGomez.agregarDisponibilidad(
-      new Date("2026-06-13T14:30:00"), 
-      new Date("2026-06-13T21:30:00"), 
+      horaInicio,
+      horaFin,
       sp
     )
 
@@ -112,15 +121,17 @@ export class SeederService {
     }
 
     // 7. Reservar algunos turnos para pruebas
-    const todosLosTurnos = await this.turnoRepository.listar()
-    if (todosLosTurnos.length >= 3) {
-      // Reservamos el primero para Ana con Cardiologia
-      await todosLosTurnos[0].reservar(pacienteAna, cardiologia)
-      await this.turnoRepository.guardarturno(todosLosTurnos[0]._id, todosLosTurnos[0])
+    const todosLosTurnosDocs = await this.turnoRepository.listar()
+    if (todosLosTurnosDocs.length >= 3) {
+      // Reservamos el primero para Ana con Cardiología
+      const turno1 = await this.turnoRepository.obtenerPorId(todosLosTurnosDocs[0]._id)
+      turno1.reservar(pacienteAna, cardiologia)
+      await this.turnoRepository.guardarTurno(turno1)
 
-      // Reservamos el segundo para Juan con Cardiologia
-      await todosLosTurnos[1].reservar(pacienteJuan, cardiologia)
-      await this.turnoRepository.guardarturno(todosLosTurnos[1]._id, todosLosTurnos[1])
+      // Reservamos el segundo para Juan con Cardiología
+      const turno2 = await this.turnoRepository.obtenerPorId(todosLosTurnosDocs[1]._id)
+      turno2.reservar(pacienteJuan, cardiologia)
+      await this.turnoRepository.guardarTurno(turno2)
     }
     
     console.log("Seeding completado exitosamente en MongoDB.")
