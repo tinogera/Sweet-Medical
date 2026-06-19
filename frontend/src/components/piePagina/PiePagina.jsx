@@ -1,6 +1,4 @@
-import React from 'react';
-
-const PiePagina = ({}) => {
+const PiePagina = () => {
   return (
     <footer className="bg-bg-dark dark:bg-black w-full py-section-padding px-margin-mobile md:px-gutter flex flex-col md:flex-row justify-between items-start gap-8">
       <div>

@@ -53,7 +53,7 @@ export default function BusquedaMedico() {
 
       {/* Results Section */}
       <div className="max-w-4xl mx-auto">
-        <h2 class="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Todos los medicos</h2>
+        <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Todos los medicos</h2>
         <div className="flex flex-col gap-4">
           <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
         </div>
