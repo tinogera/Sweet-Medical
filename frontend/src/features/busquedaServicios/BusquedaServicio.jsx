@@ -33,7 +33,7 @@ export default function BusquedaServicio() {
             search
           </span>
           <input
-            className="w-full h-16 pl-14 pr-6 rounded-full border border-outline-variant bg-surface-lowest text-on-surface font-body-main text-body-main focus:ring-0 focus:border-primary-container transition-colors placeholder:text-secondary-fixed-dim shadow-sm"
+            className="w-full h-16 pl-14 pr-6 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-main text-body-main focus:ring-0 focus:border-primary-container transition-colors placeholder:text-secondary-fixed-dim shadow-sm"
             placeholder="Ej. Cardiología, Ecografía, Laboratorio..."
             type="text"
           />
