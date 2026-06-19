@@ -8,6 +8,9 @@ import MedicosSearchBar from '../../components/medicosSearchBar/MedicosSearchBar
 export default function BusquedaMedico() {
   const [medicos, setMedicos] = useState([])
   const [medicosFiltrados, setMedicosFiltrados] = useState([])
+  const [busquedaRealizada, setBusquedaRealizada] = useState(false)
+
+  const sinResultados = busquedaRealizada && medicosFiltrados.length === 0;
 
   useEffect(() => {
     const cargarMedicos = async () => {
@@ -26,6 +29,7 @@ export default function BusquedaMedico() {
         medico.nombre.toLowerCase().includes(texto)
       );
       setMedicosFiltrados(filtered);
+      setBusquedaRealizada(true);
   };
 
   return (
@@ -53,7 +57,18 @@ export default function BusquedaMedico() {
 
       {/* Results Section */}
       <div className="max-w-4xl mx-auto">
-        <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">Todos los medicos</h2>
+        {busquedaRealizada && (
+          <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
+            Resultados de la búsqueda
+          </h2>
+        )}
+        {
+          sinResultados && (
+            <h3>
+              No hubo resultados para esa busqueda
+            </h3>
+          )
+        }
         <div className="flex flex-col gap-4">
           <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
         </div>
