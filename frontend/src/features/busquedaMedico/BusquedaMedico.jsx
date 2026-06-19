@@ -9,16 +9,19 @@ export default function BusquedaMedico() {
   const [medicos, setMedicos] = useState([])
   const [medicosFiltrados, setMedicosFiltrados] = useState([])
   const [busquedaRealizada, setBusquedaRealizada] = useState(false)
+  const [cargando, setCargando] = useState(true)
 
   const sinResultados = busquedaRealizada && medicosFiltrados.length === 0;
 
   useEffect(() => {
     const cargarMedicos = async () => {
+      setCargando(true)
       const data = await getMedicos()
       if (data) {
         setMedicos(data)
         //setMedicosFiltrados(data)
       }
+      setCargando(false)
     }
     cargarMedicos()
   }, [])
@@ -57,21 +60,30 @@ export default function BusquedaMedico() {
 
       {/* Results Section */}
       <div className="max-w-4xl mx-auto">
-        {busquedaRealizada && (
-          <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
-            Resultados de la búsqueda
-          </h2>
+        {cargando ? (
+          <div className="flex flex-col items-center justify-center py-12 gap-4">
+            <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+            <p className="font-body-main text-text-secondary animate-pulse">
+              Cargando profesionales...
+            </p>
+          </div>
+        ) : (
+          <>
+            {busquedaRealizada && (
+              <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
+                Resultados de la búsqueda
+              </h2>
+            )}
+            {sinResultados && (
+              <h3 className="font-body-main text-text-secondary text-center mb-6">
+                No hubo resultados para esa búsqueda
+              </h3>
+            )}
+            <div className="flex flex-col gap-4">
+              <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+            </div>
+          </>
         )}
-        {
-          sinResultados && (
-            <h3>
-              No hubo resultados para esa busqueda
-            </h3>
-          )
-        }
-        <div className="flex flex-col gap-4">
-          <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
-        </div>
 
         {/* Bottom Action */}
         <div className="mt-12 flex justify-end">
