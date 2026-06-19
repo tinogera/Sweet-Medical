@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 
@@ -14,7 +13,7 @@ const Header = ({ usuario }) => {
             <Link to="/" className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight" href="#">SWEET MEDICAL</Link>
           </div>
           {/* Mobile Menu Toggle */}
-          <button className="md:hidden text-primary p-2">
+          <button type='button' className="md:hidden text-primary p-2">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>menu</span>
           </button>
           {/* Desktop Nav */}

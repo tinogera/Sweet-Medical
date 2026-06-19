@@ -2,7 +2,7 @@ import BusquedasEspecificas from "../../components/busquedasEspecificas/Busqueda
 
 export default function Home() {
 	return (
-		<main className="min-h-screen px-margin-mobile py-8 md:py-section-padding max-w-container-max mx-auto">
+		<main className="min-h-screen px-margin-mobile py-8 md:py-section-padding max-w-container-max mx-auto bg-surface">
 			{/* Header Section */}
 			<div className="mb-8 text-center md:text-left">
 				<h1 className="font-h1-hero-mobile md:font-h1-hero text-h1-hero-mobile md:text-h1-hero text-on-surface mb-2">

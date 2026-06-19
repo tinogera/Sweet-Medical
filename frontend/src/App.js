@@ -11,11 +11,11 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/servicios" element={<BusquedaServicio />} />
-        <Route path="/medicos" element={<BusquedaMedico />} />
       </Route>
       <Route element={<TransactionalLayout />}>
         <Route path="/fecha" element={<SeleccionFecha />} />
+        <Route path="/medicos" element={<BusquedaMedico />} />
+        <Route path="/servicios" element={<BusquedaServicio />} />
       </Route>
     </Routes>
   );
