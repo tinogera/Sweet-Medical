@@ -11,7 +11,7 @@ const Header = ({ usuario }) => {
           <div className="flex items-center gap-2">
             {/* Red square isotype */}
             <div className="w-8 h-8 bg-primary-container rounded-sm flex items-center justify-center text-white font-bold text-xs">SM</div>
-            <Link to="/" className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight" href="#">SWISS MEDICAL</Link>
+            <Link to="/" className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight" href="#">SWEET MEDICAL</Link>
           </div>
           {/* Mobile Menu Toggle */}
           <button className="md:hidden text-primary p-2">

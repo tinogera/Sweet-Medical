@@ -12,8 +12,8 @@ export default function TransactionalLayout() {
             <button className="text-secondary hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-bg-alternate">
               <span className="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
             </button>
-            <div className="font-h2-section text-h2-section text-primary uppercase tracking-tight hidden md:block">SWISS MEDICAL</div>
-            <div className="font-h2-section-mobile text-h2-section-mobile text-primary uppercase tracking-tight md:hidden">SWISS MEDICAL</div>
+            <div className="font-h2-section text-h2-section text-primary uppercase tracking-tight hidden md:block">SWEET MEDICAL</div>
+            <div className="font-h2-section-mobile text-h2-section-mobile text-primary uppercase tracking-tight md:hidden">SWEET MEDICAL</div>
           </div>
           {/* Wizard Progress Indicator */}
           <div className="flex items-center gap-2">
