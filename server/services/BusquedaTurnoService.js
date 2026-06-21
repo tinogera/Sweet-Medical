@@ -25,7 +25,7 @@ export class BusquedaTurnoService {
             if (t.servicio) {
                 return [new TurnoOutputDTO(
                     t._id || t.id,
-                    t.medico?.nombre || "Médico",
+                    `${t.medico?.nombre || ''} ${t.medico?.apellido || ''}`.trim() || "Médico",
                     t.servicio.nombre,
                     t.fechaHora,
                     t.sede?.nombre || "Sede",
@@ -46,14 +46,14 @@ export class BusquedaTurnoService {
 
             return serviciosAMostrar.map(s => new TurnoOutputDTO(
                 t._id || t.id,
-                t.medico?.nombre || "Médico",
+                `${t.medico?.nombre || ''} ${t.medico?.apellido || ''}`.trim() || "Médico",
                 s.nombre,
                 t.fechaHora,
                 t.sede?.nombre || "Sede",
                 t.estadoActual().estado,
-						paciente.plan.precioDe(s),
-					),
-			);
+                paciente.plan.precioDe(s),
+                s._id?.toString() || s.id,
+            ));
 		});
 		
 		// FIX: Que el sort lo haga la base de datos

@@ -7,6 +7,19 @@ export class PacienteController{
     }
 
 
+    listarTodos = async (req, res, next) => {
+        try {
+            const pacientes = await this.pacienteService.listarTodos();
+            return res.status(200).json(pacientes.map(p => ({
+                id: p.id,
+                nombre: p.nombre,
+                apellido: p.apellido,
+            })));
+        } catch (e) {
+            return next(e);
+        }
+    }
+
     listarTurnos = async (req, res, next) => {
         try{
             const pacienteId = req.params.id

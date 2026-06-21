@@ -1,7 +1,25 @@
-import React from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+const SERVICIOS = [
+  { label: 'Cardiología',  icon: 'cardiology',   tipo: 'especialidad', valor: 'cardiología'  },
+  { label: 'Pediatría',    icon: 'pediatrics',    tipo: 'especialidad', valor: 'pediatría'    },
+  { label: 'Dermatología', icon: 'dermatology',   tipo: 'especialidad', valor: 'dermatología' },
+  { label: 'Laboratorio',  icon: 'biotech',       tipo: 'practica',     valor: 'análisis'     },
+];
 
 export default function BusquedaServicio() {
+  const navigate = useNavigate();
+  const [seleccionado, setSeleccionado] = useState(null);
+
+  const irAFecha = () => {
+    if (!seleccionado) return;
+    const state = seleccionado.tipo === 'especialidad'
+      ? { tipo: 'servicio', especialidad: seleccionado.valor, label: seleccionado.label }
+      : { tipo: 'servicio', practica: seleccionado.valor,    label: seleccionado.label };
+    navigate('/fecha', { state });
+  };
+
   return (
     <main className="flex-grow flex flex-col items-center py-section-padding px-margin-mobile md:px-gutter w-full">
       <div className="w-full max-w-[800px] flex flex-col gap-12">
@@ -17,7 +35,7 @@ export default function BusquedaServicio() {
           </div>
         </div>
 
-        {/* Title Section */}
+        {/* Title */}
         <div className="text-center flex flex-col gap-4">
           <h1 className="font-h2-section-mobile text-h2-section-mobile md:font-h2-section md:text-h2-section text-on-surface">
             ¿Qué servicio estás buscando?
@@ -39,61 +57,49 @@ export default function BusquedaServicio() {
           />
         </div>
 
-        {/* Suggested Services Bento */}
+        {/* Service Cards */}
         <div className="flex flex-col gap-6">
           <h3 className="font-cta-label text-cta-label text-on-surface-variant">Servicios Sugeridos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Service Card 1 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">cardiology</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Cardiología</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
-
-            {/* Service Card 2 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">pediatrics</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Pediatría</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
-
-            {/* Service Card 3 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">dermatology</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Dermatología</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
-
-            {/* Service Card 4 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">biotech</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Laboratorio</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
+            {SERVICIOS.map((svc) => {
+              const isSelected = seleccionado?.label === svc.label;
+              return (
+                <button
+                  key={svc.label}
+                  onClick={() => setSeleccionado(svc)}
+                  className={`flex items-center justify-between p-6 rounded-xl border transition-all group text-left ${
+                    isSelected
+                      ? 'border-2 border-primary-container bg-surface-container shadow-[0_0_0_4px_rgba(226,0,26,0.1)]'
+                      : 'border-outline-variant bg-surface-container-lowest hover:border-primary-container hover:bg-surface-container'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      isSelected ? 'bg-primary-container text-white' : 'bg-surface-container-high text-primary-container group-hover:bg-primary-container group-hover:text-white'
+                    }`}>
+                      <span className="material-symbols-outlined">{svc.icon}</span>
+                    </div>
+                    <span className="font-cta-label text-body-main text-on-surface">{svc.label}</span>
+                  </div>
+                  <span className={`material-symbols-outlined transition-colors ${isSelected ? 'text-primary-container' : 'text-secondary group-hover:text-primary-container'}`}>
+                    chevron_right
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Action Area */}
+        {/* Action */}
         <div className="mt-8 flex justify-end">
           <button
-            disabled
-            className="px-8 py-4 bg-secondary-container text-secondary font-cta-label text-cta-label rounded-full cursor-not-allowed transition-colors w-full md:w-auto"
+            onClick={irAFecha}
+            disabled={!seleccionado}
+            className={`px-8 py-4 font-cta-label text-cta-label rounded-full transition-colors w-full md:w-auto ${
+              seleccionado
+                ? 'bg-primary-container text-on-primary hover:opacity-90 shadow-sm'
+                : 'bg-secondary-container text-secondary cursor-not-allowed'
+            }`}
           >
             Siguiente Paso
           </button>
