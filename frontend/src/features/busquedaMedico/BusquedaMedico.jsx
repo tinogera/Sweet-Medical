@@ -5,7 +5,6 @@ import SiguientePaso from "../../components/siguientePaso/SiguientePaso";
 import { getMedicos } from "../../service/busquedaMedicoService";
 
 export default function BusquedaMedico() {
-<<<<<<< HEAD
   const [medicos, setMedicos] = useState([])
   const [medicosFiltrados, setMedicosFiltrados] = useState([])
   const [busquedaRealizada, setBusquedaRealizada] = useState(false)
@@ -34,29 +33,6 @@ export default function BusquedaMedico() {
       setMedicosFiltrados(filtered);
       setBusquedaRealizada(true);
   };
-=======
-	const [medicos, setMedicos] = useState([]);
-	const [medicosFiltrados, setMedicosFiltrados] = useState([]);
-
-	useEffect(() => {
-		const cargarMedicos = async () => {
-			const data = await getMedicos();
-			if (data) {
-				setMedicos(data);
-				//setMedicosFiltrados(data)
-			}
-		};
-		cargarMedicos();
-	}, []);
-
-	const filtrarMedicos = (searchText) => {
-		const texto = searchText.toLowerCase();
-		const filtered = medicos.filter((medico) =>
-			medico.nombre.toLowerCase().includes(texto),
-		);
-		setMedicosFiltrados(filtered);
-	};
->>>>>>> d967caf (refactor: migro home y busquedas especificas a heroui (card, button, link))
 
 	return (
 		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
@@ -87,48 +63,39 @@ export default function BusquedaMedico() {
 					<MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
 				</div>
 
-<<<<<<< HEAD
-      {/* Results Section */}
-      <div className="max-w-4xl mx-auto">
-        {cargando ? (
-          <div className="flex flex-col items-center justify-center py-12 gap-4">
-            <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
-            <p className="font-body-main text-text-secondary animate-pulse">
-              Cargando profesionales...
-            </p>
-          </div>
-        ) : (
-          <>
-            {busquedaRealizada && (
-              <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
-                Resultados de la búsqueda
-              </h2>
-            )}
-            {sinResultados && (
-              <h3 className="font-body-main text-text-secondary text-center mb-6">
-                No hubo resultados para esa búsqueda
-              </h3>
-            )}
-            <div className="flex flex-col gap-4">
-              <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+        {/* Results Section */}
+        <div className="max-w-4xl mx-auto">
+          {cargando ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <div className="w-12 h-12 border-4 border-outline-variant border-t-primary rounded-full animate-spin"></div>
+              <p className="font-body-main text-text-secondary animate-pulse">
+                Cargando profesionales...
+              </p>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              {busquedaRealizada && (
+                <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
+                  Resultados de la búsqueda
+                </h2>
+              )}
+              {sinResultados && (
+                <h3 className="font-body-main text-text-secondary text-center mb-6">
+                  No hubo resultados para esa búsqueda
+                </h3>
+              )}
+              <div className="flex flex-col gap-4">
+                <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+              </div>
+            </>
+          )}
 
-        {/* Bottom Action */}
-        <div className="mt-12 flex justify-end">
-          <SiguientePaso></SiguientePaso>
-        </div>
+          {/* Bottom Action */}
+          <div className="mt-12 flex justify-end">
+            <SiguientePaso></SiguientePaso>
+          </div>
       </div>
-    </main>
-  );
-=======
-				{/* Bottom Action */}
-				<div className="mt-12 flex justify-end">
-					<SiguientePaso></SiguientePaso>
-				</div>
-			</div>
-		</div>
-	);
->>>>>>> d967caf (refactor: migro home y busquedas especificas a heroui (card, button, link))
-}
+      </div>
+    </div>
+    );
+  }

@@ -1,5 +1,6 @@
 import { Button, ToggleButtonGroup } from "@heroui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
 import ServicioCard from "../../components/servicioCard/ServicioCard";
 
@@ -12,7 +13,7 @@ const services = [
 
 export default function BusquedaServicio() {
 	const navigate = useNavigate();
-  const [seleccionado, setSeleccionado] = useState(null);
+  const [seleccionado, setSeleccionado] = useState(services[0].id);
 
   const irAFecha = () => {
     if (!seleccionado) return;
@@ -50,8 +51,8 @@ export default function BusquedaServicio() {
 					selectionMode="single"
 					size="lg"
 					isDetached
-					selectedKeys={[selectedService]}
-					onSelectionChange={(keys) => setSelectedService([...keys][0])}
+					selectedKeys={[seleccionado]}
+					onSelectionChange={(keys) => setSeleccionado([...keys][0])}
 					className="grid gap-4 grid-cols-(--auto-columns) w-full"
 				>
 					{services.map((service) => (
@@ -68,7 +69,7 @@ export default function BusquedaServicio() {
 			{/* Action Area */}
 			<div className="mt-8 flex justify-end">
 				<Button
-					isDisabled={!selectedService}
+					isDisabled={!seleccionado}
 					variant="secondary"
 					className="w-full md:w-auto"
           onClick={irAFecha}

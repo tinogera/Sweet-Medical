@@ -67,7 +67,7 @@ export default function SeleccionFecha() {
   };
 
   return (
-    <main className="flex-grow py-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full max-w-3xl">
+    <main className="grow py-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full max-w-3xl">
 
       {/* Header */}
       <div className="mb-12 text-center md:text-left">
@@ -94,6 +94,7 @@ export default function SeleccionFecha() {
             <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface">{busqueda.label}</h2>
           </div>
           <button
+            type='button'
             onClick={() => navigate(-1)}
             className="absolute top-6 right-6 text-primary font-body-sm text-body-sm underline hover:opacity-80 transition-opacity"
           >
@@ -134,9 +135,10 @@ export default function SeleccionFecha() {
               const isSelected = fechaSeleccionada === key;
               return (
                 <button
+                  type='button'
                   key={key}
                   onClick={() => seleccionarFecha(key)}
-                  className={`snap-start flex-shrink-0 w-24 h-28 rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-all ${
+                  className={`snap-start shrink-0 w-24 h-28 rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-all ${
                     isSelected
                       ? 'border-2 border-primary bg-surface-container shadow-[0_0_0_4px_rgba(226,0,26,0.1)]'
                       : 'border-outline-variant bg-surface hover:bg-bg-alternate shadow-sm'
@@ -171,6 +173,7 @@ export default function SeleccionFecha() {
               const isSelected = turnoSeleccionado?.id === tur.id && turnoSeleccionado?.servicioId === tur.servicioId;
               return (
                 <button
+                  type='button'
                   key={`${tur.id}-${tur.servicioId ?? 'sin-servicio'}`}
                   onClick={() => setTurnoSeleccionado(tur)}
                   className={`py-4 px-4 rounded-xl border flex flex-col items-center gap-1 transition-all ${
@@ -197,12 +200,14 @@ export default function SeleccionFecha() {
       {/* Actions */}
       <div className="flex flex-col md:flex-row justify-end items-center gap-4 mt-8 pt-8 border-t border-outline-variant">
         <button
+          type='button'
           onClick={() => navigate(-1)}
           className="w-full md:w-auto px-8 py-4 rounded-full border border-secondary text-secondary font-cta-label text-cta-label hover:bg-bg-alternate transition-colors bg-surface"
         >
           Cancelar
         </button>
         <button
+          type='button'
           onClick={continuar}
           disabled={!turnoSeleccionado}
           className={`w-full md:w-auto px-10 py-4 rounded-full font-cta-label text-cta-label flex items-center justify-center gap-2 transition-all ${
@@ -215,6 +220,6 @@ export default function SeleccionFecha() {
           <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
         </button>
       </div>
-    </div>
+    </main>
   );
 }
