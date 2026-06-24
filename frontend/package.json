@@ -27,7 +27,7 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "test": "vitest",
+    "test": "vitest run",
     "preview": "vite preview"
   }
 }

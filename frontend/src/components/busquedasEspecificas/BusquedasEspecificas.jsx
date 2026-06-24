@@ -7,7 +7,7 @@ const BusquedasEspecificas = ({ icon, title, description, to, buttonName }) => {
 			<Card
 				className="p-8 flex flex-col items-center justify-center text-center 
 				transition duration-200 hover:bg-surface-tertiary hover:shadow-sm 
-				border border-focus/20 hover:border-focus h-full"
+				border border-blue-100 hover:border-blue-800/50 h-full"
 			>
 				<Card.Header className="flex flex-col items-center text-center">
 					<div

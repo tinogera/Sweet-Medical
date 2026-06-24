@@ -42,7 +42,7 @@ const Header = ({ _usuario }) => {
 
 				{/* Botón - derecha (en desktop) */}
 				<div className="hidden md:flex col-start-3 justify-end">
-					<Button onPress={() => {navigate("/mis-turnos")}}>
+					<Button onPress={() => {navigate("/mis-turnos")}} className="font-bold">
 						Mis Turnos
 					</Button>
 				</div>
