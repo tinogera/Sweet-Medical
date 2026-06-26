@@ -29,7 +29,7 @@ export class PacienteController{
 
             const turnosDTO = resultado.turnos.map(t => new TurnoOutputDTO(
                 t.id,
-                t.medico.nombre,
+                `${t.medico.nombre} ${t.medico.apellido}`,
                 t.servicio.nombre,
                 t.fechaHora,
                 t.sede.nombre,

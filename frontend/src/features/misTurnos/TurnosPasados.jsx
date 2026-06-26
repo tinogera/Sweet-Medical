@@ -3,7 +3,7 @@ import { Button, Chip, Table } from "@heroui/react";
 const ESTADO_CONFIG = {
 	asistio: { label: "Realizado", color: "success", icon: "check" },
 	cancelado: { label: "Cancelado", color: "danger", icon: "close" },
-	reprogramado: { label: "Reprogramado", color: "warning", icon: "sync" },
+	pendiente: { label: "Reprogramado", color: "warning", icon: "schedule" },
 };
 
 export default function TurnosPasados({ turnos }) {

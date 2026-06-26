@@ -1,5 +1,6 @@
 import { Button } from "@heroui/react";
 import { Link, useNavigate } from "react-router-dom";
+import { DEMO_PACIENTE_ID } from "../../config";
 import Logo from "../logo/Logo";
 
 const Header = ({ _usuario }) => {
@@ -42,7 +43,7 @@ const Header = ({ _usuario }) => {
 
 				{/* Botón - derecha (en desktop) */}
 				<div className="hidden md:flex col-start-3 justify-end">
-					<Button onPress={() => {navigate("/mis-turnos")}} className="font-bold">
+					<Button onPress={() => {navigate(`/mis-turnos/${DEMO_PACIENTE_ID}`)}} className="font-bold">
 						Mis Turnos
 					</Button>
 				</div>

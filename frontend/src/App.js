@@ -13,7 +13,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/mis-turnos" element={<MisTurnos />} />
+        <Route path="/mis-turnos/:id" element={<MisTurnos />} />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route element={<TransactionalLayout />}>

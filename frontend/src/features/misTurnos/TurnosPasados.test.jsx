@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import TurnosPasados from "./TurnosPasados";
 
-const mockTurnos = [
+const sampleTurnos = [
   {
     id: "past-1",
     profesional: "Dr. Carlos Méndez",
@@ -33,7 +33,7 @@ const mockTurnos = [
 
 describe("TurnosPasados", () => {
   test("renders section header and table columns", () => {
-    render(<TurnosPasados turnos={mockTurnos} />);
+    render(<TurnosPasados turnos={sampleTurnos} />);
 
     expect(screen.getByText("Turnos Pasados")).toBeInTheDocument();
     expect(screen.getByText("(Últimos 3 meses)")).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("TurnosPasados", () => {
   });
 
   test("renders one row per appointment", () => {
-    render(<TurnosPasados turnos={mockTurnos} />);
+    render(<TurnosPasados turnos={sampleTurnos} />);
 
     const rows = screen.getAllByRole("row").filter((row) => row.tagName === "TR");
     // 3 data rows + 1 header row = 4
@@ -58,7 +58,7 @@ describe("TurnosPasados", () => {
   });
 
   test("renders estado chips with correct colors", () => {
-    render(<TurnosPasados turnos={mockTurnos} />);
+    render(<TurnosPasados turnos={sampleTurnos} />);
 
     const asistenciaChips = screen.getAllByText("Realizado");
     expect(asistenciaChips).toHaveLength(2);
@@ -71,14 +71,14 @@ describe("TurnosPasados", () => {
   });
 
   test("cancelled row has reduced opacity", () => {
-    render(<TurnosPasados turnos={mockTurnos} />);
+    render(<TurnosPasados turnos={sampleTurnos} />);
 
     const canceladoRow = screen.getByText("Dr. Luis Almirón").closest("tr");
     expect(canceladoRow).toHaveClass("opacity-70");
   });
 
   test("renders scroll container and footer button", () => {
-    render(<TurnosPasados turnos={mockTurnos} />);
+    render(<TurnosPasados turnos={sampleTurnos} />);
 
     expect(screen.getByRole("button", { name: /Ver historial completo/i })).toBeInTheDocument();
     expect(document.querySelector("[class*='table__scroll-container']")).toBeInTheDocument();
