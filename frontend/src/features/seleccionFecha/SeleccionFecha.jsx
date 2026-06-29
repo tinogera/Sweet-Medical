@@ -99,7 +99,8 @@ export default function SeleccionFecha() {
 
   const continuar = () => {
     if (fechaSeleccionada) {
-      navigate("/turno", { state: { fechaKey: fechaSeleccionada, pacienteId } });
+      setSearchOptions({ fechaKey: fechaSeleccionada });
+      navigate("/turno");
     }
   };
 

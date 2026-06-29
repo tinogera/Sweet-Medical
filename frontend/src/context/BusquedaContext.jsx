@@ -10,6 +10,7 @@ const ESTADO_INICIAL = {
   especialidad: null,
   practica: null,
   pacienteId: DEMO_PACIENTE_ID,
+  fechaKey: null,
 };
 
 export function BusquedaProvider({ children, initialValue }) {

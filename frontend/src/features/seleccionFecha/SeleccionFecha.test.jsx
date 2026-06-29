@@ -1,8 +1,8 @@
 import { describe, expect, test, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SeleccionFecha from "./SeleccionFecha";
-import { BusquedaProvider } from "../../context/BusquedaContext";
+import { BusquedaProvider, useBusqueda } from "../../context/BusquedaContext";
 import * as turnosService from "../../service/turnosService";
 import * as pacientesService from "../../service/pacientesService";
 
@@ -40,14 +40,14 @@ const medicoState = {
   profesionalId: "Dr. Rossi",
 };
 
-/** Helper component that exposes navigation state for testing */
-function LocationCapture() {
-  const loc = useLocation();
+/** Helper component that exposes busqueda context for testing */
+function BusquedaCapture() {
+  const { busqueda } = useBusqueda();
   return (
     <div>
       <div>Confirmación de Turno</div>
-      <div data-testid="nav-fechaKey">{loc.state?.fechaKey ?? ""}</div>
-      <div data-testid="nav-pacienteId">{loc.state?.pacienteId ?? ""}</div>
+      <div data-testid="ctx-fechaKey">{busqueda.fechaKey ?? ""}</div>
+      <div data-testid="ctx-pacienteId">{busqueda.pacienteId ?? ""}</div>
     </div>
   );
 }
@@ -58,7 +58,7 @@ function renderAtFecha(initialBusqueda) {
       <MemoryRouter initialEntries={["/fecha"]}>
         <Routes>
           <Route path="/fecha" element={<SeleccionFecha />} />
-          <Route path="/turno" element={<LocationCapture />} />
+          <Route path="/turno" element={<BusquedaCapture />} />
         </Routes>
       </MemoryRouter>
     </BusquedaProvider>,
@@ -106,7 +106,7 @@ describe("SeleccionFecha", () => {
     expect(screen.getByText("15")).toBeInTheDocument();
   });
 
-  test("selecting time and clicking Continuar navigates to /turno with fechaKey and pacienteId", async () => {
+  test("selecting time and clicking Continuar navigates to /turno with fechaKey and pacienteId in context", async () => {
     pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00")],
@@ -139,12 +139,12 @@ describe("SeleccionFecha", () => {
     // Click Continuar
     fireEvent.click(continuarButton);
 
-    // Should navigate to /turno with fechaKey and pacienteId in state
+    // Should navigate to /turno with fechaKey and pacienteId in context
     await waitFor(() => {
       expect(screen.getByText("Confirmación de Turno")).toBeInTheDocument();
     });
-    expect(screen.getByTestId("nav-fechaKey")).toHaveTextContent("2026-07-15");
-    expect(screen.getByTestId("nav-pacienteId")).toHaveTextContent("pac-1");
+    expect(screen.getByTestId("ctx-fechaKey")).toHaveTextContent("2026-07-15");
+    expect(screen.getByTestId("ctx-pacienteId")).toHaveTextContent("pac-1");
   });
 
   test("empty turnos shows empty state", async () => {
