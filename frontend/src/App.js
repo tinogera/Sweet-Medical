@@ -7,6 +7,7 @@ import SeleccionFecha from './features/seleccionFecha/SeleccionFecha';
 import TurnosUsuario from './features/turnosUsuario/turnosUsuario';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
+import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 
 export function AppRoutes() {
   return (
