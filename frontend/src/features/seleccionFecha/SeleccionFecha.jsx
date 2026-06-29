@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
 import { getTurnos } from "../../service/turnosService";
@@ -71,14 +71,11 @@ export default function SeleccionFecha() {
   const fechas = Object.keys(porFecha).sort();
   const turnosDelDia = fechaSeleccionada ? porFecha[fechaSeleccionada] ?? [] : [];
 
-  const turnoMap = useMemo(() => {
-    const map = {};
-    turnosDelDia.forEach((tur) => {
-      const key = `${tur.id}-${tur.servicioId ?? "sin-servicio"}`;
-      map[key] = tur;
-    });
-    return map;
-  }, [turnosDelDia]);
+  const turnoMap = {};
+  turnosDelDia.forEach((tur) => {
+    const key = `${tur.id}-${tur.servicioId ?? "sin-servicio"}`;
+    turnoMap[key] = tur;
+  });
 
   const selectedTurno = selectedTurnoKey.size > 0 ? turnoMap[[...selectedTurnoKey][0]] : null;
 
