@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
 import ServicioCard from "../../components/servicioCard/ServicioCard";
+import { useBusqueda } from "../../context/BusquedaContext";
 
 const services = [
 	{ id: "cardiology", icon: "cardiology", label: "Cardiología" },
@@ -13,14 +14,19 @@ const services = [
 
 export default function BusquedaServicio() {
 	const navigate = useNavigate();
+	const { setSearchOptions } = useBusqueda();
   const [seleccionado, setSeleccionado] = useState(services[0].id);
 
   const irAFecha = () => {
     if (!seleccionado) return;
-    const state = seleccionado.tipo === 'especialidad'
-      ? { tipo: 'servicio', especialidad: seleccionado.valor, label: seleccionado.label }
-      : { tipo: 'servicio', practica: seleccionado.valor,    label: seleccionado.label };
-    navigate('/fecha', { state });
+    const servicio = services.find((s) => s.id === seleccionado);
+    if (!servicio) return;
+    setSearchOptions({
+      tipo: 'servicio',
+      label: servicio.label,
+      practica: servicio.id,
+    });
+    navigate('/fecha');
   };
   
 	return (

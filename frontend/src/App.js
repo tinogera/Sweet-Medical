@@ -7,6 +7,8 @@ import SeleccionFecha from './features/seleccionFecha/SeleccionFecha';
 import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
+import { BusquedaProvider } from './context/BusquedaContext';
+import NotFound  from './features/notFound/NotFound'
 
 export function AppRoutes() {
   return (
@@ -14,6 +16,7 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/mis-turnos/:id" element={<MisTurnos />} />
+          <Route path="*" element={<NotFound />} />
       </Route>
       <Route element={<TransactionalLayout />}>
         <Route path="/fecha" element={<SeleccionFecha />} />
@@ -28,7 +31,9 @@ export function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <BusquedaProvider>
+        <AppRoutes />
+      </BusquedaProvider>
     </Router>
   );
 }

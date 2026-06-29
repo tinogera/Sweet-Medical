@@ -2,6 +2,7 @@ import { describe, expect, test, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SeleccionFecha from "./SeleccionFecha";
+import { BusquedaProvider } from "../../context/BusquedaContext";
 import * as turnosService from "../../service/turnosService";
 import * as pacientesService from "../../service/pacientesService";
 
@@ -36,17 +37,19 @@ function makeTurno(id, hora, extras = {}) {
 const medicoState = {
   tipo: "medico",
   label: "Dr. Rossi",
-  profesional: "Dr. Rossi",
+  profesionalId: "Dr. Rossi",
 };
 
-function renderAtFecha(state) {
+function renderAtFecha(initialBusqueda) {
   return render(
-    <MemoryRouter initialEntries={[{ pathname: "/fecha", state }]}>
-      <Routes>
-        <Route path="/fecha" element={<SeleccionFecha />} />
-        <Route path="/turno" element={<div>Confirmación de Turno</div>} />
-      </Routes>
-    </MemoryRouter>,
+    <BusquedaProvider initialValue={initialBusqueda}>
+      <MemoryRouter initialEntries={["/fecha"]}>
+        <Routes>
+          <Route path="/fecha" element={<SeleccionFecha />} />
+          <Route path="/turno" element={<div>Confirmación de Turno</div>} />
+        </Routes>
+      </MemoryRouter>
+    </BusquedaProvider>,
   );
 }
 

@@ -2,6 +2,7 @@ import { Avatar, Card, Link } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 
 function getInitials(label) {
+  if (!label) return "?";
   return label
     .split(" ")
     .map((word) => word.charAt(0))

@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useBusqueda } from '../../context/BusquedaContext';
 
 const Medicos = ({ medicosCargados }) => {
   const navigate = useNavigate();
+  const { setSearchOptions } = useBusqueda();
 
   return (
     <>
@@ -9,7 +11,14 @@ const Medicos = ({ medicosCargados }) => {
         <button
           type="button"
           key={m.id || m._id}
-          onClick={() => navigate('/fecha', { state: { tipo: 'medico', profesional: m.id || m._id, label: `${m.nombre} ${m.apellido}` } })}
+          onClick={() => {
+            setSearchOptions({
+              tipo: 'medico',
+              label: `${m.nombre} ${m.apellido}`,
+              profesionalId: m.id || m._id,
+            });
+            navigate('/fecha');
+          }}
           className="w-full text-left bg-bg-alternate hover:bg-surface-container transition-colors duration-200 rounded-xl p-6 flex items-center gap-6 group border border-transparent focus:outline-none focus:border-primary-container"
         >
           <div className="grow">

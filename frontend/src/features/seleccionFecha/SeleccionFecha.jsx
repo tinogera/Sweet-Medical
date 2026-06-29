@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
 import { getTurnos } from "../../service/turnosService";
 import { getPacientes } from "../../service/pacientesService";
+import { useBusqueda } from "../../context/BusquedaContext";
 import ResumenTurno from "./ResumenTurno";
 import FechaCard from "./FechaCard";
 import HorarioSlot from "./HorarioSlot";
@@ -24,9 +25,8 @@ function agruparPorFecha(turnos) {
 }
 
 export default function SeleccionFecha() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const busqueda = location.state;
+  const { busqueda, setSearchOptions } = useBusqueda();
 
   const [cargando, setCargando] = useState(true);
   const [turnos, setTurnos] = useState([]);
@@ -42,6 +42,7 @@ export default function SeleccionFecha() {
         if (!pacientes.length) return;
         const id = pacientes[0].id;
         setPacienteId(id);
+        setSearchOptions({ pacienteId: id });
 
         const params = {
           idPaciente: id,
@@ -50,8 +51,8 @@ export default function SeleccionFecha() {
           pagina: 1,
           limite: 100,
         };
-        if (busqueda?.tipo === "medico" && busqueda.profesional) {
-          params.profesional = busqueda.profesional;
+        if (busqueda?.tipo === "medico" && busqueda.profesionalId) {
+          params.profesional = busqueda.profesionalId;
         } else if (busqueda?.tipo === "servicio") {
           if (busqueda.especialidad) params.especialidad = busqueda.especialidad;
           if (busqueda.practica) params.practica = busqueda.practica;
