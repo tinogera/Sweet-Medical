@@ -1,18 +1,26 @@
 import { Button } from "@heroui/react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/logo/Logo";
 import PiePagina from "../components/piePagina/PiePagina";
 import ProgressIndicator from "../components/progressIndicator/ProgressIndicator";
 
+const MAPA_PASOS = {
+  "/medicos":   { paso: 1, label: "Búsqueda de Profesional" },
+  "/servicios": { paso: 1, label: "Búsqueda de Servicio" },
+  "/fecha":     { paso: 2, label: "Selección de Fecha" },
+  "/turno":     { paso: 3, label: "Confirmación de Turno" },
+};
+
 export default function TransactionalLayout() {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const progreso = MAPA_PASOS[location.pathname] ?? { paso: 1, label: "Búsqueda" };
+
 	return (
 		<>
-			{/* Header / TopNavBar (Simplified for transactional flow - Navigation suppressed as per rules) */}
 			<header className="full-width top-0 sticky bg-surface border-b shadow-xs border-border z-50 transition duration-200 ease-in-out">
 				<div className="grid grid-cols-2 items-center h-20 px-6 max-w-300 mx-auto ">
 					<nav className="flex items-center gap-4">
-						{/* Back Button for Transactional Flow */}
 						<Button
 							type="button"
 							isIconOnly
@@ -32,12 +40,10 @@ export default function TransactionalLayout() {
 						<Logo className="size-10" />
 					</nav>
 
-					{/* Wizard Progress Indicator */}
 					<ProgressIndicator
-						step={1}
+						step={progreso.paso}
 						totalSteps={3}
-						label="Búsqueda de Profesional"
-						className="mb-12"
+						label={progreso.label}
 					/>
 				</div>
 			</header>
