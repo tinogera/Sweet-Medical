@@ -4,49 +4,31 @@ import { DEMO_PACIENTE_ID } from "../../config";
 import Logo from "../logo/Logo";
 
 const Header = ({ _usuario }) => {
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	return (
-		//{/* TopNavBar */}
-		<header className="full-width top-0 sticky bg-surface border-b shadow-xs border-border z-50 transition duration-200 ease-in-out">
-			<div className="grid grid-cols-3 items-center h-20 px-4 md:px-6 max-w-300 mx-auto w-full">
-				{/* Logo - izquierda */}
-				<div className="flex items-center">
-					<Link to="/" aria-label="Sweet Medical - Inicio">
-						<Logo className="size-10" />
+		<header className="docked full-width top-0 sticky bg-surface dark:bg-bg-dark border-b border-outline-variant dark:border-secondary z-50 transition-all duration-200 ease-in-out">
+			{/* TopNavBar */}
+			<div className="flex justify-between items-center h-20 px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
+				<div className="flex items-center gap-3">
+					<Link to="/" aria-label="Sweet Medical - Inicio" className="flex items-center gap-2">
+						<Logo className="size-9" />
+						<span className="font-h2-section-mobile md:font-h2-section text-h2-section-mobile md:text-h2-section text-primary dark:text-primary-container uppercase tracking-tight">
+							SWEET MEDICAL
+						</span>
 					</Link>
 				</div>
-
-				{/* TODO: Mobile Menu Toggle - derecha (en mobile) */}
-				<Button
-					type="button"
-					isIconOnly
-					variant="ghost"
-					className="md:hidden justify-self-end text-accent"
-				>
-					<span
-						className="material-symbols-outlined"
-						style={{ fontVariationSettings: "'FILL' 0" }}
-					>
-						menu
-					</span>
-				</Button>
-
-				{/* Desktop Nav - centro */}
-				<nav className="hidden md:flex col-start-2 justify-center items-center">
-					<ul className="flex items-center gap-6">
-						<NavItem href="/turnos">Turnos</NavItem>
-						<NavItem href="/cartilla">Cartilla</NavItem>
-						<NavItem href="/planes">Planes</NavItem>
-					</ul>
+				{/* Mobile Menu Toggle */}
+				<button className="md:hidden text-primary p-2">
+					<span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>menu</span>
+				</button>
+				{/* Desktop Nav */}
+				<nav className="hidden md:flex items-center gap-6">
+					<Link className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" to="/mis-turnos">Mis Turnos</Link>
+					<a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Cartilla</a>
+					<a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Planes</a>
+					<a className="font-body-main text-body-main text-secondary dark:text-text-dark-mode hover:text-primary dark:hover:text-primary-container transition-colors" href="#">Sucursales</a>
 				</nav>
-
-				{/* Botón - derecha (en desktop) */}
-				<div className="hidden md:flex col-start-3 justify-end">
-					<Button onPress={() => {navigate(`/mis-turnos/${DEMO_PACIENTE_ID}`)}} className="font-bold">
-						Mis Turnos
-					</Button>
-				</div>
 			</div>
 		</header>
 	);
