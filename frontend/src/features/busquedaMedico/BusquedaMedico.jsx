@@ -56,14 +56,6 @@ export default function BusquedaMedico() {
 
 			{/* Results Section */}
 			<div>
-				<h2 className="font-sans text-2xl font-semibold text-surface-foreground mb-6">
-					Todos los medicos
-				</h2>
-				<div className="flex flex-col gap-4">
-					<MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
-				</div>
-
-        {/* Results Section */}
         <div className="max-w-4xl mx-auto">
           {cargando ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
@@ -89,11 +81,7 @@ export default function BusquedaMedico() {
               </div>
             </>
           )}
-
-          {/* Bottom Action */}
-          <div className="mt-12 flex justify-end">
-            <SiguientePaso></SiguientePaso>
-          </div>
+          
       </div>
       </div>
     </div>

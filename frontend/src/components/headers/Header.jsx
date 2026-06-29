@@ -1,11 +1,9 @@
 import { Button } from "@heroui/react";
-import { Link, useNavigate } from "react-router-dom";
-import { DEMO_PACIENTE_ID } from "../../config";
+import { Link } from "react-router-dom";
 import Logo from "../logo/Logo";
+import LoginModal from "../../features/login/LoginModal";
 
 const Header = ({ _usuario }) => {
-	const navigate = useNavigate()
-
 	return (
 		//{/* TopNavBar */}
 		<header className="full-width top-0 sticky bg-surface border-b shadow-xs border-border z-50 transition duration-200 ease-in-out">
@@ -35,7 +33,7 @@ const Header = ({ _usuario }) => {
 				{/* Desktop Nav - centro */}
 				<nav className="hidden md:flex col-start-2 justify-center items-center">
 					<ul className="flex items-center gap-6">
-						<NavItem href="/turnos">Turnos</NavItem>
+						<NavItem href="/mis-turnos">Turnos</NavItem>
 						<NavItem href="/cartilla">Cartilla</NavItem>
 						<NavItem href="/planes">Planes</NavItem>
 					</ul>
@@ -43,9 +41,7 @@ const Header = ({ _usuario }) => {
 
 				{/* Botón - derecha (en desktop) */}
 				<div className="hidden md:flex col-start-3 justify-end">
-					<Button onPress={() => {navigate(`/mis-turnos/${DEMO_PACIENTE_ID}`)}} className="font-bold">
-						Mis Turnos
-					</Button>
+					<LoginModal />
 				</div>
 			</div>
 		</header>
