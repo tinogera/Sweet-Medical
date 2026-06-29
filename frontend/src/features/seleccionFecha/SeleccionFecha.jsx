@@ -14,6 +14,17 @@ const MESES = [
   "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
 ];
 
+export function deduplicarHorarios(turnos) {
+  const seen = new Set();
+  return turnos.filter((tur) => {
+    const fecha = new Date(tur.fechaHora);
+    const key = `${String(fecha.getHours()).padStart(2, "0")}:${String(fecha.getMinutes()).padStart(2, "0")}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function agruparPorFecha(turnos) {
   return turnos.reduce((acc, tur) => {
     const day = new Date(tur.fechaHora);
@@ -69,7 +80,9 @@ export default function SeleccionFecha() {
 
   const porFecha = agruparPorFecha(turnos);
   const fechas = Object.keys(porFecha).sort();
-  const turnosDelDia = fechaSeleccionada ? porFecha[fechaSeleccionada] ?? [] : [];
+  const turnosDelDia = fechaSeleccionada
+    ? deduplicarHorarios(porFecha[fechaSeleccionada] ?? [])
+    : [];
 
   const turnoMap = {};
   turnosDelDia.forEach((tur) => {
@@ -85,8 +98,8 @@ export default function SeleccionFecha() {
   };
 
   const continuar = () => {
-    if (selectedTurno) {
-      navigate("/turno", { state: { turno: selectedTurno, pacienteId } });
+    if (fechaSeleccionada) {
+      navigate("/turno", { state: { fechaKey: fechaSeleccionada, pacienteId } });
     }
   };
 

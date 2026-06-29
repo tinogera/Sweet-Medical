@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
 import SeleccionFecha from "./SeleccionFecha";
 import { BusquedaProvider } from "../../context/BusquedaContext";
 import * as turnosService from "../../service/turnosService";
@@ -40,13 +40,25 @@ const medicoState = {
   profesionalId: "Dr. Rossi",
 };
 
+/** Helper component that exposes navigation state for testing */
+function LocationCapture() {
+  const loc = useLocation();
+  return (
+    <div>
+      <div>Confirmación de Turno</div>
+      <div data-testid="nav-fechaKey">{loc.state?.fechaKey ?? ""}</div>
+      <div data-testid="nav-pacienteId">{loc.state?.pacienteId ?? ""}</div>
+    </div>
+  );
+}
+
 function renderAtFecha(initialBusqueda) {
   return render(
     <BusquedaProvider initialValue={initialBusqueda}>
       <MemoryRouter initialEntries={["/fecha"]}>
         <Routes>
           <Route path="/fecha" element={<SeleccionFecha />} />
-          <Route path="/turno" element={<div>Confirmación de Turno</div>} />
+          <Route path="/turno" element={<LocationCapture />} />
         </Routes>
       </MemoryRouter>
     </BusquedaProvider>,
@@ -94,7 +106,7 @@ describe("SeleccionFecha", () => {
     expect(screen.getByText("15")).toBeInTheDocument();
   });
 
-  test("selecting time and clicking Continuar navigates to /turno", async () => {
+  test("selecting time and clicking Continuar navigates to /turno with fechaKey and pacienteId", async () => {
     pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00")],
@@ -127,10 +139,12 @@ describe("SeleccionFecha", () => {
     // Click Continuar
     fireEvent.click(continuarButton);
 
-    // Should navigate to /turno
+    // Should navigate to /turno with fechaKey and pacienteId in state
     await waitFor(() => {
       expect(screen.getByText("Confirmación de Turno")).toBeInTheDocument();
     });
+    expect(screen.getByTestId("nav-fechaKey")).toHaveTextContent("2026-07-15");
+    expect(screen.getByTestId("nav-pacienteId")).toHaveTextContent("pac-1");
   });
 
   test("empty turnos shows empty state", async () => {
@@ -185,5 +199,66 @@ describe("SeleccionFecha", () => {
 
     const cancelarButton = screen.getByRole("button", { name: /Cancelar/i });
     expect(cancelarButton).toBeInTheDocument();
+  });
+});
+
+describe("deduplicarHorarios", () => {
+  test("removes turnos with duplicate normalized times keeping first occurrence", async () => {
+    // Import dynamically so test fails early if function doesn't exist yet
+    const { deduplicarHorarios } = await import("./SeleccionFecha");
+    const turnos = [
+      makeTurno("t1", "09:00", { profesional: "Dr. A" }),
+      makeTurno("t2", "09:00", { profesional: "Dr. B" }),
+      makeTurno("t3", "10:30", { profesional: "Dr. C" }),
+    ];
+
+    const result = deduplicarHorarios(turnos);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe("t1");
+    expect(result[1].id).toBe("t3");
+  });
+
+  test("keeps all turnos when all times are distinct", async () => {
+    const { deduplicarHorarios } = await import("./SeleccionFecha");
+    const turnos = [
+      makeTurno("t1", "08:00"),
+      makeTurno("t2", "09:30"),
+      makeTurno("t3", "11:15"),
+    ];
+
+    const result = deduplicarHorarios(turnos);
+
+    expect(result).toHaveLength(3);
+  });
+
+  test("returns empty array when given empty array", async () => {
+    const { deduplicarHorarios } = await import("./SeleccionFecha");
+    const result = deduplicarHorarios([]);
+
+    expect(result).toEqual([]);
+  });
+
+  test("normalizes times to minute precision (ignores seconds)", async () => {
+    const { deduplicarHorarios } = await import("./SeleccionFecha");
+    const turnos = [
+      makeTurno("t1", "09:00", { fechaHora: "2026-07-15T09:00:15" }),
+      makeTurno("t2", "09:00", { fechaHora: "2026-07-15T09:00:45" }),
+    ];
+
+    const result = deduplicarHorarios(turnos);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("t1");
+  });
+
+  test("handles single turno without deduplicating", async () => {
+    const { deduplicarHorarios } = await import("./SeleccionFecha");
+    const turnos = [makeTurno("t1", "09:00")];
+
+    const result = deduplicarHorarios(turnos);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("t1");
   });
 });
