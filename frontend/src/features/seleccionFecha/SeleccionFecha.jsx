@@ -105,21 +105,14 @@ export default function SeleccionFecha() {
 
       {/* Summary Card */}
       {busqueda && (
-        <div
-          className="mb-8"
-          style={{
-            animation: "fadeIn 0.4s ease-out",
-            animationDelay: "0.1s",
-            animationFillMode: "backwards",
-          }}
-        >
+        <div className="mb-8 fade-in">
           <ResumenTurno busqueda={busqueda} />
         </div>
       )}
 
       {/* Loading */}
       {cargando && (
-        <div style={{ animation: "fadeIn 0.4s ease-out", animationFillMode: "backwards" }}>
+        <div className="fade-in">
           <div className="flex gap-4 overflow-x-auto pb-4 mb-8">
             {Array.from({ length: 3 }).map((_, i) => (
               <Skeleton key={i} className="h-28 w-24 rounded-xl shrink-0" />
@@ -163,12 +156,8 @@ export default function SeleccionFecha() {
               return (
                 <div
                   key={key}
-                  className="snap-start shrink-0"
-                  style={{
-                    animation: "fadeIn 0.4s ease-out",
-                    animationDelay: "0.2s",
-                    animationFillMode: "backwards",
-                  }}
+                  className="snap-start shrink-0 fade-in"
+                  style={{ animationDelay: "0.2s" }}
                 >
                   <FechaCard
                     fechaKey={key}
@@ -184,12 +173,8 @@ export default function SeleccionFecha() {
             })}
             {/* Más fechas button */}
             <div
-              className="snap-start shrink-0 flex items-center"
-              style={{
-                animation: "fadeIn 0.4s ease-out",
-                animationDelay: "0.2s",
-                animationFillMode: "backwards",
-              }}
+              className="snap-start shrink-0 flex items-center fade-in"
+              style={{ animationDelay: "0.2s" }}
             >
               <Button
                 variant="ghost"
@@ -228,11 +213,8 @@ export default function SeleccionFecha() {
               return (
                 <div
                   key={key}
-                  style={{
-                    animation: "fadeIn 0.4s ease-out",
-                    animationDelay: "0.3s",
-                    animationFillMode: "backwards",
-                  }}
+                  className="fade-in"
+                  style={{ animationDelay: "0.3s" }}
                 >
                   <HorarioSlot
                     turno={tur}
@@ -248,12 +230,8 @@ export default function SeleccionFecha() {
 
       {/* Actions */}
       <div
-        className="flex flex-col md:flex-row justify-end items-center gap-4 mt-8 pt-8 border-t border-border"
-        style={{
-          animation: "fadeIn 0.4s ease-out",
-          animationDelay: "0.5s",
-          animationFillMode: "backwards",
-        }}
+        className="flex flex-col md:flex-row justify-end items-center gap-4 mt-8 pt-8 border-t border-border fade-in"
+        style={{ animationDelay: "0.5s" }}
       >
         <Button
           variant="outline"

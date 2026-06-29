@@ -37,7 +37,8 @@ export default function BusquedaMedico() {
 	return (
 		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
 			{/* Header Section */}
-			<div className="text-center mb-12">
+			<div
+				className="text-center mb-12 fade-in">
 				<h1 className="font-sans text-[40px] font-bold text-surface-foreground mb-4">
 					¿A quién estás buscando?
 				</h1>
@@ -66,18 +67,23 @@ export default function BusquedaMedico() {
             </div>
           ) : (
             <>
-              {busquedaRealizada && (
-                <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
-                  Resultados de la búsqueda
-                </h2>
-              )}
-              {sinResultados && (
-                <h3 className="font-body-main text-text-secondary text-center mb-6">
-                  No hubo resultados para esa búsqueda
-                </h3>
-              )}
-              <div className="flex flex-col gap-4">
-                <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+              <div
+                className="fade-in"
+                style={{ animationDelay: "0.15s" }}
+              >
+                {busquedaRealizada && (
+                  <h2 className="font-h3-subtitle text-h3-subtitle text-on-surface mb-6">
+                    Resultados de la búsqueda
+                  </h2>
+                )}
+                {sinResultados && (
+                  <h3 className="font-body-main text-text-secondary text-center mb-6">
+                    No hubo resultados para esa búsqueda
+                  </h3>
+                )}
+                <div className="flex flex-col gap-4">
+                  <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
+                </div>
               </div>
             </>
           )}

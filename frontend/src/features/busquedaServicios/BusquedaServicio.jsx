@@ -32,7 +32,8 @@ export default function BusquedaServicio() {
 	return (
 		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
 			{/* Title Section */}
-			<div className="text-center flex flex-col gap-4">
+			<div
+				className="text-center flex flex-col gap-4 fade-in">
 				<h1 className="font-sans text-[28px] md:text-[40px] font-bold text-surface-foreground">
 					¿Qué servicio estás buscando?
 				</h1>
@@ -48,7 +49,10 @@ export default function BusquedaServicio() {
 			/>
 
 			{/* Suggested Services Bento */}
-			<div className="flex flex-col gap-6">
+			<div
+				className="flex flex-col gap-6 fade-in"
+				style={{ animationDelay: "0.15s" }}
+			>
 				<h3 className="font-sans text-base font-bold text-surface-foreground">
 					Servicios Sugeridos
 				</h3>
@@ -61,19 +65,27 @@ export default function BusquedaServicio() {
 					onSelectionChange={(keys) => setSeleccionado([...keys][0])}
 					className="grid gap-4 grid-cols-(--auto-columns) w-full"
 				>
-					{services.map((service) => (
-						<ServicioCard
+					{services.map((service, i) => (
+						<div
 							key={service.id}
-							id={service.id}
-							icon={service.icon}
-							label={service.label}
-						/>
+							className="fade-in"
+							style={{ animationDelay: `${0.15 + i * 0.08}s` }}
+						>
+							<ServicioCard
+								id={service.id}
+								icon={service.icon}
+								label={service.label}
+							/>
+						</div>
 					))}
 				</ToggleButtonGroup>
 			</div>
 
 			{/* Action Area */}
-			<div className="mt-8 flex justify-end">
+			<div
+				className="mt-8 flex justify-end fade-in"
+				style={{ animationDelay: "0.3s" }}
+			>
 				<Button
 					isDisabled={!seleccionado}
 					variant="secondary"

@@ -36,6 +36,11 @@ body {
   }
 }
 
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+  animation-fill-mode: backwards;
+}
+
 /*
  * HeroUI Theme Customization
  * Add this to your global.css after importing @heroui/styles
