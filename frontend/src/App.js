@@ -5,6 +5,7 @@ import BusquedaServicio from './features/busquedaServicios/BusquedaServicio';
 import BusquedaMedico from './features/busquedaMedico/BusquedaMedico';
 import SeleccionFecha from './features/seleccionFecha/SeleccionFecha';
 import NotFound from './features/notFound/NotFound';
+import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
 
@@ -20,6 +21,7 @@ export function AppRoutes() {
         <Route path="/fecha" element={<SeleccionFecha />} />
         <Route path="/medicos" element={<BusquedaMedico />} />
         <Route path="/servicios" element={<BusquedaServicio />} />
+        <Route path="/turno" element={<ConfirmacionTurno />} />
       </Route>
     </Routes>
   );

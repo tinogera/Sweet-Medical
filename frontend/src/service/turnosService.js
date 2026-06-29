@@ -9,3 +9,13 @@ export const getTurnos = async (params) => {
         return { turnos: [], paginacion: {} };
     }
 };
+
+export const reservarTurno = async (turnoId, pacienteId, servicioId) => {
+    const response = await axios.patch(`http://localhost:3000/turnos/${turnoId}`, {
+        estado: 'RESERVADO',
+        responsableId: pacienteId,
+        servicioId: servicioId,
+    });
+    return response.data;
+};
+
