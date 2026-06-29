@@ -8,6 +8,7 @@ import TurnosUsuario from './features/turnosUsuario/turnosUsuario';
 import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
+import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 
 export function AppRoutes() {
   return (
