@@ -5,7 +5,6 @@ import SiguientePaso from "../../components/siguientePaso/SiguientePaso";
 import { getMedicos } from "../../service/busquedaMedicoService";
 
 export default function BusquedaMedico() {
-  const [medicos, setMedicos] = useState([])
   const [medicosFiltrados, setMedicosFiltrados] = useState([])
   const [busquedaRealizada, setBusquedaRealizada] = useState(false)
   const [cargando, setCargando] = useState(true)
@@ -17,21 +16,21 @@ export default function BusquedaMedico() {
       setCargando(true)
       const data = await getMedicos()
       if (data) {
-        setMedicos(data)
-        //setMedicosFiltrados(data)
+        setMedicosFiltrados(data)
       }
       setCargando(false)
     }
     cargarMedicos()
   }, [])
 
-  const filtrarMedicos = (searchText) => {
-      const texto = searchText.toLowerCase();
-      const filtered = medicos.filter(medico =>
-        medico.nombre.toLowerCase().includes(texto)
-      );
-      setMedicosFiltrados(filtered);
+  const filtrarMedicos = async (searchText) => {
+      setCargando(true);
+      const data = await getMedicos(searchText);
+      if (data) {
+        setMedicosFiltrados(data);
+      }
       setBusquedaRealizada(true);
+      setCargando(false);
   };
 
 	return (

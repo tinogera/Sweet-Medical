@@ -9,8 +9,12 @@ export class MedicoRepository {
     this.model = MedicoModel
   }
 
-  async findAll() {
-    return await this.model.find().populate('servicios sedes usuario agenda.sede')
+  async findAll(filters = {}) {
+    const query = {};
+    if (filters.nombre) {
+      query.nombre = { $regex: filters.nombre, $options: 'i' };
+    }
+    return await this.model.find(query).populate('servicios sedes usuario agenda.sede')
   }
 
   async findById(id) {

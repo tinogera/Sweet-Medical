@@ -12,8 +12,8 @@ export class MedicoService {
     this.servicioRepository = servicioRepository;
   }
 
-  async obtenerMedicos() {
-    return await this.medicoRepository.findAll();
+  async obtenerMedicos(filters = {}) {
+    return await this.medicoRepository.findAll(filters);
   }
 
   async agregarDisponibilidad(medicoId, { fecha, horaInicio, horaFin, sedeName }) {
