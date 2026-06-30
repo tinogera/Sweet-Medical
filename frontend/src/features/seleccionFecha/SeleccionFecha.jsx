@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
 import { getTurnos } from "../../service/turnosService";
 import { getPacientes } from "../../service/pacientesService";
 import { useBusqueda } from "../../context/BusquedaContext";
-import ResumenTurno from "./ResumenTurno";
-import FechaCard from "./FechaCard";
-import HorarioSlot from "./HorarioSlot";
-
-const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-const MESES = [
-  "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-  "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
-];
+import ResumenTurno from "./components/ResumenTurno";
+import HeaderSeleccionFecha from "./components/HeaderSeleccionFecha";
+import LoadingSkeleton from "./components/LoadingSkeleton";
+import EmptyState from "./components/EmptyState";
+import FechaSection from "./components/FechaSection";
+import HorarioSection from "./components/HorarioSection";
+import ActionButtons from "./components/ActionButtons";
 
 function agruparPorFecha(turnos) {
   return turnos.reduce((acc, tur) => {
@@ -93,166 +90,39 @@ export default function SeleccionFecha() {
 
   return (
     <main className="grow py-4 md:py-20 px-4 md:px-6 max-w-300 mx-auto w-full">
-      {/* Header */}
-      <div className="mb-12 text-center md:text-left">
-        <h1 className="font-sans text-2xl md:text-4xl font-extrabold text-foreground mb-4">
-          Seleccioná la Fecha
-        </h1>
-        <p className="font-sans text-base text-muted">
-          Elegí el día y horario que mejor se adapte a tu disponibilidad para
-          continuar con la reserva del turno.
-        </p>
-      </div>
+      <HeaderSeleccionFecha />
 
-      {/* Summary Card */}
       {busqueda && (
         <div className="mb-8 fade-in">
           <ResumenTurno busqueda={busqueda} />
         </div>
       )}
 
-      {/* Loading */}
-      {cargando && (
-        <div className="fade-in">
-          <div className="flex gap-4 overflow-x-auto pb-4 mb-8">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-24 rounded-xl shrink-0" />
-            ))}
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-14 rounded-xl" />
-            ))}
-          </div>
-        </div>
-      )}
+      {cargando && <LoadingSkeleton />}
 
-      {/* No results */}
-      {!cargando && fechas.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-          <span className="material-symbols-outlined text-5xl text-muted">
-            calendar_month
-          </span>
-          <p className="font-sans text-lg font-semibold text-surface-foreground">
-            Sin fechas disponibles
-          </p>
-          <p className="font-sans text-base text-surface-foreground">
-            No hay turnos disponibles para este criterio de búsqueda.
-          </p>
-        </div>
-      )}
+      {!cargando && fechas.length === 0 && <EmptyState />}
 
-      {/* Date Cards */}
       {!cargando && fechas.length > 0 && (
-        <div className="mb-12">
-          <div className="flex justify-between items-end mb-6">
-            <h3 className="font-sans text-lg font-semibold text-surface-foreground">
-              Fechas Disponibles
-            </h3>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x">
-            {fechas.map((key) => {
-              const [year, month, day] = key.split("-").map(Number);
-              const fecha = new Date(year, month - 1, day);
-              return (
-                <div
-                  key={key}
-                  className="snap-start shrink-0 fade-in"
-                  style={{ animationDelay: "0.2s" }}
-                >
-                  <FechaCard
-                    fechaKey={key}
-                    dayName={DIAS[fecha.getDay()]}
-                    dayNumber={day}
-                    month={MESES[month - 1]}
-                    isSelected={fechaSeleccionada === key}
-                    hasTurnos={true}
-                    onSelect={seleccionarFecha}
-                  />
-                </div>
-              );
-            })}
-            {/* Más fechas button */}
-            <div
-              className="snap-start shrink-0 flex items-center fade-in"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <Button
-                variant="ghost"
-                isIconOnly
-                onPress={() => {}}
-                className="w-24 h-28 rounded-2xl"
-                aria-label="Más fechas"
-              >
-                <span className="material-symbols-outlined text-2xl">add</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+        <FechaSection
+          fechas={fechas}
+          fechaSeleccionada={fechaSeleccionada}
+          onSelect={seleccionarFecha}
+        />
       )}
 
-      {/* Time Slots */}
       {fechaSeleccionada && turnosDelDia.length > 0 && (
-        <div className="mb-12">
-          <h3 className="font-sans text-lg font-semibold text-surface-foreground mb-6">
-            Horarios Disponibles
-          </h3>
-          <ToggleButtonGroup
-            selectionMode="single"
-            selectedKeys={selectedTurnoKey}
-            onSelectionChange={setSelectedTurnoKey}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4"
-            orientation="horizontal"
-          >
-            {turnosDelDia.map((tur) => {
-              const key = `${tur.id}-${tur.servicioId ?? "sin-servicio"}`;
-              const hora = new Date(tur.fechaHora).toLocaleTimeString("es-AR", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              });
-              return (
-                <div
-                  key={key}
-                  className="fade-in"
-                  style={{ animationDelay: "0.3s" }}
-                >
-                  <HorarioSlot
-                    turno={tur}
-                    turnoKey={key}
-                    hora={hora}
-                  />
-                </div>
-              );
-            })}
-          </ToggleButtonGroup>
-        </div>
+        <HorarioSection
+          turnos={turnosDelDia}
+          selectedKeys={selectedTurnoKey}
+          onSelectionChange={setSelectedTurnoKey}
+        />
       )}
 
-      {/* Actions */}
-      <div
-        className="flex flex-col md:flex-row justify-end items-center gap-4 mt-8 pt-8 border-t border-border fade-in"
-        style={{ animationDelay: "0.5s" }}
-      >
-        <Button
-          variant="outline"
-          onPress={() => navigate(-1)}
-          className="w-full md:w-auto"
-        >
-          Cancelar
-        </Button>
-        <Button
-          variant="primary"
-          isDisabled={!selectedTurno}
-          onPress={continuar}
-          className="w-full md:w-auto"
-        >
-          Continuar
-          <span className="material-symbols-outlined text-[20px]">
-            arrow_forward
-          </span>
-        </Button>
-      </div>
+      <ActionButtons
+        onContinue={continuar}
+        isContinueDisabled={!selectedTurno}
+        onCancel={() => navigate(-1)}
+      />
     </main>
   );
 }
