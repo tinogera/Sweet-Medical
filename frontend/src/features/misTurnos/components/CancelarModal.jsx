@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Button, Modal } from "@heroui/react";
 
 export default function CancelarModal({
@@ -6,6 +7,16 @@ export default function CancelarModal({
 	servicioLabel,
 	onConfirm,
 }) {
+	const navigate = useNavigate();
+
+	const handleConfirm = async () => {
+		try {
+			await onConfirm?.();
+		} finally {
+			navigate(0);
+		}
+	};
+
 	return (
 		<Modal>
 			<Modal.Trigger>
@@ -35,7 +46,7 @@ export default function CancelarModal({
 							<Button variant="ghost" className="w-full" slot="close">
 								Volver
 							</Button>
-							<Button variant="danger" className="w-full" onPress={onConfirm}>
+							<Button variant="danger" className="w-full" onPress={handleConfirm} slot="close">
 								Sí, cancelar
 							</Button>
 						</Modal.Footer>

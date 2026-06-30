@@ -1,5 +1,7 @@
 import { Alert, Button, Card, Skeleton } from "@heroui/react";
 import TurnoAgendadoCard from "./TurnoAgendadoCard";
+import { cancelarTurno } from "../../../service/turnosService";
+import { useBusqueda } from "../../../context/BusquedaContext"
 
 export default function ProximosTurnosSection({
   loading,
@@ -7,6 +9,8 @@ export default function ProximosTurnosSection({
   upcoming,
   onNuevoTurno,
 }) {
+  const { busqueda } = useBusqueda();
+    const pacienteId = busqueda?.pacienteId;
   return (
     <section>
       <div className="flex justify-between items-end mb-8 border-b border-border pb-4">
@@ -50,7 +54,11 @@ export default function ProximosTurnosSection({
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
           {upcoming.map((turno) => (
-            <TurnoAgendadoCard key={turno.id} turno={turno} />
+            <TurnoAgendadoCard 
+              key={turno.id} 
+              {...turno}
+              onCancel={()=> cancelarTurno(turno.id, pacienteId, "")} 
+            />
           ))}
         </div>
       )}

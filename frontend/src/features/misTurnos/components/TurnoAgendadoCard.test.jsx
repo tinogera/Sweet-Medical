@@ -14,7 +14,7 @@ const mockTurno = {
 
 describe("TurnoAgendadoCard", () => {
   test("renders date box, specialty, doctor, location and type", () => {
-    render(<TurnoAgendadoCard turno={mockTurno} />);
+    render(<TurnoAgendadoCard {...mockTurno} />);
 
     expect(screen.getByText("15")).toBeInTheDocument();
     expect(screen.getByText("NOV")).toBeInTheDocument();
