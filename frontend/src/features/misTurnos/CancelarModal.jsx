@@ -32,11 +32,11 @@ export default function CancelarModal({
 							</p>
 						</Modal.Body>
 						<Modal.Footer className="flex flex-col sm:flex-row gap-2">
-							<Button variant="danger" className="w-full" onPress={onConfirm}>
-								Sí, cancelar
-							</Button>
 							<Button variant="ghost" className="w-full" slot="close">
 								Volver
+							</Button>
+							<Button variant="danger" className="w-full" onPress={onConfirm}>
+								Sí, cancelar
 							</Button>
 						</Modal.Footer>
 					</Modal.Dialog>
