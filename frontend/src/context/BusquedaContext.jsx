@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { DEMO_PACIENTE_ID } from "../config";
+import { getPacientes } from "../service/pacientesService";
 
 const BusquedaContext = createContext(null);
 
@@ -14,6 +15,24 @@ const ESTADO_INICIAL = {
 
 export function BusquedaProvider({ children, initialValue }) {
   const [busqueda, setBusqueda] = useState(initialValue ?? ESTADO_INICIAL);
+
+  useEffect(() => {
+    const cargarPacienteInicial = async () => {
+      try {
+        const pacientes = await getPacientes();
+        if (pacientes && pacientes.length > 0) {
+          const idPaciente = pacientes[0].id;
+          setBusqueda((prev) => ({
+            ...prev,
+            pacienteId: prev.pacienteId || idPaciente
+          }));
+        }
+      } catch (e) {
+        console.error("Error cargando paciente inicial", e);
+      }
+    };
+    cargarPacienteInicial();
+  }, []);
 
   const setSearchOptions = (opts) => {
     setBusqueda((prev) => ({ ...prev, ...opts }));
