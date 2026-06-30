@@ -16,7 +16,7 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/mis-turnos/:id" element={<MisTurnos />} />
-          <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
       <Route element={<TransactionalLayout />}>
         <Route path="/fecha" element={<SeleccionFecha />} />
