@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ConfirmarModal from './ConfirmarModal';
 import ResumenTurno from '../../components/resumenTurno/ResumenTurno';
 import { reservarTurno } from '../../service/turnosService';
 import { useBusqueda } from '../../context/BusquedaContext';
 
 export default function ConfirmacionTurno() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { busqueda } = useBusqueda();
-  const turno = location.state?.turno;
+  const turno = busqueda.turno;
   const pacienteId = busqueda.pacienteId;
 
   const [reservando, setReservando] = useState(false);

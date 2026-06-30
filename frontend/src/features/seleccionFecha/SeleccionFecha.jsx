@@ -86,7 +86,8 @@ export default function SeleccionFecha() {
 
   const continuar = () => {
     if (selectedTurno) {
-      navigate("/turno", { state: { turno: selectedTurno, pacienteId } });
+      setSearchOptions({ turno: selectedTurno, pacienteId });
+      navigate("/turno");
     }
   };
 
