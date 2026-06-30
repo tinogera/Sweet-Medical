@@ -35,15 +35,15 @@ export default function ConfirmarModal({
 							</p>
 						</Modal.Body>
 						<Modal.Footer className="flex flex-col sm:flex-row gap-2">
+							<Button variant="ghost" className="w-full" slot="close">
+								Volver
+							</Button>
 							<Button
 								className="w-full"
 								onPress={onConfirm}
 								isDisabled={reservando}
 							>
 								{reservando ? "Reservando..." : "Sí, reservar"}
-							</Button>
-							<Button variant="ghost" className="w-full" slot="close">
-								Volver
 							</Button>
 						</Modal.Footer>
 					</Modal.Dialog>

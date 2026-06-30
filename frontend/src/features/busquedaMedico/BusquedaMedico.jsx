@@ -36,7 +36,6 @@ export default function BusquedaMedico() {
 
 	return (
 		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
-			{/* Header Section */}
 			<div
 				className="text-center mb-12 fade-in">
 				<h1 className="font-sans text-[40px] font-bold text-surface-foreground mb-4">
@@ -47,7 +46,6 @@ export default function BusquedaMedico() {
 				</p>
 			</div>
 
-			{/* Search Bar */}
 			<SearchBar
 				name="medico"
 				placeholder="Ej. Carlos Gardel"
@@ -55,7 +53,6 @@ export default function BusquedaMedico() {
 				showButton={true}
 			/>
 
-			{/* Results Section */}
 			<div>
         <div className="max-w-4xl mx-auto">
           {cargando ? (

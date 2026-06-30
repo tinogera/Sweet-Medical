@@ -10,9 +10,9 @@ const ServicioCard = ({ id, icon, label }) => {
 		>
 			{({ isSelected }) => (
 				<>
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-4 min-w-0 w-full">
 						<div
-							className={`w-12 h-12 rounded-full flex items-center justify-center ${
+							className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center ${
 								isSelected
 									? "bg-accent text-accent-foreground"
 									: "bg-surface-tertiary text-accent"
@@ -22,7 +22,7 @@ const ServicioCard = ({ id, icon, label }) => {
 								{icon}
 							</span>
 						</div>
-						<span className="font-sans text-lg text-surface-foreground">
+						<span className="font-sans text-lg text-surface-foreground break-words whitespace-normal leading-tight">
 							{label}
 						</span>
 					</div>
