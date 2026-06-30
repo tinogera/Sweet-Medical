@@ -3,10 +3,10 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { BusquedaProvider } from "../../context/BusquedaContext";
 import ConfirmacionTurno from "./ConfirmacionTurno";
-import * as turnosService from "../../service/turnosService";
+import * as turnosService from "../../services/turnosService";
 
-vi.mock("../../service/turnosService", async () => {
-  const actual = await vi.importActual("../../service/turnosService");
+vi.mock("../../services/turnosService", async () => {
+  const actual = await vi.importActual("../../services/turnosService");
   return {
     ...actual,
     getTurnos: vi.fn(),

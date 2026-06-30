@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
-import { getTurnos } from "../../service/turnosService";
-import { getPacientes } from "../../service/pacientesService";
+import { Alert, Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
+import { useTurnos } from "../../hooks/useTurnos";
 import { useBusqueda } from "../../context/BusquedaContext";
 import ResumenTurno from "./ResumenTurno";
 import FechaCard from "./FechaCard";
@@ -25,60 +24,15 @@ export function deduplicarHorarios(turnos) {
   });
 }
 
-function agruparPorFecha(turnos) {
-  return turnos.reduce((acc, tur) => {
-    const day = new Date(tur.fechaHora);
-    const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(tur);
-    return acc;
-  }, {});
-}
-
 export default function SeleccionFecha() {
   const navigate = useNavigate();
   const { busqueda, setSearchOptions } = useBusqueda();
+  const { data, loading, error, fase, refetch } = useTurnos();
 
-  const [cargando, setCargando] = useState(true);
-  const [turnos, setTurnos] = useState([]);
-  const [pacienteId, setPacienteId] = useState(null);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [selectedTurnoKey, setSelectedTurnoKey] = useState(new Set());
 
-  useEffect(() => {
-    const cargar = async () => {
-      setCargando(true);
-      try {
-        const pacientes = await getPacientes();
-        if (!pacientes.length) return;
-        const id = pacientes[0].id;
-        setPacienteId(id);
-        setSearchOptions({ pacienteId: id });
-
-        const params = {
-          idPaciente: id,
-          ordenarPor: "fecha",
-          direccion: "asc",
-          pagina: 1,
-          limite: 100,
-        };
-        if (busqueda?.tipo === "medico" && busqueda.profesionalId) {
-          params.profesional = busqueda.profesionalId;
-        } else if (busqueda?.tipo === "servicio") {
-          if (busqueda.especialidad) params.especialidad = busqueda.especialidad;
-          if (busqueda.practica) params.practica = busqueda.practica;
-        }
-
-        const resultado = await getTurnos(params);
-        setTurnos(resultado.turnos || []);
-      } finally {
-        setCargando(false);
-      }
-    };
-    cargar();
-  }, []);
-
-  const porFecha = agruparPorFecha(turnos);
+  const porFecha = data?.porFecha ?? {};
   const fechas = Object.keys(porFecha).sort();
   const turnosDelDia = fechaSeleccionada
     ? deduplicarHorarios(porFecha[fechaSeleccionada] ?? [])
@@ -125,7 +79,7 @@ export default function SeleccionFecha() {
       )}
 
       {/* Loading */}
-      {cargando && (
+      {loading && (
         <div className="fade-in">
           <div className="flex gap-4 overflow-x-auto pb-4 mb-8">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -140,8 +94,20 @@ export default function SeleccionFecha() {
         </div>
       )}
 
+      {/* Error */}
+      {fase === "error" && !loading && (
+        <div className="mb-8 fade-in">
+          <Alert color="danger" title="Error al cargar turnos">
+            <p>{error?.message ?? "Ocurrió un error inesperado."}</p>
+            <Button variant="ghost" onPress={() => refetch()} className="mt-2">
+              Reintentar
+            </Button>
+          </Alert>
+        </div>
+      )}
+
       {/* No results */}
-      {!cargando && fechas.length === 0 && (
+      {!loading && fase !== "error" && fechas.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
           <span className="material-symbols-outlined text-5xl text-muted">
             calendar_month
@@ -156,7 +122,7 @@ export default function SeleccionFecha() {
       )}
 
       {/* Date Cards */}
-      {!cargando && fechas.length > 0 && (
+      {!loading && fase !== "error" && fechas.length > 0 && (
         <div className="mb-12">
           <div className="flex justify-between items-end mb-6">
             <h3 className="font-sans text-lg font-semibold text-surface-foreground">

@@ -3,22 +3,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SeleccionFecha from "./SeleccionFecha";
 import { BusquedaProvider, useBusqueda } from "../../context/BusquedaContext";
-import * as turnosService from "../../service/turnosService";
-import * as pacientesService from "../../service/pacientesService";
+import * as turnosService from "../../services/turnosService";
 
-vi.mock("../../service/turnosService", async () => {
-  const actual = await vi.importActual("../../service/turnosService");
+vi.mock("../../services/turnosService", async () => {
+  const actual = await vi.importActual("../../services/turnosService");
   return {
     ...actual,
     getTurnos: vi.fn(),
-  };
-});
-
-vi.mock("../../service/pacientesService", async () => {
-  const actual = await vi.importActual("../../service/pacientesService");
-  return {
-    ...actual,
-    getPacientes: vi.fn(),
   };
 });
 
@@ -38,6 +29,7 @@ const medicoState = {
   tipo: "medico",
   label: "Dr. Rossi",
   profesionalId: "Dr. Rossi",
+  pacienteId: "pac-1",
 };
 
 /** Helper component that exposes busqueda context for testing */
@@ -72,7 +64,7 @@ describe("SeleccionFecha", () => {
 
   test("loading state shows Skeleton placeholders", async () => {
     // Keep loading pending by never resolving
-    pacientesService.getPacientes.mockReturnValue(new Promise(() => {}));
+    turnosService.getTurnos.mockReturnValue(new Promise(() => {}));
 
     renderAtFecha(medicoState);
 
@@ -82,7 +74,6 @@ describe("SeleccionFecha", () => {
   });
 
   test("loaded state renders ResumenTurno and date cards", async () => {
-    pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00"), makeTurno("t2", "10:00")],
     });
@@ -107,7 +98,6 @@ describe("SeleccionFecha", () => {
   });
 
   test("selecting time and clicking Continuar navigates to /turno with fechaKey and pacienteId in context", async () => {
-    pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00")],
     });
@@ -148,7 +138,6 @@ describe("SeleccionFecha", () => {
   });
 
   test("empty turnos shows empty state", async () => {
-    pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({ turnos: [] });
 
     renderAtFecha(medicoState);
@@ -159,7 +148,6 @@ describe("SeleccionFecha", () => {
   });
 
   test("Más fechas button is present and non-functional", async () => {
-    pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00")],
     });
@@ -186,7 +174,6 @@ describe("SeleccionFecha", () => {
   });
 
   test("Cancelar button navigates back", async () => {
-    pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     turnosService.getTurnos.mockResolvedValue({
       turnos: [makeTurno("t1", "09:00")],
     });

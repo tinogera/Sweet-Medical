@@ -1,90 +1,72 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Skeleton } from "@heroui/react";
-import { getTurnos } from "../../service/turnosService";
+import { useTurnos } from "../../hooks/useTurnos";
+import { reservarTurno } from "../../services/turnosService";
 import { useBusqueda } from "../../context/BusquedaContext";
 import ConfirmarModal from "./ConfirmarModal";
+
+/**
+ * Estado único para la operación de reserva (no confundir con fetching de turnos).
+ * { fase: 'idle' | 'reservando' | 'success' | 'error', selectedTurno, error, errorType }
+ */
+const RESERVA_INITIAL = {
+  fase: "idle",
+  selectedTurno: null,
+  error: null,
+  errorType: null,
+};
 
 export default function ConfirmacionTurno() {
   const { busqueda } = useBusqueda();
   const fechaKey = busqueda?.fechaKey;
+  const { data, loading, refetch, error: fetchError } = useTurnos();
 
-  const [cargando, setCargando] = useState(true);
-  const [turnos, setTurnos] = useState([]);
-  const [selectedTurno, setSelectedTurno] = useState(null);
-  const [reservando, setReservando] = useState(false);
-  const [error, setError] = useState(null);
-  const [errorType, setErrorType] = useState(null);
+  const [reserva, setReserva] = useState(RESERVA_INITIAL);
 
-  const fetchTurnos = async () => {
-    setCargando(true);
-    try {
-      const params = {
-        fecha: fechaKey,
-        idPaciente: busqueda?.pacienteId,
-        ordenarPor: "fecha",
-        direccion: "asc",
-        pagina: 1,
-        limite: 100,
-      };
-      if (busqueda?.tipo === "medico" && busqueda.profesionalId) {
-        params.profesional = busqueda.profesionalId;
-      } else if (busqueda?.tipo === "servicio") {
-        if (busqueda.especialidad) params.especialidad = busqueda.especialidad;
-        if (busqueda.practica) params.practica = busqueda.practica;
-      }
-
-      const resultado = await getTurnos(params);
-      setTurnos(resultado.turnos || []);
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  useEffect(() => {
-    if (fechaKey) {
-      fetchTurnos();
-    } else {
-      setCargando(false);
-    }
-  }, [fechaKey, busqueda]);
+  const turnos = fechaKey ? data?.turnos ?? [] : [];
 
   const handleReservar = (turno) => {
-    setSelectedTurno(turno);
-    setError(null);
-    setErrorType(null);
+    setReserva({ fase: "confirming", selectedTurno: turno, error: null, errorType: null });
   };
 
   const handleConfirm = async () => {
-    if (!selectedTurno) return;
-    setReservando(true);
-    setError(null);
+    if (!reserva.selectedTurno) return;
+    setReserva((prev) => ({
+      ...prev,
+      fase: "reservando",
+      error: null,
+      errorType: null,
+    }));
     try {
-      const { reservarTurno } = await import("../../service/turnosService");
       await reservarTurno(
-        selectedTurno.id,
+        reserva.selectedTurno.id,
         busqueda?.pacienteId,
-        selectedTurno.servicioId,
+        reserva.selectedTurno.servicioId,
       );
-      setSelectedTurno(null);
+      setReserva({ ...RESERVA_INITIAL, fase: "success" });
     } catch (err) {
       const status = err?.response?.status;
       if (status === 409) {
-        setError("Este turno ya no está disponible. Por favor, seleccioná otro horario.");
-        setErrorType("409");
+        setReserva((prev) => ({
+          ...prev,
+          fase: "error",
+          error: "Este turno ya no está disponible. Por favor, seleccioná otro horario.",
+          errorType: "409",
+        }));
       } else {
-        setError("Ocurrió un error al reservar el turno. Intentalo de nuevo.");
-        setErrorType("other");
+        setReserva((prev) => ({
+          ...prev,
+          fase: "error",
+          error: "Ocurrió un error al reservar el turno. Intentalo de nuevo.",
+          errorType: "other",
+        }));
       }
-    } finally {
-      setReservando(false);
     }
   };
 
   const handleRefetch = async () => {
-    setSelectedTurno(null);
-    setError(null);
-    setErrorType(null);
-    await fetchTurnos();
+    setReserva(RESERVA_INITIAL);
+    await refetch();
   };
 
   const formatFechaLabel = (fechaHora) => {
@@ -110,7 +92,7 @@ export default function ConfirmacionTurno() {
       </div>
 
       {/* Loading */}
-      {cargando && (
+      {loading && (
         <div className="fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -120,8 +102,20 @@ export default function ConfirmacionTurno() {
         </div>
       )}
 
-      {/* Empty state */}
-      {!cargando && turnos.length === 0 && (
+      {/* Fetch error */}
+      {!loading && fetchError && (
+        <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
+          <p className="font-sans text-base text-surface-foreground">
+            No se pudieron cargar los turnos.
+          </p>
+          <Button variant="primary" onPress={() => refetch()}>
+            Reintentar
+          </Button>
+        </div>
+      )}
+
+      {/* Empty state (no fechaKey or no turnos) */}
+      {!loading && !fetchError && turnos.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
           <span className="material-symbols-outlined text-5xl text-muted">
             event_busy
@@ -136,7 +130,7 @@ export default function ConfirmacionTurno() {
       )}
 
       {/* Responsive Grid */}
-      {!cargando && turnos.length > 0 && (
+      {!loading && !fetchError && turnos.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {turnos.map((tur, index) => {
             const fecha = new Date(tur.fechaHora);
@@ -225,21 +219,19 @@ export default function ConfirmacionTurno() {
       )}
       {/* Confirmar Modal */}
       <ConfirmarModal
-        isOpen={!!selectedTurno}
+        isOpen={reserva.fase !== "idle" && !!reserva.selectedTurno}
         onOpenChange={(open) => {
           if (!open) {
-            setSelectedTurno(null);
-            setError(null);
-            setErrorType(null);
+            setReserva(RESERVA_INITIAL);
           }
         }}
-        turno={selectedTurno}
-        fechaLabel={selectedTurno ? formatFechaLabel(selectedTurno.fechaHora) : ""}
+        turno={reserva.selectedTurno}
+        fechaLabel={reserva.selectedTurno ? formatFechaLabel(reserva.selectedTurno.fechaHora) : ""}
         onConfirm={handleConfirm}
         onRefetch={handleRefetch}
-        reservando={reservando}
-        error={error}
-        errorType={errorType}
+        reservando={reserva.fase === "reservando"}
+        error={reserva.error}
+        errorType={reserva.errorType}
       />
     </main>
   );

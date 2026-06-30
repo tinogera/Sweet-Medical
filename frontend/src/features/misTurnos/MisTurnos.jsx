@@ -1,46 +1,13 @@
-import { useEffect, useState } from "react";
 import { Alert, Button, Card, Skeleton } from "@heroui/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getMisTurnos, splitUpcomingPast } from "../../service/misTurnosService";
+import { useMisTurnos } from "../../hooks/useMisTurnos";
 import TurnoAgendadoCard from "./TurnoAgendadoCard";
 import TurnosPasados from "./TurnosPasados";
 
 export default function MisTurnos() {
 	const navigate = useNavigate();
 	const { id } = useParams();
-	const [cargando, setCargando] = useState(true);
-	const [error, setError] = useState(null);
-	const [data, setData] = useState({ upcoming: [], past: [] });
-
-	useEffect(() => {
-		let cancelled = false;
-
-		const fetchTurnos = async () => {
-			setCargando(true);
-			setError(null);
-			try {
-				const { turnos } = await getMisTurnos(id);
-				if (!cancelled) {
-					setData(splitUpcomingPast(turnos));
-				}
-			} catch (e) {
-				console.error(e);
-				if (!cancelled) {
-					setError(e);
-				}
-			} finally {
-				if (!cancelled) {
-					setCargando(false);
-				}
-			}
-		};
-
-		fetchTurnos();
-
-		return () => {
-			cancelled = true;
-		};
-	}, [id]);
+	const { data, loading, error } = useMisTurnos(id);
 
 	return (
 		<div className="py-4 md:py-20 flex flex-col gap-10 max-w-300 mx-auto">
@@ -71,7 +38,7 @@ export default function MisTurnos() {
 					</Button>
 				</div>
 
-				{cargando ? (
+				{loading ? (
 					<div className="grid gap-6 lg:grid-cols-2">
 						{Array.from({ length: 2 }).map((_, i) => (
 							<Card key={i} className="flex flex-col md:flex-row gap-6 p-6">
@@ -102,7 +69,7 @@ export default function MisTurnos() {
 				)}
 			</section>
 
-{error ? null : cargando ? (
+{error ? null : loading ? (
 			<section className="flex flex-col gap-4">
 				<div className="border-b border-border pb-4">
 					<h2 className="font-sans text-2xl font-semibold text-surface-foreground">
