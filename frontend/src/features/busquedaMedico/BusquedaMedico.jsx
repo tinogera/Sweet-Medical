@@ -62,8 +62,7 @@ export default function BusquedaMedico() {
               </p>
             </div>
           ) : (
-            <>
-              <div
+            <div
                 className="fade-in"
                 style={{ animationDelay: "0.15s" }}
               >
@@ -81,7 +80,6 @@ export default function BusquedaMedico() {
                   <MedicosCarousel medicosCargados={medicosFiltrados}></MedicosCarousel>
                 </div>
               </div>
-            </>
           )}
           
       </div>

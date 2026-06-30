@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ConfirmarModal from './ConfirmarModal';
-import ResumenTurno from '../../components/resumenTurno/ResumenTurno';
-import { reservarTurno } from '../../service/turnosService';
-import { useBusqueda } from '../../context/BusquedaContext';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Alert, Button, Surface, Typography } from "@heroui/react";
+import ConfirmarModal from "./ConfirmarModal";
+import ResumenTurno from "../../components/resumenTurno/ResumenTurno";
+import { reservarTurno } from "../../service/turnosService";
+import { useBusqueda } from "../../context/BusquedaContext";
 
 export default function ConfirmacionTurno() {
   const navigate = useNavigate();
@@ -16,20 +17,18 @@ export default function ConfirmacionTurno() {
 
   if (!turno || !pacienteId) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-        <span className="material-symbols-outlined text-5xl text-outline-variant">error</span>
-        <p className="font-h3-subtitle text-h3-subtitle text-on-surface">No hay turno seleccionado</p>
-        <p className="font-body-main text-body-main text-text-secondary">
+      <Surface className="flex flex-col items-center justify-center py-20 gap-4 text-center mx-auto my-20 max-w-md">
+        <span className="material-symbols-outlined text-5xl text-muted">
+          error
+        </span>
+        <Typography type="h3">No hay turno seleccionado</Typography>
+        <Typography type="body" color="muted">
           Volvé al inicio para buscar un turno.
-        </p>
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="mt-4 px-8 py-3 rounded-full bg-primary-container text-on-primary font-cta-label text-cta-label hover:opacity-90 transition-all"
-        >
+        </Typography>
+        <Button variant="primary" onPress={() => navigate("/")} className="mt-2">
           Volver al inicio
-        </button>
-      </div>
+        </Button>
+      </Surface>
     );
   }
 
@@ -41,7 +40,8 @@ export default function ConfirmacionTurno() {
       navigate(`/mis-turnos/${pacienteId}`);
     } catch (e) {
       setError(
-        e.response?.data?.message || 'Ocurrió un error al reservar el turno. Intentá nuevamente.'
+        e.response?.data?.message ||
+          "Ocurrió un error al reservar el turno. Intentá nuevamente."
       );
     } finally {
       setReservando(false);
@@ -49,42 +49,42 @@ export default function ConfirmacionTurno() {
   };
 
   const fecha = new Date(turno.fechaHora);
-  const hora = fecha.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
-  const fechaLabel = `${fecha.toLocaleDateString('es-AR')}, ${hora} hs`;
+  const hora = fecha.toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const fechaLabel = `${fecha.toLocaleDateString("es-AR")}, ${hora} hs`;
 
   return (
-    <main className="grow py-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full max-w-3xl">
-
-      {/* Header */}
+    <main className="grow py-4 md:py-20 px-4 md:px-6 mx-auto w-full max-w-3xl">
       <div className="mb-12 text-center md:text-left">
-        <h1 className="font-h1-hero-mobile text-h1-hero-mobile md:font-h1-hero md:text-h1-hero text-on-background mb-4">
+        <Typography type="h1" className="mb-4">
           Confirmá tu Turno
-        </h1>
-        <p className="font-body-main text-body-main text-text-secondary">
+        </Typography>
+        <Typography type="body" color="muted">
           Revisá los datos del turno antes de confirmar la reserva.
-        </p>
+        </Typography>
       </div>
 
-      {/* tarjeta de resumen */}
       <ResumenTurno turno={turno} />
 
-      {/* Mensaje de error */}
       {error && (
-        <div className="mb-8 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 font-body-main text-body-main flex items-center gap-3">
-          <span className="material-symbols-outlined text-red-600">error</span>
-          {error}
+        <div className="mb-8">
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Error al reservar</Alert.Title>
+              <Alert.Description>{error}</Alert.Description>
+            </Alert.Content>
+          </Alert>
         </div>
       )}
 
-      {/* Botones de acción */}
-      <div className="flex flex-col md:flex-row justify-end items-center gap-4 pt-8 border-t border-outline-variant">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="w-full md:w-auto px-8 py-4 rounded-full border border-secondary text-secondary font-cta-label text-cta-label hover:bg-bg-alternate transition-colors bg-surface"
-        >
+      <div className="flex flex-col md:flex-row justify-end items-center gap-4 pt-8 border-t border-border">
+        <Button variant="outline" onPress={() => navigate(-1)} className="w-full md:w-auto">
           Volver
-        </button>
+        </Button>
         <ConfirmarModal
           profesional={turno.profesional}
           servicio={turno.servicio}

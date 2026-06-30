@@ -42,6 +42,7 @@ export default function ConfirmarModal({
 								className="w-full"
 								onPress={onConfirm}
 								isDisabled={reservando}
+								slot="close"
 							>
 								{reservando ? "Reservando..." : "Sí, reservar"}
 							</Button>
