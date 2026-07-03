@@ -34,7 +34,7 @@ export function BusquedaProvider({ children, initialValue }) {
     cargarPacienteInicial();
   }, []);
 
-  const setSearchOptions = (opts) => {
+  const actualizarBusqueda = (opts) => {
     setBusqueda((prev) => ({ ...prev, ...opts }));
   };
 
@@ -43,7 +43,7 @@ export function BusquedaProvider({ children, initialValue }) {
   };
 
   return (
-    <BusquedaContext.Provider value={{ busqueda, setSearchOptions, reset }}>
+    <BusquedaContext.Provider value={{ busqueda, actualizarBusqueda, reset }}>
       {children}
     </BusquedaContext.Provider>
   );

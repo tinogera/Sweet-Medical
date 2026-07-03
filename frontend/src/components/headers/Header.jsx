@@ -26,12 +26,7 @@ const Header = ({ _usuario }) => {
 					variant="ghost"
 					className="md:hidden justify-self-end text-accent"
 				>
-					<span
-						className="material-symbols-outlined"
-						style={{ fontVariationSettings: "'FILL' 0" }}
-					>
-						menu
-					</span>
+					<span className="material-symbols-outlined">menu</span>
 				</Button>
 
 				{/* Desktop Nav - centro */}

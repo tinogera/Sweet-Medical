@@ -46,6 +46,26 @@ describe("HorarioSlot", () => {
     expect(screen.getByText(formattedTime("09:00"))).toBeInTheDocument();
   });
 
+  test("renders servicio and sede below the time", () => {
+    const turno = makeTurno("09:00");
+    render(
+      <ToggleButtonGroup
+        selectionMode="single"
+        selectedKeys={new Set()}
+        onSelectionChange={() => {}}
+      >
+        <HorarioSlot
+          turno={turno}
+          turnoKey="turno-1-serv-1"
+          hora={formattedTime("09:00")}
+        />
+      </ToggleButtonGroup>,
+    );
+
+    expect(screen.getByText("Cardiología")).toBeInTheDocument();
+    expect(screen.getByText("Centro Médico")).toBeInTheDocument();
+  });
+
   test("fires onSelectionChange when ToggleButton is clicked", () => {
     const onSelectionChange = vi.fn();
     const turno = makeTurno("09:00");

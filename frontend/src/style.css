@@ -41,6 +41,28 @@ body {
   animation-fill-mode: backwards;
 }
 
+.fade-in-delay-100 { animation-delay: 0.1s; }
+.fade-in-delay-150 { animation-delay: 0.15s; }
+.fade-in-delay-200 { animation-delay: 0.2s; }
+.fade-in-delay-300 { animation-delay: 0.3s; }
+.fade-in-delay-500 { animation-delay: 0.5s; }
+
+/* Fade-in escalonado para listas: cada hijo aparece un poco después del anterior */
+.fade-in-stagger > * {
+  animation: fadeIn 0.4s ease-out backwards;
+}
+.fade-in-stagger > :nth-child(1) { animation-delay: 0.05s; }
+.fade-in-stagger > :nth-child(2) { animation-delay: 0.1s; }
+.fade-in-stagger > :nth-child(3) { animation-delay: 0.15s; }
+.fade-in-stagger > :nth-child(4) { animation-delay: 0.2s; }
+.fade-in-stagger > :nth-child(5) { animation-delay: 0.25s; }
+.fade-in-stagger > :nth-child(6) { animation-delay: 0.3s; }
+.fade-in-stagger > :nth-child(n + 7) { animation-delay: 0.35s; }
+
+.icon-filled {
+  font-variation-settings: 'FILL' 1;
+}
+
 /*
  * HeroUI Theme Customization
  * Add this to your global.css after importing @heroui/styles

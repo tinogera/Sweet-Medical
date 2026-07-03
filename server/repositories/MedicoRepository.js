@@ -12,7 +12,14 @@ export class MedicoRepository {
   async findAll(filters = {}) {
     const query = {};
     if (filters.nombre) {
-      query.nombre = { $regex: filters.nombre, $options: 'i' };
+      // Cada término del texto buscado tiene que matchear el nombre o el apellido
+      const terminos = filters.nombre.trim().split(/\s+/);
+      query.$and = terminos.map((termino) => ({
+        $or: [
+          { nombre: { $regex: termino, $options: 'i' } },
+          { apellido: { $regex: termino, $options: 'i' } },
+        ],
+      }));
     }
     return await this.model.find(query).populate('servicios sedes usuario agenda.sede')
   }

@@ -20,8 +20,7 @@ export default function FechaSection({ fechas, fechaSeleccionada, onSelect }) {
           return (
             <div
               key={key}
-              className="snap-start shrink-0 fade-in"
-              style={{ animationDelay: "0.2s" }}
+              className="snap-start shrink-0 fade-in fade-in-delay-200"
             >
               <FechaCard
                 fechaKey={key}
@@ -35,18 +34,15 @@ export default function FechaSection({ fechas, fechaSeleccionada, onSelect }) {
             </div>
           );
         })}
-        <div
-          className="snap-start shrink-0 flex items-center fade-in"
-          style={{ animationDelay: "0.2s" }}
-        >
+        <div className="snap-start shrink-0 flex items-center fade-in fade-in-delay-200">
           <Button
             variant="ghost"
             isIconOnly
             onPress={() => {}}
             className="w-24 h-28 rounded-2xl"
-            aria-label="Más fechas"
+            aria-label="Ver más fechas"
           >
-            <span className="material-symbols-outlined text-2xl">add</span>
+            <span className="material-symbols-outlined text-2xl">chevron_right</span>
           </Button>
         </div>
       </div>

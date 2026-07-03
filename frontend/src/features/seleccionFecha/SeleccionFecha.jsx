@@ -23,7 +23,7 @@ function agruparPorFecha(turnos) {
 
 export default function SeleccionFecha() {
   const navigate = useNavigate();
-  const { busqueda, setSearchOptions } = useBusqueda();
+  const { busqueda, actualizarBusqueda } = useBusqueda();
 
   const [cargando, setCargando] = useState(true);
   const [turnos, setTurnos] = useState([]);
@@ -39,7 +39,7 @@ export default function SeleccionFecha() {
         if (!pacientes.length) return;
         const id = pacientes[0].id;
         setPacienteId(id);
-        setSearchOptions({ pacienteId: id });
+        actualizarBusqueda({ pacienteId: id });
 
         const params = {
           idPaciente: id,
@@ -83,7 +83,7 @@ export default function SeleccionFecha() {
 
   const continuar = () => {
     if (selectedTurno) {
-      setSearchOptions({ turno: selectedTurno, pacienteId });
+      actualizarBusqueda({ turno: selectedTurno, pacienteId });
       navigate("/turno");
     }
   };
@@ -94,7 +94,7 @@ export default function SeleccionFecha() {
 
       {busqueda && (
         <div className="mb-8 fade-in">
-          <ResumenTurno busqueda={busqueda} />
+          <ResumenTurno busqueda={busqueda} turnoSeleccionado={selectedTurno} />
         </div>
       )}
 

@@ -156,10 +156,12 @@ describe("SeleccionFecha", () => {
       expect(screen.getByTestId("resumen-turno")).toBeInTheDocument();
     });
 
-    // Find the Más fechas button with + icon
+    // Find the Más fechas button with chevron icon
     const addButtons = screen.getAllByRole("button");
     const masFechasBtn = addButtons.find(
-      (btn) => btn.querySelector(".material-symbols-outlined")?.textContent === "add",
+      (btn) =>
+        btn.querySelector(".material-symbols-outlined")?.textContent ===
+        "chevron_right",
     );
     expect(masFechasBtn).toBeInTheDocument();
 

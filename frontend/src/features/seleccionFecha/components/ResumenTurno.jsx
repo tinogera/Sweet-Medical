@@ -10,7 +10,7 @@ function getInitials(label) {
     .toUpperCase();
 }
 
-export default function ResumenTurno({ busqueda }) {
+export default function ResumenTurno({ busqueda, turnoSeleccionado }) {
   const navigate = useNavigate();
   const tipoLabel = busqueda.tipo === "medico" ? "Médico" : "Servicio";
 
@@ -29,6 +29,28 @@ export default function ResumenTurno({ busqueda }) {
         <p className="font-sans text-lg font-semibold text-surface-foreground">
           {busqueda.label}
         </p>
+        {turnoSeleccionado && (
+          <div className="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+            <span className="flex items-center gap-1 font-sans text-sm text-muted">
+              <span
+                className="material-symbols-outlined text-base"
+                aria-hidden="true"
+              >
+                medical_services
+              </span>
+              {turnoSeleccionado.servicio}
+            </span>
+            <span className="flex items-center gap-1 font-sans text-sm text-muted">
+              <span
+                className="material-symbols-outlined text-base"
+                aria-hidden="true"
+              >
+                location_on
+              </span>
+              {turnoSeleccionado.sede}
+            </span>
+          </div>
+        )}
       </div>
       <Link
         href="#"

@@ -14,10 +14,7 @@ const BusquedasEspecificas = ({ icon, title, description, to, buttonName }) => {
 						className="size-16 bg-surface-terciary rounded-full flex items-center justify-center 
             			mb-6 shadow-sm group-hover:bg-surface group-hover:scale-105 transition-transform"
 					>
-						<span
-							className="material-symbols-outlined text-accent text-3xl"
-							style={{ fontVariationSettings: "'FILL' 1" }}
-						>
+						<span className="material-symbols-outlined icon-filled text-accent text-3xl">
 							{icon}
 						</span>
 					</div>

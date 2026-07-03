@@ -8,6 +8,7 @@ import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
 import { BusquedaProvider } from './context/BusquedaContext';
+import ScrollToTop from './components/scrollToTop/ScrollToTop';
 import NotFound  from './features/notFound/NotFound'
 
 export function AppRoutes() {
@@ -31,6 +32,7 @@ export function AppRoutes() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <BusquedaProvider>
         <AppRoutes />
       </BusquedaProvider>

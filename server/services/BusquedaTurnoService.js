@@ -34,8 +34,8 @@ export class BusquedaTurnoService {
                 )];
             }
 
-			const especialidadBuscada = filtros.especialidad;
-			const practicaBuscada = filtros.practica;
+			const especialidadBuscada = filtros.especialidad?.toLowerCase();
+			const practicaBuscada = filtros.practica?.toLowerCase();
 			// FIX: que el filtro lo haga la base de datos
             let serviciosAMostrar = t.medico.servicios;
             if (especialidadBuscada) {

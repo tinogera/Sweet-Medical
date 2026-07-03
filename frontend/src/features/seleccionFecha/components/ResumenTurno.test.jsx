@@ -40,6 +40,25 @@ describe("ResumenTurno", () => {
     expect(screen.getByRole("link", { name: /Cambiar/i })).toBeInTheDocument();
   });
 
+  test("shows servicio and sede of the selected turno", () => {
+    const busqueda = { tipo: "medico", label: "Dr. Rossi" };
+    const turnoSeleccionado = { servicio: "Cardiología", sede: "Sede Palermo" };
+    renderWithRouter(
+      <ResumenTurno busqueda={busqueda} turnoSeleccionado={turnoSeleccionado} />,
+    );
+
+    expect(screen.getByText("Cardiología")).toBeInTheDocument();
+    expect(screen.getByText("Sede Palermo")).toBeInTheDocument();
+  });
+
+  test("does not show servicio/sede row without a selected turno", () => {
+    const busqueda = { tipo: "medico", label: "Dr. Rossi" };
+    renderWithRouter(<ResumenTurno busqueda={busqueda} />);
+
+    expect(screen.queryByText("Cardiología")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sede Palermo")).not.toBeInTheDocument();
+  });
+
   test("renders Avatar without Image when no image URL is provided", () => {
     const busqueda = { tipo: "medico", label: "Dr. Rossi" };
     const { container } = renderWithRouter(<ResumenTurno busqueda={busqueda} />);
