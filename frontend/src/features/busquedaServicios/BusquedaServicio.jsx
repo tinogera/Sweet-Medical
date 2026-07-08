@@ -1,4 +1,4 @@
-import { Button, ToggleButtonGroup } from "@heroui/react";
+import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/SearchBar";
@@ -7,34 +7,31 @@ import { useBusqueda } from "../../context/BusquedaContext";
 import { useCargarDatos } from "../../hooks/useCargarDatos";
 import { getServicios } from "../../service/busquedaServicioService";
 
-const TIPO_ESPECIALIDAD = "ESPECIALIDAD";
-const TIPO_PRACTICA = "PRACTICA";
-
-// Accesos rápidos con la misma forma que los servicios que devuelve la API
-const serviciosSugeridos = [
-	{ id: "sugerido-cardiologia", icon: "cardiology", nombre: "Cardiología", tipoServicio: TIPO_ESPECIALIDAD },
-	{ id: "sugerido-pediatria", icon: "pediatrics", nombre: "Pediatría", tipoServicio: TIPO_ESPECIALIDAD },
-	{ id: "sugerido-dermatologia", icon: "dermatology", nombre: "Dermatología", tipoServicio: TIPO_ESPECIALIDAD },
-	{ id: "sugerido-laboratorio", icon: "biotech", nombre: "Laboratorio", tipoServicio: TIPO_PRACTICA },
-];
-
 const idDeServicio = (servicio) => servicio.id ?? servicio._id;
 
 const armarBusquedaServicio = (servicio) => {
-	const esEspecialidad = servicio.tipoServicio === TIPO_ESPECIALIDAD;
 	return {
 		tipo: "servicio",
-		label: servicio.nombre,
-		especialidad: esEspecialidad ? servicio.nombre : null,
-		practica: esEspecialidad ? null : servicio.nombre,
+		id: idDeServicio(servicio),
+		nombre: servicio.nombre,
+		tipoServicio: servicio.tipoServicio
 	};
+};
+
+const getServicioIcon = (nombre) => {
+	const n = nombre.toLowerCase();
+	if (n.includes("cardio")) return "cardiology";
+	if (n.includes("pediat")) return "pediatrics";
+	if (n.includes("derma")) return "dermatology";
+	if (n.includes("sangre") || n.includes("laboratorio")) return "biotech";
+	return "medical_services";
 };
 
 export default function BusquedaServicio() {
 	const navigate = useNavigate();
 	const { actualizarBusqueda } = useBusqueda();
-	const { datos: servicios } = useCargarDatos(getServicios);
-	const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState(serviciosSugeridos[0].id);
+	const { datos: servicios, cargando } = useCargarDatos(getServicios);
+	const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState();
 	const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
 	const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
@@ -43,14 +40,15 @@ export default function BusquedaServicio() {
 	const filtrarServicios = (searchText) => {
 		const texto = searchText.toLowerCase();
 		const filtered = servicios.filter((servicio) =>
-			servicio.nombre.toLowerCase().includes(texto)
+			servicio.nombre.toLowerCase().includes(texto),
 		);
 		setServiciosFiltrados(filtered);
 		setBusquedaRealizada(true);
 	};
 
-	const buscarServicioPorId = (id) =>
-		[...serviciosSugeridos, ...servicios].find((s) => idDeServicio(s) === id);
+	const buscarServicioPorId = (id) => {
+		return servicios.find((s) => idDeServicio(s) === id);
+	};
 
 	const irAFecha = () => {
 		const servicio = buscarServicioPorId(servicioSeleccionadoId);
@@ -114,24 +112,38 @@ export default function BusquedaServicio() {
 					Servicios Sugeridos
 				</h3>
 
-				<ToggleButtonGroup
-					selectionMode="single"
-					size="lg"
-					isDetached
-					selectedKeys={[servicioSeleccionadoId]}
-					onSelectionChange={seleccionarServicio}
-					className="grid gap-4 grid-cols-(--auto-columns) w-full fade-in-stagger"
-				>
-					{serviciosSugeridos.map((servicio) => (
-						<div key={servicio.id}>
-							<ServicioCard
-								id={servicio.id}
-								icon={servicio.icon}
-								label={servicio.nombre}
-							/>
-						</div>
-					))}
-				</ToggleButtonGroup>
+				{cargando ? (
+					<div className="grid gap-4 grid-cols-(--auto-columns) w-full">
+						{[1, 2, 3, 4].map((i) => (
+							<div
+								key={i}
+								className="flex items-center gap-4 w-full p-10 bg-surface border border-border rounded-xl"
+							>
+								<Skeleton className="w-12 h-12 rounded-full shrink-0" />
+								<Skeleton className="h-5 w-2/3 rounded-lg" />
+							</div>
+						))}
+					</div>
+				) : (
+					<ToggleButtonGroup
+						selectionMode="single"
+						size="lg"
+						isDetached
+						selectedKeys={[servicioSeleccionadoId]}
+						onSelectionChange={seleccionarServicio}
+						className="grid gap-4 grid-cols-(--auto-columns) w-full fade-in-stagger"
+					>
+						{servicios.slice(0, 4).map((servicio) => (
+							<div key={idDeServicio(servicio)}>
+								<ServicioCard
+									id={idDeServicio(servicio)}
+									icon={getServicioIcon(servicio.nombre)}
+									label={servicio.nombre}
+								/>
+							</div>
+						))}
+					</ToggleButtonGroup>
+				)}
 			</div>
 
 			<div className="mt-8 flex justify-end fade-in fade-in-delay-300">

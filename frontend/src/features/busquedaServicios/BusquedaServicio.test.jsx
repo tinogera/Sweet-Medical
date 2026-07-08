@@ -34,7 +34,11 @@ describe("BusquedaServicio", () => {
     vi.resetAllMocks();
     pacientesService.getPacientes.mockResolvedValue([{ id: "pac-1" }]);
     busquedaServicioService.getServicios.mockResolvedValue([
-      { _id: "srv-1", nombre: "Ecografía", tipoServicio: "PRACTICA" },
+      { _id: "srv-1", nombre: "Cardiología", tipoServicio: "ESPECIALIDAD" },
+      { _id: "srv-2", nombre: "Pediatría", tipoServicio: "ESPECIALIDAD" },
+      { _id: "srv-3", nombre: "Dermatología", tipoServicio: "ESPECIALIDAD" },
+      { _id: "srv-4", nombre: "Laboratorio", tipoServicio: "PRACTICA" },
+      { _id: "srv-5", nombre: "Ecografía", tipoServicio: "PRACTICA" },
     ]);
   });
 
@@ -42,14 +46,14 @@ describe("BusquedaServicio", () => {
     renderServicios();
 
     expect(screen.getByText("Servicios Sugeridos")).toBeInTheDocument();
-    expect(screen.getByText("Cardiología")).toBeInTheDocument();
+    expect(await screen.findByText("Cardiología")).toBeInTheDocument();
     expect(screen.getByText("Laboratorio")).toBeInTheDocument();
   });
 
   test("selecting a suggested service and pressing Siguiente Paso navigates to /fecha", async () => {
     renderServicios();
 
-    fireEvent.click(screen.getByText("Pediatría"));
+    fireEvent.click(await screen.findByText("Pediatría"));
     fireEvent.click(screen.getByRole("button", { name: /Siguiente Paso/i }));
 
     await waitFor(() => {
