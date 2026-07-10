@@ -22,6 +22,7 @@ export const reservarTurno = async (turnoId, pacienteId, servicioId) => {
 export const cancelarTurno = async(turnoId, pacienteId, motivo) => {
    const response = await axios.patch(`http://localhost:3000/turnos/${turnoId}`, {
         estado: 'CANCELADO',
+        rol: 'PACIENTE',
         responsableId: pacienteId,
         motivo: motivo || "No puedo asistir"
     });

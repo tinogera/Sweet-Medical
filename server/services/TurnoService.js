@@ -33,12 +33,16 @@ export class TurnoService{
             ? [turno.paciente, turno.medico] 
             : [turno.medico, turno.paciente];
         
+        const nombreServicio = turno.servicio?.nombre || "servicio";
+
         turno.cancelar(responsable, motivo)
-        const mensajeCancelacion = `El turno para ${turno.servicio.nombre} fue cancelado. Motivo: ${motivo}`
-        contraparte.usuario.recibirNotificacion(new Notificacion({
-            destinatario: contraparte.usuario.nombre, 
-            mensaje: mensajeCancelacion 
-        }))
+        const mensajeCancelacion = `El turno para ${nombreServicio} fue cancelado. Motivo: ${motivo}`
+        if (contraparte && contraparte.usuario) {
+            contraparte.usuario.recibirNotificacion(new Notificacion({
+                destinatario: contraparte.usuario.nombre, 
+                mensaje: mensajeCancelacion 
+            }))
+        }
 
         return await this.turnoRepository.guardarTurno(turno)
     }
