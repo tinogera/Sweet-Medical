@@ -5,6 +5,7 @@ import BusquedaServicio from './features/busquedaServicios/BusquedaServicio';
 import BusquedaMedico from './features/busquedaMedico/BusquedaMedico';
 import SeleccionFecha from './features/seleccionFecha/SeleccionFecha';
 import ConfirmacionTurno from './features/confirmacionTurno/ConfirmacionTurno';
+import Disponibilidad from './features/disponibilidad/Disponibilidad';
 import AppLayout from './layouts/AppLayout';
 import TransactionalLayout from './layouts/TransactionalLayout';
 import { BusquedaProvider } from './context/BusquedaContext';
@@ -17,6 +18,7 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/mis-turnos/:id" element={<MisTurnos />} />
+        <Route path="/doctor/disponibilidad" element={<Disponibilidad />} />
         <Route path="*" element={<NotFound />} />
       </Route>
       <Route element={<TransactionalLayout />}>

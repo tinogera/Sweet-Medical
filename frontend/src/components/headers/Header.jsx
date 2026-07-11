@@ -35,7 +35,9 @@ const Header = ({ _usuario }) => {
 					{/* Desktop Nav - centro */}
 					<nav className="hidden md:flex col-start-2 justify-center items-center">
 						<ul className="flex items-center gap-6">
-							<NavItem href={`/mis-turnos/${pacienteId}`}>Turnos</NavItem>
+							<NavItem href="/">Inicio</NavItem>
+							<NavItem href={`/mis-turnos/${pacienteId}`}>Mis Turnos</NavItem>
+							<NavItem href="/doctor/disponibilidad">Disponibilidad (Médico)</NavItem>
 							<NavItem href="/cartilla">Cartilla</NavItem>
 							<NavItem href="/planes">Planes</NavItem>
 						</ul>
@@ -50,7 +52,9 @@ const Header = ({ _usuario }) => {
 				{menuAbierto && (
 					<nav className="md:hidden pb-6 border-t border-border fade-in">
 						<ul className="flex flex-col gap-4 pt-4">
-							<NavItem href={`/mis-turnos/${pacienteId}`} onClick={() => setMenuAbierto(false)}>Turnos</NavItem>
+							<NavItem href="/" onClick={() => setMenuAbierto(false)}>Inicio</NavItem>
+							<NavItem href={`/mis-turnos/${pacienteId}`} onClick={() => setMenuAbierto(false)}>Mis Turnos</NavItem>
+							<NavItem href="/doctor/disponibilidad" onClick={() => setMenuAbierto(false)}>Disponibilidad (Médico)</NavItem>
 							<NavItem href="/cartilla" onClick={() => setMenuAbierto(false)}>Cartilla</NavItem>
 							<NavItem href="/planes" onClick={() => setMenuAbierto(false)}>Planes</NavItem>
 							<div className="pt-2 border-t border-border flex justify-start">
