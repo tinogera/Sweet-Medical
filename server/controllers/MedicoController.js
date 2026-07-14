@@ -5,7 +5,8 @@ export class MedicoController {
 
   obtenerMedicos = async (req, res, next) => {
     try {
-      const medicos = await this.medicoService.obtenerMedicos();
+      const { nombre } = req.query;
+      const medicos = await this.medicoService.obtenerMedicos({ nombre });
       
       const response = medicos.map(m => ({
         id: m.id || m._id,

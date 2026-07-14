@@ -5,6 +5,10 @@ export class PacienteService{
     
     }
 
+    async listarTodos() {
+        return await this.pacienteRepository.listar();
+    }
+
     async listarTurnos(pacienteId, paginacion){
         
         const { turnos, totalTurnos } = await this.turnoRepository.obtenerTurnosDePaciente(

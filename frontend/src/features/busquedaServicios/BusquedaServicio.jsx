@@ -1,104 +1,161 @@
-import React from 'react';
+import { Button, Skeleton, ToggleButtonGroup } from "@heroui/react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import SearchBar from "../../components/searchBar/SearchBar";
+import ServicioCard from "../../components/servicioCard/ServicioCard";
+import { useBusqueda } from "../../context/BusquedaContext";
+import { useCargarDatos } from "../../hooks/useCargarDatos";
+import { getServicios } from "../../service/busquedaServicioService";
 
+const idDeServicio = (servicio) => servicio.id ?? servicio._id;
+
+const armarBusquedaServicio = (servicio) => {
+	return {
+		tipo: "servicio",
+		id: idDeServicio(servicio),
+		nombre: servicio.nombre,
+		tipoServicio: servicio.tipoServicio
+	};
+};
+
+const getServicioIcon = (nombre) => {
+	const n = nombre.toLowerCase();
+	if (n.includes("cardio")) return "cardiology";
+	if (n.includes("pediat")) return "pediatrics";
+	if (n.includes("derma")) return "dermatology";
+	if (n.includes("sangre") || n.includes("laboratorio")) return "biotech";
+	return "medical_services";
+};
 
 export default function BusquedaServicio() {
-  return (
-    <main className="flex-grow flex flex-col items-center py-section-padding px-margin-mobile md:px-gutter w-full">
-      <div className="w-full max-w-[800px] flex flex-col gap-12">
-        {/* Progress Header */}
-        <div className="flex flex-col gap-4 text-center">
-          <div className="flex items-center justify-center gap-4 text-secondary font-cta-label text-body-sm">
-            <span className="text-primary-container font-bold">PASO 1 DE 3</span>
-            <span className="w-1 h-1 bg-outline rounded-full"></span>
-            <span>Búsqueda de Servicio</span>
-          </div>
-          <div className="w-full bg-secondary-container h-2 rounded-full overflow-hidden">
-            <div className="bg-primary-container h-full w-1/3 rounded-full transition-all duration-500"></div>
-          </div>
-        </div>
+	const navigate = useNavigate();
+	const { actualizarBusqueda } = useBusqueda();
+	const { datos: servicios, cargando } = useCargarDatos(getServicios);
+	const [servicioSeleccionadoId, setServicioSeleccionadoId] = useState();
+	const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
+	const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
-        {/* Title Section */}
-        <div className="text-center flex flex-col gap-4">
-          <h1 className="font-h2-section-mobile text-h2-section-mobile md:font-h2-section md:text-h2-section text-on-surface">
-            ¿Qué servicio estás buscando?
-          </h1>
-          <p className="font-body-main text-body-main text-text-secondary max-w-[600px] mx-auto">
-            Seleccioná la especialidad médica o el estudio que necesitás.
-          </p>
-        </div>
+	const sinResultados = busquedaRealizada && serviciosFiltrados.length === 0;
 
-        {/* Search Input */}
-        <div className="relative w-full group">
-          <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-secondary group-focus-within:text-primary-container transition-colors">
-            search
-          </span>
-          <input
-            className="w-full h-16 pl-14 pr-6 rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface font-body-main text-body-main focus:ring-0 focus:border-primary-container transition-colors placeholder:text-secondary-fixed-dim shadow-sm"
-            placeholder="Ej. Cardiología, Ecografía, Laboratorio..."
-            type="text"
-          />
-        </div>
+	const filtrarServicios = (searchText) => {
+		const texto = searchText.toLowerCase();
+		const filtered = servicios.filter((servicio) =>
+			servicio.nombre.toLowerCase().includes(texto),
+		);
+		setServiciosFiltrados(filtered);
+		setBusquedaRealizada(true);
+	};
 
-        {/* Suggested Services Bento */}
-        <div className="flex flex-col gap-6">
-          <h3 className="font-cta-label text-cta-label text-on-surface-variant">Servicios Sugeridos</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Service Card 1 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">cardiology</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Cardiología</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
+	const buscarServicioPorId = (id) => {
+		return servicios.find((s) => idDeServicio(s) === id);
+	};
 
-            {/* Service Card 2 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">pediatrics</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Pediatría</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
+	const irAFecha = () => {
+		const servicio = buscarServicioPorId(servicioSeleccionadoId);
+		if (!servicio) return;
+		actualizarBusqueda(armarBusquedaServicio(servicio));
+		navigate("/fecha");
+	};
 
-            {/* Service Card 3 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">dermatology</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Dermatología</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
+	const seleccionarServicio = (keys) => setServicioSeleccionadoId([...keys][0]);
 
-            {/* Service Card 4 */}
-            <button className="flex items-center justify-between p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:border-primary-container hover:bg-surface-container transition-all group text-left">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container group-hover:text-white transition-colors text-primary-container">
-                  <span className="material-symbols-outlined">biotech</span>
-                </div>
-                <span className="font-cta-label text-body-main text-on-surface">Laboratorio</span>
-              </div>
-              <span className="material-symbols-outlined text-secondary group-hover:text-primary-container transition-colors">chevron_right</span>
-            </button>
-          </div>
-        </div>
+	return (
+		<div className="pt-30 pb-20 px-6 max-w-300 mx-auto">
+			<div className="text-center flex flex-col gap-4 fade-in">
+				<h1 className="font-sans text-[28px] md:text-[40px] font-bold text-surface-foreground">
+					¿Qué servicio estás buscando?
+				</h1>
+				<p className="font-sans text-lg text-muted max-w-150 mx-auto">
+					Seleccioná la especialidad médica o el estudio que necesitás.
+				</p>
+			</div>
 
-        {/* Action Area */}
-        <div className="mt-8 flex justify-end">
-          <button
-            disabled
-            className="px-8 py-4 bg-secondary-container text-secondary font-cta-label text-cta-label rounded-full cursor-not-allowed transition-colors w-full md:w-auto"
-          >
-            Siguiente Paso
-          </button>
-        </div>
-      </div>
-    </main>
-  );
+			<SearchBar
+				name="servicio"
+				placeholder="Ej. Cardiología, Ecografía, Laboratorio..."
+				onSearch={filtrarServicios}
+				showButton={true}
+			/>
+
+			{busquedaRealizada && (
+				<div className="flex flex-col gap-6 fade-in fade-in-delay-100 mb-8">
+					<h3 className="font-sans text-base font-bold text-surface-foreground">
+						Resultados de la búsqueda
+					</h3>
+					{sinResultados ? (
+						<p className="font-sans text-muted">No se encontraron servicios.</p>
+					) : (
+						<ToggleButtonGroup
+							selectionMode="single"
+							size="lg"
+							isDetached
+							selectedKeys={[servicioSeleccionadoId]}
+							onSelectionChange={seleccionarServicio}
+							className="grid gap-4 grid-cols-(--auto-columns) w-full fade-in-stagger"
+						>
+							{serviciosFiltrados.map((srv) => (
+								<div key={idDeServicio(srv)}>
+									<ServicioCard
+										id={idDeServicio(srv)}
+										icon="medical_services"
+										label={srv.nombre}
+									/>
+								</div>
+							))}
+						</ToggleButtonGroup>
+					)}
+				</div>
+			)}
+
+			<div className="flex flex-col gap-6 fade-in fade-in-delay-150">
+				<h3 className="font-sans text-base font-bold text-surface-foreground">
+					Servicios Sugeridos
+				</h3>
+
+				{cargando ? (
+					<div className="grid gap-4 grid-cols-(--auto-columns) w-full">
+						{[1, 2, 3, 4].map((i) => (
+							<div
+								key={i}
+								className="flex items-center gap-4 w-full p-10 bg-surface border border-border rounded-xl"
+							>
+								<Skeleton className="w-12 h-12 rounded-full shrink-0" />
+								<Skeleton className="h-5 w-2/3 rounded-lg" />
+							</div>
+						))}
+					</div>
+				) : (
+					<ToggleButtonGroup
+						selectionMode="single"
+						size="lg"
+						isDetached
+						selectedKeys={[servicioSeleccionadoId]}
+						onSelectionChange={seleccionarServicio}
+						className="grid gap-4 grid-cols-(--auto-columns) w-full fade-in-stagger"
+					>
+						{servicios.slice(0, 4).map((servicio) => (
+							<div key={idDeServicio(servicio)}>
+								<ServicioCard
+									id={idDeServicio(servicio)}
+									icon={getServicioIcon(servicio.nombre)}
+									label={servicio.nombre}
+								/>
+							</div>
+						))}
+					</ToggleButtonGroup>
+				)}
+			</div>
+
+			<div className="mt-8 flex justify-end fade-in fade-in-delay-300">
+				<Button
+					isDisabled={!servicioSeleccionadoId}
+					variant="primary"
+					className="w-full md:w-auto"
+					onPress={irAFecha}
+				>
+					Siguiente Paso
+				</Button>
+			</div>
+		</div>
+	);
 }

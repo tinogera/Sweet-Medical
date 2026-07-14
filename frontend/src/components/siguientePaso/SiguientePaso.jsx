@@ -1,10 +1,10 @@
+import { Button } from "@heroui/react";
+
 function SiguientePaso({ }) {
-    return (<button
-        disabled
-        className="font-cta-label text-cta-label bg-secondary-fixed text-text-secondary px-8 py-4 rounded-full cursor-not-allowed opacity-70 transition-colors"
-    >
-        Siguiente Paso
-    </button>
+    return (
+        <Button isDisabled variant="secondary">
+            Siguiente Paso
+        </Button>
     )
 }
 

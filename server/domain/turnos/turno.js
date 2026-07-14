@@ -43,6 +43,9 @@ export class Turno {
       throw new TurnoNoPuedeCambiarEstado(`El turno [${this.id}] no se puede cancelar, solo turnos disponibles o reservados pueden ser cancelado`);
     }
     this.cambiarEstado(Estado.CANCELADO, responsable, motivo);
+    this.paciente = null;
+    this.servicio = null;
+    this.cambiarEstado(Estado.DISPONIBLE, this.medico, "Turno disponible nuevamente por cancelación");
   }
 
   confirmar(responsable) {

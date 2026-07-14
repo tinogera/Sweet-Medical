@@ -2,6 +2,7 @@ import { jest } from "@jest/globals";
 import request from "supertest";
 import app from "../server/app.js";
 import { MedicoRepository } from "../server/repositories/MedicoRepository.js";
+import { MedicoModel } from "../server/schemas/medicoSchema.js";
 import { SedeRepository } from "../server/repositories/SedeRepository.js";
 import { ServicioRepository } from "../server/repositories/ServicioRepository.js";
 import { NotFoundError, BadRequestError } from "../server/errors/AppErrors.js";
@@ -247,6 +248,45 @@ describe("Medicos Endpoints", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.precio).toBe(3500);
+    });
+  });
+
+  describe("MedicoRepository.findAll", () => {
+    it("debería buscar cada término contra nombre y apellido (case-insensitive)", async () => {
+      const findSpy = jest.spyOn(MedicoModel, "find").mockReturnValue({
+        populate: jest.fn().mockResolvedValue([]),
+      });
+
+      const repo = new MedicoRepository();
+      await repo.findAll({ nombre: "Carlos Gardel" });
+
+      expect(findSpy).toHaveBeenCalledWith({
+        $and: [
+          {
+            $or: [
+              { nombre: { $regex: "Carlos", $options: "i" } },
+              { apellido: { $regex: "Carlos", $options: "i" } },
+            ],
+          },
+          {
+            $or: [
+              { nombre: { $regex: "Gardel", $options: "i" } },
+              { apellido: { $regex: "Gardel", $options: "i" } },
+            ],
+          },
+        ],
+      });
+    });
+
+    it("debería buscar sin filtros cuando no se pasa nombre", async () => {
+      const findSpy = jest.spyOn(MedicoModel, "find").mockReturnValue({
+        populate: jest.fn().mockResolvedValue([]),
+      });
+
+      const repo = new MedicoRepository();
+      await repo.findAll();
+
+      expect(findSpy).toHaveBeenCalledWith({});
     });
   });
 });

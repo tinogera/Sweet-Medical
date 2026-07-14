@@ -20,7 +20,11 @@ export class TurnoController{
                     turnoActualizado = await this.turnoService.reservar(turnoId, actualizacionesTurno);
                     break;
                 case 'CANCELADO':
-                    turnoActualizado = await this.turnoService.cancelar(turnoId, actualizacionesTurno.rol, actualizacionesTurno.motivo);
+                    turnoActualizado = await this.turnoService.cancelar(
+                        turnoId,
+                        actualizacionesTurno.rol || (actualizacionesTurno.responsableId ? "PACIENTE" : "MEDICO"),
+                        actualizacionesTurno.motivo
+                    );
                     break;
                 case 'CONFIRMADO':
                     turnoActualizado = await this.turnoService.confirmar(turnoId);
@@ -36,7 +40,7 @@ export class TurnoController{
                 new TurnoOutputDTO(
                     turnoActualizado.id,
                     turnoActualizado.medico.nombre,
-                    turnoActualizado.servicio.nombre,
+                    turnoActualizado.servicio?.nombre || null,
                     turnoActualizado.fechaHora,
                     turnoActualizado.sede.nombre,
                     turnoActualizado.estadoActual().estado,

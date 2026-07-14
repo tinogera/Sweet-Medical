@@ -68,6 +68,7 @@ import { NotificacionController } from "../controllers/NotificacionController.js
 import { PacienteController } from "../controllers/PacienteController.js";
 import { SeederController } from "../controllers/SeederController.js";
 import { TurnoController } from "../controllers/TurnoController.js";
+import { ServicioController } from "../controllers/ServicioController.js"
 
 export const busquedaTurnoController = new BusquedaTurnoController({
   busquedaTurnoService,
@@ -96,3 +97,7 @@ export const seederController = new SeederController({
 export const turnoController = new TurnoController({
   turnoService,
 });
+
+export const servicioController = new ServicioController({
+  servicioRepo
+})
