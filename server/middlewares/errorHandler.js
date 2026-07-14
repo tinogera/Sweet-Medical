@@ -15,9 +15,7 @@ export function errorHandler(err, _req, res, next) {
         return res.status(err.statusCode).json(body)
     }
 
-    if (process.env.ENV === "dev") 				{
-        console.error("Error no manejado:\n", err)
-    }
+    console.error("Error no manejado:\n", err)
 
     return res.status(500).json({
         status: "error",
