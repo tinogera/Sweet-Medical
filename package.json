@@ -18,7 +18,8 @@
     "start": "node ./server/server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "dev": "node --watch ./server/server.js",
-    "lint": "biome lint"
+    "lint": "biome lint",
+    "seed": "node db/seed-node.js"
   },
   "jest": {
     "transform": {}
