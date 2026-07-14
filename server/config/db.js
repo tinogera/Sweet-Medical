@@ -4,9 +4,10 @@ export async function connectToDB(dbConnectionString, dbName) {
 
   for (let i = 0; i < 3; ++i) {
     try {
-      const url = dbConnectionString.includes('?')
-        ? dbConnectionString.replace('?', `/${dbName}?`)
-        : `${dbConnectionString}/${dbName}`;
+      const cleanedConnectionString = dbConnectionString.replace('/?', '?');
+      const url = cleanedConnectionString.includes('?')
+        ? cleanedConnectionString.replace('?', `/${dbName}?`)
+        : `${cleanedConnectionString}/${dbName}`;
       await mongoose.connect(url);
       console.log('Se conecto a la base de datos con éxito.')
       break;
