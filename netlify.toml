@@ -1,0 +1,13 @@
+[build]
+  # Base directory where frontend code lies
+  base = "frontend"
+  # Directory that contains the built deploy-ready HTML/JS/CSS assets (relative to the base directory)
+  publish = "dist"
+  # The command to run to compile assets
+  command = "npm run build"
+
+[[redirects]]
+  # Redirect all routes to index.html for React Router (Single Page Application)
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sweet-medical-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: ENV
+        value: production
+      - key: DB_CONNECTION_STRING
+        sync: false # Debes configurar tu cadena de conexión de MongoDB Atlas en el dashboard de Render
+      - key: MONGODB_DB_NAME
+        value: sweetmedical
